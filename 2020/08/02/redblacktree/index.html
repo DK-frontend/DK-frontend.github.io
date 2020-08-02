@@ -1,0 +1,880 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+ <!--pjax：防止跳转页面音乐暂停-->
+  <script src="https://cdn.jsdelivr.net/npm/pjax@0.2.8/pjax.js"></script> 
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<script src="//cdn.bootcss.com/pace/1.0.2/pace.min.js"></script>
+<link href="//cdn.bootcss.com/pace/1.0.2/themes/pink/pace-theme-flash.css" rel="stylesheet">
+<style>
+    .pace .pace-progress {
+        background: #1E92FB; /*进度条颜色*/
+        height: 3px;
+    }
+    .pace .pace-progress-inner {
+         box-shadow: 0 0 10px #1E92FB, 0 0 5px     #1E92FB; /*阴影颜色*/
+    }
+    .pace .pace-activity {
+        border-top-color: #1E92FB;    /*上边框颜色*/
+        border-left-color: #1E92FB;    /*左边框颜色*/
+    }
+</style>
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-big-counter.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yoursite.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="图解红黑树一、红黑树的五条规则红黑树除了符合二叉搜索树的基本规则外，还添加了以下特性：  规则1：节点是红色或黑色的； 规则2：根节点是黑色的； 规则3：每个叶子节点都是黑色的空节点（NIL节点）； 规则4：每个红色节点的两个子节点都是黑色的（从每个叶子到根的所有路径上不可能有两个连续的红色节点）； 规则5：从任一节点到其每个叶子节点的所有路径都包含相同数目的黑色节点；">
+<meta property="og:type" content="article">
+<meta property="og:title" content="图解红黑树(redblacktree)">
+<meta property="og:url" content="http://yoursite.com/2020/08/02/redblacktree/index.html">
+<meta property="og:site_name" content="DKの博客">
+<meta property="og:description" content="图解红黑树一、红黑树的五条规则红黑树除了符合二叉搜索树的基本规则外，还添加了以下特性：  规则1：节点是红色或黑色的； 规则2：根节点是黑色的； 规则3：每个叶子节点都是黑色的空节点（NIL节点）； 规则4：每个红色节点的两个子节点都是黑色的（从每个叶子到根的所有路径上不可能有两个连续的红色节点）； 规则5：从任一节点到其每个叶子节点的所有路径都包含相同数目的黑色节点；">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://gitee.com/ahuntsun/BlogImgs/raw/master/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/%E7%BA%A2%E9%BB%91%E6%A0%91/1.png">
+<meta property="og:image" content="https://gitee.com/ahuntsun/BlogImgs/raw/master/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/%E7%BA%A2%E9%BB%91%E6%A0%91/2.png">
+<meta property="og:image" content="https://gitee.com/ahuntsun/BlogImgs/raw/master/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/%E7%BA%A2%E9%BB%91%E6%A0%91/3.png">
+<meta property="og:image" content="https://gitee.com/ahuntsun/BlogImgs/raw/master/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/%E7%BA%A2%E9%BB%91%E6%A0%91/4.png">
+<meta property="og:image" content="https://gitee.com/ahuntsun/BlogImgs/raw/master/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/%E7%BA%A2%E9%BB%91%E6%A0%91/5.png">
+<meta property="og:image" content="https://gitee.com/ahuntsun/BlogImgs/raw/master/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/%E7%BA%A2%E9%BB%91%E6%A0%91/6.png">
+<meta property="og:image" content="https://gitee.com/ahuntsun/BlogImgs/raw/master/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/%E7%BA%A2%E9%BB%91%E6%A0%91/7.png">
+<meta property="og:image" content="https://gitee.com/ahuntsun/BlogImgs/raw/master/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/%E7%BA%A2%E9%BB%91%E6%A0%91/8.png">
+<meta property="og:image" content="https://gitee.com/ahuntsun/BlogImgs/raw/master/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/%E7%BA%A2%E9%BB%91%E6%A0%91/9.png">
+<meta property="og:image" content="https://gitee.com/ahuntsun/BlogImgs/raw/master/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/%E7%BA%A2%E9%BB%91%E6%A0%91/10.png">
+<meta property="og:image" content="https://gitee.com/ahuntsun/BlogImgs/raw/master/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/%E7%BA%A2%E9%BB%91%E6%A0%91/11.png">
+<meta property="og:image" content="https://gitee.com/ahuntsun/BlogImgs/raw/master/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/%E7%BA%A2%E9%BB%91%E6%A0%91/12.png">
+<meta property="og:image" content="https://gitee.com/ahuntsun/BlogImgs/raw/master/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/%E7%BA%A2%E9%BB%91%E6%A0%91/13.png">
+<meta property="og:image" content="https://gitee.com/ahuntsun/BlogImgs/raw/master/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/%E7%BA%A2%E9%BB%91%E6%A0%91/14.png">
+<meta property="og:image" content="https://gitee.com/ahuntsun/BlogImgs/raw/master/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/%E7%BA%A2%E9%BB%91%E6%A0%91/15.png">
+<meta property="og:image" content="https://gitee.com/ahuntsun/BlogImgs/raw/master/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/%E7%BA%A2%E9%BB%91%E6%A0%91/16.png">
+<meta property="og:image" content="https://gitee.com/ahuntsun/BlogImgs/raw/master/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/%E7%BA%A2%E9%BB%91%E6%A0%91/17.png">
+<meta property="og:image" content="https://gitee.com/ahuntsun/BlogImgs/raw/master/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/%E7%BA%A2%E9%BB%91%E6%A0%91/18.png">
+<meta property="og:image" content="https://gitee.com/ahuntsun/BlogImgs/raw/master/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/%E7%BA%A2%E9%BB%91%E6%A0%91/19.png">
+<meta property="og:image" content="https://gitee.com/ahuntsun/BlogImgs/raw/master/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/%E7%BA%A2%E9%BB%91%E6%A0%91/20.png">
+<meta property="og:image" content="https://gitee.com/ahuntsun/BlogImgs/raw/master/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/%E7%BA%A2%E9%BB%91%E6%A0%91/21.png">
+<meta property="og:image" content="https://gitee.com/ahuntsun/BlogImgs/raw/master/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/%E7%BA%A2%E9%BB%91%E6%A0%91/22.png">
+<meta property="og:image" content="https://gitee.com/ahuntsun/BlogImgs/raw/master/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/%E7%BA%A2%E9%BB%91%E6%A0%91/23.png">
+<meta property="og:image" content="https://gitee.com/ahuntsun/BlogImgs/raw/master/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/%E7%BA%A2%E9%BB%91%E6%A0%91/24.png">
+<meta property="og:image" content="https://gitee.com/ahuntsun/BlogImgs/raw/master/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/%E7%BA%A2%E9%BB%91%E6%A0%91/25.png">
+<meta property="og:image" content="https://gitee.com/ahuntsun/BlogImgs/raw/master/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/%E7%BA%A2%E9%BB%91%E6%A0%91/26.png">
+<meta property="og:image" content="https://gitee.com/ahuntsun/BlogImgs/raw/master/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/%E7%BA%A2%E9%BB%91%E6%A0%91/27.png">
+<meta property="og:image" content="https://gitee.com/ahuntsun/BlogImgs/raw/master/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/%E7%BA%A2%E9%BB%91%E6%A0%91/28.png">
+<meta property="og:image" content="https://gitee.com/ahuntsun/BlogImgs/raw/master/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/%E7%BA%A2%E9%BB%91%E6%A0%91/29.png">
+<meta property="article:published_time" content="2020-08-02T15:02:18.000Z">
+<meta property="article:modified_time" content="2020-08-02T15:26:58.169Z">
+<meta property="article:author" content="丁可">
+<meta property="article:tag" content="数据结构与算法">
+<meta property="article:tag" content="Javascript">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://gitee.com/ahuntsun/BlogImgs/raw/master/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/%E7%BA%A2%E9%BB%91%E6%A0%91/1.png">
+
+<link rel="canonical" href="http://yoursite.com/2020/08/02/redblacktree/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>图解红黑树(redblacktree) | DKの博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+    <a href="https://github.com/DK-frontend" target="_blank" rel="noopener" class="github-corner" aria-label="View source on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" style="fill:#151513; color:#fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a><style>.github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}</style>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">DKの博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">记录前端学习的历程</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">6</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">3</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">12</span></a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/08/02/redblacktree/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/touxiang.jpg">
+      <meta itemprop="name" content="丁可">
+      <meta itemprop="description" content="哪来的勇气我就是不灰心">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="DKの博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          图解红黑树(redblacktree)
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2020-08-02 23:02:18 / 修改时间：23:26:58" itemprop="dateCreated datePublished" datetime="2020-08-02T23:02:18+08:00">2020-08-02</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Javascript/" itemprop="url" rel="index"><span itemprop="name">Javascript</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>3.1k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>3 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="图解红黑树"><a href="#图解红黑树" class="headerlink" title="图解红黑树"></a>图解红黑树</h1><h2 id="一、红黑树的五条规则"><a href="#一、红黑树的五条规则" class="headerlink" title="一、红黑树的五条规则"></a>一、红黑树的五条规则</h2><p>红黑树除了符合二叉搜索树的基本规则外，还添加了以下特性：</p>
+<ul>
+<li><strong>规则1：节点是红色或黑色的；</strong></li>
+<li><strong>规则2：根节点是黑色的；</strong></li>
+<li><strong>规则3：每个叶子节点都是黑色的空节点（NIL节点）；</strong></li>
+<li><strong>规则4：每个红色节点的两个子节点都是黑色的（从每个叶子到根的所有路径上不可能有两个连续的红色节点）；</strong></li>
+<li><strong>规则5：从任一节点到其每个叶子节点的所有路径都包含相同数目的黑色节点；</strong><a id="more"></a>
+<img src="https://gitee.com/ahuntsun/BlogImgs/raw/master/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/%E7%BA%A2%E9%BB%91%E6%A0%91/1.png" alt="图片示例"></li>
+</ul>
+<p><strong>红黑树的相对平衡</strong></p>
+<p>前面5条规则的约束确保了以下红黑树的关键特性：</p>
+<ul>
+<li><p>从<strong>根到叶子节点</strong>的<strong>最长路径</strong>，不会超过<strong>最短路径</strong>的<strong>两倍</strong>；</p>
+</li>
+<li><p>结果就是这棵树<strong>基本</strong>是平衡的；</p>
+</li>
+<li><p>虽然没有做到绝对的平衡，但是可以保证在最坏的情况下，该树依然是高效的；<br>为什么可以做到<strong>最长路径不超过最短路径的两倍</strong>呢？</p>
+</li>
+<li><p><strong>性质4</strong>决定了路径上不能有两个相连的红色节点；</p>
+</li>
+<li><p>所以，最长路径一定是红色节点和黑色节点交替而成的；</p>
+</li>
+<li><p>由于根节点和叶子节点都是黑色的，最短路径可能都是黑色节点，并且最长路径中一定是黑色节点多于红色节点；</p>
+</li>
+<li><p><strong>性质5</strong>决定了所有路径上都有相同数目的黑色节点；</p>
+</li>
+<li><p>这就表明了没有路径能多于其他任何路径两倍长。</p>
+<h2 id="二、红黑树的三种变换"><a href="#二、红黑树的三种变换" class="headerlink" title="二、红黑树的三种变换"></a>二、红黑树的三种变换</h2><p>插入一个新节点时，有可能树不再平衡，可以通过三种方式的变换使树保持平衡：</p>
+</li>
+<li><p><strong>变色；</strong></p>
+</li>
+<li><p><strong>左旋转；</strong></p>
+</li>
+<li><p><strong>右旋转；</strong></p>
+<h3 id="2-1-变色"><a href="#2-1-变色" class="headerlink" title="2.1.变色"></a>2.1.变色</h3><p>为了重新符合红黑树的规则，需要把<strong>红色</strong>节点变为<strong>黑色</strong>，或者把<strong>黑色</strong>节点变为<strong>红色</strong>；</p>
+</li>
+</ul>
+<p>插入的<strong>新节点</strong>通常都是<strong>红色节点</strong>：</p>
+<ul>
+<li><p>当插入的节点为<strong>红色</strong>的时候，大多数情况<strong>不违反</strong>红黑树的任何规则；</p>
+</li>
+<li><p>而<strong>插入黑色节点</strong>，必然会导致一条路径上多了一个<strong>黑色节点</strong>，这是很难调整的；</p>
+</li>
+<li><p>红色节点虽然可能导致<strong>红红相连</strong>的情况，但是这种情况可以通过<strong>颜色调换和旋转</strong>来调整；</p>
+</li>
+</ul>
+<h3 id="2-2-左旋转"><a href="#2-2-左旋转" class="headerlink" title="2.2.左旋转"></a>2.2.左旋转</h3><p>以节点X为根<strong>逆时针</strong>旋转二叉搜索树，使得父节点原来的位置被自己的右子节点替代，左子节点的位置被父节点替代；</p>
+<p><img src="https://gitee.com/ahuntsun/BlogImgs/raw/master/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/%E7%BA%A2%E9%BB%91%E6%A0%91/2.png" alt="图片示例"></p>
+<p><strong>详解：</strong></p>
+<p>如上图所示，左旋转之后：</p>
+<ul>
+<li>节点X取代了节点a原来的位置；</li>
+<li>节点Y取代了节点X原来的位置；</li>
+<li>节点X的<strong>左子树</strong> a 仍然是节点X的<strong>左子树</strong>（这里X的左子树只有一个节点，有多个节点时同样适用，以下同理）；</li>
+<li>节点Y的<strong>右子树</strong> c 仍然是节点Y的<strong>右子树</strong>；</li>
+<li>节点Y的<strong>左子树</strong> b 向<strong>左平移</strong>成为了节点X的<strong>右子树</strong>；<br>除此之外，二叉搜索树左旋转之后仍为二叉搜索树：</li>
+</ul>
+<p><img src="https://gitee.com/ahuntsun/BlogImgs/raw/master/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/%E7%BA%A2%E9%BB%91%E6%A0%91/3.png" alt="图片示例"></p>
+<h3 id="2-3-右旋转"><a href="#2-3-右旋转" class="headerlink" title="2.3.右旋转"></a>2.3.右旋转</h3><p>以节点X为根<strong>顺时针</strong>旋转二叉搜索树，使得父节点原来的位置被自己的左子节点替代，右子节点的位置被父节点替代；</p>
+<p><img src="https://gitee.com/ahuntsun/BlogImgs/raw/master/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/%E7%BA%A2%E9%BB%91%E6%A0%91/4.png" alt="图片示例"></p>
+<p><strong>详解：</strong></p>
+<p>如上图所示，右旋转之后：</p>
+<ul>
+<li>节点X取代了节点a原来的位置；</li>
+<li>节点Y取代了节点X原来的位置；</li>
+<li>节点X的<strong>右子树</strong> a 仍然是节点X的<strong>右子树</strong>（这里X的右子树虽然只有一个节点，但是多个节点时同样适用，以下同理）；</li>
+<li>节点Y的<strong>左子树</strong> b 仍然是节点Y的<strong>左子树</strong>；</li>
+<li>节点Y的<strong>右子树 c 向右平移</strong>成为了节点X的<strong>左子树</strong>；<br>除此之外，二叉搜索树右旋转之后仍为二叉搜索树：</li>
+</ul>
+<p><img src="https://gitee.com/ahuntsun/BlogImgs/raw/master/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/%E7%BA%A2%E9%BB%91%E6%A0%91/5.png" alt="图片示例"></p>
+<h2 id="三、红黑树的插入操作"><a href="#三、红黑树的插入操作" class="headerlink" title="三、红黑树的插入操作"></a>三、红黑树的插入操作</h2><p>首先需要明确，在保证满足红黑树5条规则的情况下，新插入的节点必然是<strong>红色节点</strong>。</p>
+<p>为了方便说明，规定以下四个节点：新插入节点为<strong>N</strong>（Node），N的父节点为<strong>P</strong>（Parent），P的兄弟节点为<strong>U</strong>（Uncle），U的父节点为<strong>G</strong>（Grandpa），如下图所示：</p>
+<p><img src="https://gitee.com/ahuntsun/BlogImgs/raw/master/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/%E7%BA%A2%E9%BB%91%E6%A0%91/6.png" alt="图片示例"></p>
+<h3 id="3-1-情况1"><a href="#3-1-情况1" class="headerlink" title="3.1.情况1"></a>3.1.情况1</h3><p>当插入的新节点N位于树的根上时，没有父节点。</p>
+<p>这种情况下，只需要将红色节点变为黑色节点即可满足规则2 。</p>
+<p><img src="https://gitee.com/ahuntsun/BlogImgs/raw/master/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/%E7%BA%A2%E9%BB%91%E6%A0%91/7.png" alt="图片示例"></p>
+<h3 id="3-2-情况2"><a href="#3-2-情况2" class="headerlink" title="3.2.情况2"></a>3.2.情况2</h3><p>新界点N的父节点P为黑色节点，此时不需要任何变化。</p>
+<p>此时既满足规则4也满足规则5。尽管新节点是红色的，但是新节点N有两个黑色节点NIL，所以通向它的路径上黑色节点的个数依然相等，因此满足规则5 。</p>
+<p><img src="https://gitee.com/ahuntsun/BlogImgs/raw/master/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/%E7%BA%A2%E9%BB%91%E6%A0%91/8.png" alt="图片示例"></p>
+<h3 id="3-3-情况3"><a href="#3-3-情况3" class="headerlink" title="3.3.情况3"></a>3.3.情况3</h3><p>节点P为红色，节点U也为红色，此时节点G必为黑色，即<strong>父红叔红祖黑</strong>。</p>
+<p>在这种情况下需要：</p>
+<ul>
+<li>先将父节点P变为黑色；</li>
+<li>再将叔叔节点U变为黑色；</li>
+<li>最后将祖父节点G变为红色；<br>即变为<strong>父黑叔黑祖红</strong>，如下图所示：</li>
+</ul>
+<p><img src="https://gitee.com/ahuntsun/BlogImgs/raw/master/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/%E7%BA%A2%E9%BB%91%E6%A0%91/9.png" alt="图片示例"></p>
+<p>可能出现的问题：</p>
+<ul>
+<li>N的祖父节点G的父节点也可能是红色，这就违反了规则4，此时可以通过递归调整节点颜色；</li>
+<li>当递归调整到根节点时就需要旋转了，如下图节点A和节点B所示，具体情况后面会介绍；</li>
+</ul>
+<p><img src="https://gitee.com/ahuntsun/BlogImgs/raw/master/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/%E7%BA%A2%E9%BB%91%E6%A0%91/10.png" alt="图片示例"></p>
+<h3 id="3-4-情况4"><a href="#3-4-情况4" class="headerlink" title="3.4.情况4"></a>3.4.情况4</h3><p>节点P是红色节点，节点U是黑色节点，并且节点N为节点P的<strong>左子节点</strong>，此时节点G一定是黑色节点，即<strong>父红叔黑祖黑</strong>。</p>
+<p>在这种情况下需要：</p>
+<ul>
+<li>先变色：将父节点P变为黑色，将祖父节点G变为红色；</li>
+<li>后旋转：以祖父节点G为根进行右旋转；</li>
+</ul>
+<p><img src="https://gitee.com/ahuntsun/BlogImgs/raw/master/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/%E7%BA%A2%E9%BB%91%E6%A0%91/11.png" alt="图片示例"></p>
+<h3 id="3-5-情况5"><a href="#3-5-情况5" class="headerlink" title="3.5.情况5"></a>3.5.情况5</h3><p>节点P是红色节点，节点U是黑色节点，并且节点N为节点P的<strong>右子节点</strong>，此时节点G一定是黑色节点，即<strong>父红叔黑祖黑</strong>。</p>
+<p>在这种情况下需要：</p>
+<ul>
+<li>先以节点P为根进行左旋转，旋转后如图b所示；</li>
+<li>随后将<strong>红色</strong>节点<strong>P</strong>和<strong>黑色</strong>节点<strong>B</strong>看成一个整体的<strong>红色</strong>节点<strong>N1</strong>，将新插入的<strong>红色</strong>节点<strong>N</strong>看成<strong>红色</strong>节点<strong>P1</strong> 如图c所示。此时整体就转换为了情况4。</li>
+</ul>
+<p><img src="https://gitee.com/ahuntsun/BlogImgs/raw/master/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/%E7%BA%A2%E9%BB%91%E6%A0%91/12.png" alt="图片示例"></p>
+<p>接着可以按照情况4进行处理：</p>
+<ul>
+<li><p>先变色：将N1节点的父节点P1变为黑色，将祖父节点G变为红色；</p>
+</li>
+<li><p>后旋转：以祖父节点G为根进行右旋转，旋转后如图 e 所示；</p>
+</li>
+<li><p>最后将节点N1和P1变换回来，完成节点N的插入，如图 f 所示；</p>
+</li>
+</ul>
+<p><img src="https://gitee.com/ahuntsun/BlogImgs/raw/master/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/%E7%BA%A2%E9%BB%91%E6%A0%91/13.png" alt="图片示例"></p>
+<h3 id="3-6-案例"><a href="#3-6-案例" class="headerlink" title="3.6.案例"></a>3.6.案例</h3><p>在二叉树中依次插入节点：10，9，8，7，6，5，4，3，2，1 。</p>
+<p>如果直接采用普通的二叉搜索树，节点全部插入后是这样的：</p>
+<p><img src="https://gitee.com/ahuntsun/BlogImgs/raw/master/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/%E7%BA%A2%E9%BB%91%E6%A0%91/14.png" alt="图片示例"></p>
+<p>是一个严重的<strong>不平衡树</strong>，相当于一个链表，不能体现出二叉搜索树的高效率。而按照红黑树的五条规则插入节点就能最大程度保证搜索二叉树是一棵<strong>平衡树</strong>。以下为过程详解：<strong>为了方便解释省略了部分红黑树的叶子节点（NIL）</strong></p>
+<p>插入10<br>符合<strong>情况1：</strong></p>
+<ul>
+<li>插入节点10；</li>
+<li>将节点10的颜色变为黑色；</li>
+</ul>
+<p><img src="https://gitee.com/ahuntsun/BlogImgs/raw/master/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/%E7%BA%A2%E9%BB%91%E6%A0%91/15.png" alt="图片示例"></p>
+<p>插入9<br>符合<strong>情况2：</strong></p>
+<ul>
+<li>不需要任何变化；</li>
+</ul>
+<p><img src="https://gitee.com/ahuntsun/BlogImgs/raw/master/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/%E7%BA%A2%E9%BB%91%E6%A0%91/16.png" alt="图片示例"></p>
+<p>插入8</p>
+<blockquote>
+<p>快速判断属于情况3还是情况4的方法：</p>
+</blockquote>
+<blockquote>
+<p>从新插入的节点N出发，按图示箭头经过的四个节点，若为<strong>红红黑红</strong>3个红色节点则为情况3，若为<strong>红红黑黑</strong>两个红色节点则为情况4；</p>
+</blockquote>
+<p><img src="https://gitee.com/ahuntsun/BlogImgs/raw/master/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/%E7%BA%A2%E9%BB%91%E6%A0%91/17.png" alt="图片示例"></p>
+<p>符合<strong>情况4：</strong></p>
+<ul>
+<li>父节点9变成黑，祖父节点10变为红；</li>
+<li>以祖父节点为根进行右旋转；</li>
+</ul>
+<p><img src="https://gitee.com/ahuntsun/BlogImgs/raw/master/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/%E7%BA%A2%E9%BB%91%E6%A0%91/18.png" alt="图片示例"></p>
+<p>插入7<br>符合<strong>情况3：</strong></p>
+<ul>
+<li>父节点8和叔节点10变为黑，祖父节点9变为红；</li>
+<li>此时会出现问题：不符合规则2，即根节点不为黑，此时可以把以9为根节点的二叉搜索树当作一个整体作为一个新插入的节点N，而此时又符合情况1，只需要把9变回黑色即可。</li>
+</ul>
+<p><img src="https://gitee.com/ahuntsun/BlogImgs/raw/master/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/%E7%BA%A2%E9%BB%91%E6%A0%91/19.png" alt="图片示例"></p>
+<p>插入6<br>符合<strong>情况4：</strong></p>
+<ul>
+<li>父节点7变为黑，祖父节点8变为红；</li>
+<li>以祖父节点8为根进行右旋转；</li>
+</ul>
+<p><img src="https://gitee.com/ahuntsun/BlogImgs/raw/master/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/%E7%BA%A2%E9%BB%91%E6%A0%91/20.png" alt="图片示例"></p>
+<p>插入5<br>符合<strong>情况3</strong>：</p>
+<ul>
+<li>父节点6和叔节点8变为黑，祖父节点7变为红；</li>
+</ul>
+<p><img src="https://gitee.com/ahuntsun/BlogImgs/raw/master/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/%E7%BA%A2%E9%BB%91%E6%A0%91/21.png" alt="图片示例"></p>
+<p>插入4<br>符合<strong>情况4：</strong></p>
+<ul>
+<li>父节点5变为黑，祖父节点6变为红；</li>
+<li>以祖父节点6为根进行右旋转；</li>
+</ul>
+<p><img src="https://gitee.com/ahuntsun/BlogImgs/raw/master/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/%E7%BA%A2%E9%BB%91%E6%A0%91/22.png" alt="图片示例"></p>
+<p>插入3<br><strong>第一次变换：</strong>符合<strong>情况3：</strong></p>
+<ul>
+<li>父节点4和叔节点6变为黑，祖父节点5变为红；<br>变换之后发现5和7为相连的两个红色节点，于是把以5为根的整个子树看成一个新插入的节点N1，再进行第二次变换。</li>
+</ul>
+<p><img src="https://gitee.com/ahuntsun/BlogImgs/raw/master/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/%E7%BA%A2%E9%BB%91%E6%A0%91/23.png" alt="图片示例"></p>
+<p><strong>第二次变换：</strong>符合<strong>情况4：</strong></p>
+<ul>
+<li>父节点7变为黑，祖父节点9变为红；</li>
+<li>以祖父节点9为根进行右旋转；</li>
+</ul>
+<p><img src="https://gitee.com/ahuntsun/BlogImgs/raw/master/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/%E7%BA%A2%E9%BB%91%E6%A0%91/24.png" alt="图片示例"></p>
+<p>最后复原N1得到变换后的红黑树：</p>
+<p><img src="https://gitee.com/ahuntsun/BlogImgs/raw/master/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/%E7%BA%A2%E9%BB%91%E6%A0%91/25.png" alt="图片示例"></p>
+<p>插入2<br>符合<strong>情况4：</strong></p>
+<ul>
+<li>父节点3变为黑，祖父节点4变为红；</li>
+<li>以祖父节点4为根进行右旋转；</li>
+</ul>
+<p><img src="https://gitee.com/ahuntsun/BlogImgs/raw/master/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/%E7%BA%A2%E9%BB%91%E6%A0%91/26.png" alt="图片示例"></p>
+<p>插入1<br><strong>第一次变换：</strong>符合<strong>情况3：</strong></p>
+<ul>
+<li>父节点2和叔节点4变为黑，祖父节点3变为红；<br>变换之后发现3和5为相连的两个红色节点，于是把以3为根的整个子树看成一个新插入的节点N1，再进行第二次变换。</li>
+</ul>
+<p><img src="https://gitee.com/ahuntsun/BlogImgs/raw/master/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/%E7%BA%A2%E9%BB%91%E6%A0%91/27.png" alt="图片示例"></p>
+<p><strong>第二次变换：</strong>符合<strong>情况3：</strong></p>
+<ul>
+<li>父节点5和叔节点9变为黑，祖父节点7变为红；即由图 b -&gt; 图 c 。<br>变换之后发现根节点7为红色不符合规则2，所以把以7为根节点的红黑树看成一个新插入的节点N2，再进行第三次变换。</li>
+</ul>
+<p><strong>第三次变换：</strong>符合<strong>情况1：</strong></p>
+<ul>
+<li>直接将根节点7变为黑色即可。</li>
+</ul>
+<p><img src="https://gitee.com/ahuntsun/BlogImgs/raw/master/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/%E7%BA%A2%E9%BB%91%E6%A0%91/28.png" alt="图片示例"></p>
+<p>由此，完成了1~10节点的插入，虽然没有遇到情况5，不过情况5经过左旋转的操作便可转换为情况4，原理一样。如下图所示，将这棵红黑树的叶子节点NIL补全之后，经检验满足红黑树的五条规则，并且基本属于<strong>平衡树</strong>，效率较高。</p>
+<p><img src="https://gitee.com/ahuntsun/BlogImgs/raw/master/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/%E7%BA%A2%E9%BB%91%E6%A0%91/29.png" alt="图片示例"></p>
+<h2 id="四、红黑树的删除操作"><a href="#四、红黑树的删除操作" class="headerlink" title="四、红黑树的删除操作"></a>四、红黑树的删除操作</h2><p>红黑树的删除操作结合了复杂的<strong>二叉树的删除操作</strong>和复杂的<strong>红黑树的插入规则</strong>，整体来说难度非常大，篇幅较长，这里暂不进行探讨。</p>
+<hr>
+<p>参考资料:<a href="https://www.bilibili.com/video/BV1r7411n7Pw?p=12" target="_blank" rel="noopener">JavaScript数据结构与算法</a> <a href="https://www.cnblogs.com/AhuntSun-blog/p/12458115.html" target="_blank" rel="noopener">图解红黑树</a></p>
+
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div>您的支持是我最大的动力</div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/weixin.png" alt="丁可 微信支付">
+        <p>微信支付</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/images/zhifubao.png" alt="丁可 支付宝">
+        <p>支付宝</p>
+      </div>
+
+  </div>
+</div>
+
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>丁可
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://yoursite.com/2020/08/02/redblacktree/" title="图解红黑树(redblacktree)">http://yoursite.com/2020/08/02/redblacktree/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/" rel="tag"><i class="fa fa-tag"></i> 数据结构与算法</a>
+              <a href="/tags/Javascript/" rel="tag"><i class="fa fa-tag"></i> Javascript</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/08/02/binarysearchtree/" rel="prev" title="JavaScript实现树结构(binarysearchtree)">
+      <i class="fa fa-chevron-left"></i> JavaScript实现树结构(binarysearchtree)
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+      <div>
+  
+    <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>感谢您的阅读-------------</div>
+    
+</div>
+
+  
+</div>
+
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    
+  <div class="comments">
+    <div id="lv-container" data-id="city" data-uid="MTAyMC81MTEwOC8yNzU4OQ=="></div>
+  </div>
+  
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#图解红黑树"><span class="nav-text">图解红黑树</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#一、红黑树的五条规则"><span class="nav-text">一、红黑树的五条规则</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二、红黑树的三种变换"><span class="nav-text">二、红黑树的三种变换</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-变色"><span class="nav-text">2.1.变色</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-左旋转"><span class="nav-text">2.2.左旋转</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-右旋转"><span class="nav-text">2.3.右旋转</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#三、红黑树的插入操作"><span class="nav-text">三、红黑树的插入操作</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-情况1"><span class="nav-text">3.1.情况1</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-情况2"><span class="nav-text">3.2.情况2</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-3-情况3"><span class="nav-text">3.3.情况3</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-4-情况4"><span class="nav-text">3.4.情况4</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-5-情况5"><span class="nav-text">3.5.情况5</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-6-案例"><span class="nav-text">3.6.案例</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#四、红黑树的删除操作"><span class="nav-text">四、红黑树的删除操作</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="丁可"
+      src="/images/touxiang.jpg">
+  <p class="site-author-name" itemprop="name">丁可</p>
+  <div class="site-description" itemprop="description">哪来的勇气我就是不灰心</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">12</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/DK-frontend" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;DK-frontend" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/504015629@qq.com" title="E-Mail → 504015629@qq.com"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://blog.csdn.net/DK159753" title="CSDN → https:&#x2F;&#x2F;blog.csdn.net&#x2F;DK159753" rel="noopener" target="_blank"><i class="fab fa-crosshairs fa-fw"></i>CSDN</a>
+      </span>
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+      <iframe allow="autoplay" frameborder="no" border="0" marginwidth="0" marginheight="0" width=330 height=86 src="//music.163.com/outchain/player?type=2&id=1363973661&auto=1&height=66"></iframe>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">丁可</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">110k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">1:40</span>
+</div>
+<div class="theme-info">
+  <div class="powered-by"></div>
+  <span class="post-count">博客全站共41k字</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/pjax/pjax.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '#page-configurations',
+    '.content-wrap',
+    '.post-toc-wrap',
+    '.languages',
+    '#pjax'
+  ],
+  switches: {
+    '.post-toc-wrap': Pjax.switches.innerHTML
+  },
+  analytics: false,
+  cacheBust: false,
+  scrollTo : !CONFIG.bookmark.enable
+});
+
+window.addEventListener('pjax:success', () => {
+  document.querySelectorAll('script[data-pjax], script#page-configurations, #pjax script').forEach(element => {
+    var code = element.text || element.textContent || element.innerHTML || '';
+    var parent = element.parentNode;
+    parent.removeChild(element);
+    var script = document.createElement('script');
+    if (element.id) {
+      script.id = element.id;
+    }
+    if (element.className) {
+      script.className = element.className;
+    }
+    if (element.type) {
+      script.type = element.type;
+    }
+    if (element.src) {
+      script.src = element.src;
+      // Force synchronous loading of peripheral JS.
+      script.async = false;
+    }
+    if (element.dataset.pjax !== undefined) {
+      script.dataset.pjax = '';
+    }
+    if (code !== '') {
+      script.appendChild(document.createTextNode(code));
+    }
+    parent.appendChild(script);
+  });
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <div id="pjax">
+  
+
+  
+
+<script>
+NexT.utils.loadComments(document.querySelector('#lv-container'), () => {
+  window.livereOptions = {
+    refer: location.pathname.replace(CONFIG.root, '').replace('index.html', '')
+  };
+  (function(d, s) {
+    var j, e = d.getElementsByTagName(s)[0];
+    if (typeof LivereTower === 'function') { return; }
+    j = d.createElement(s);
+    j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+    j.async = true;
+    e.parentNode.insertBefore(j, e);
+  })(document, 'script');
+});
+</script>
+
+    </div>
+  
+   <canvas class="fireworks" style="position: fixed;left: 0;top: 0;z-index: 1; pointer-events: none;" ></canvas> 
+   <script type="text/javascript" src="//cdn.bootcss.com/animejs/2.2.0/anime.min.js"></script> 
+   <script type="text/javascript" src="/js/src/fireworks.js"></script>
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"model":{"jsonPath":"/live2dw/assets/wanko.model.json"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":false},"log":false});</script></body>
+</html>
+
+
