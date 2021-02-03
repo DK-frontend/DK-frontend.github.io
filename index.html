@@ -154,7 +154,7 @@
   </li>
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">15</span></a>
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">16</span></a>
 
   </li>
   </ul>
@@ -180,6 +180,107 @@
 
           <div class="content index posts-expand">
             
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/02/03/vueone/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/touxiang.jpg">
+      <meta itemprop="name" content="丁可">
+      <meta itemprop="description" content="哪来的勇气我就是不灰心">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="DKの博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/02/03/vueone/" class="post-title-link" itemprop="url">深入浅出vue.js学习笔记第二天</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-02-03 23:49:58" itemprop="dateCreated datePublished" datetime="2021-02-03T23:49:58+08:00">2021-02-03</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-02-04 00:55:27" itemprop="dateModified" datetime="2021-02-04T00:55:27+08:00">2021-02-04</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">学习笔记</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>2.6k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>2 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="深入浅出vue-js学习笔记第二天"><a href="#深入浅出vue-js学习笔记第二天" class="headerlink" title="深入浅出vue.js学习笔记第二天"></a>深入浅出vue.js学习笔记第二天</h1><h2 id="第五章-虚拟DOM简介"><a href="#第五章-虚拟DOM简介" class="headerlink" title="第五章 虚拟DOM简介"></a>第五章 虚拟DOM简介</h2><h3 id="1-虚拟DOM的解决方式是通过状态生成一个虚拟节点树，然后使用虚拟节点进行渲染。在渲染之前，会使用新生成的虚拟节点树和上一次生成的虚拟节点树进行对比，只渲染不同的部分。"><a href="#1-虚拟DOM的解决方式是通过状态生成一个虚拟节点树，然后使用虚拟节点进行渲染。在渲染之前，会使用新生成的虚拟节点树和上一次生成的虚拟节点树进行对比，只渲染不同的部分。" class="headerlink" title="1.虚拟DOM的解决方式是通过状态生成一个虚拟节点树，然后使用虚拟节点进行渲染。在渲染之前，会使用新生成的虚拟节点树和上一次生成的虚拟节点树进行对比，只渲染不同的部分。"></a>1.虚拟DOM的解决方式是通过状态生成一个虚拟节点树，然后使用虚拟节点进行渲染。在渲染之前，会使用新生成的虚拟节点树和上一次生成的虚拟节点树进行对比，只渲染不同的部分。</h3><h3 id="2-虚拟节点树其实是由组件树建立起来的整个虚拟节点树"><a href="#2-虚拟节点树其实是由组件树建立起来的整个虚拟节点树" class="headerlink" title="2.虚拟节点树其实是由组件树建立起来的整个虚拟节点树"></a>2.虚拟节点树其实是由组件树建立起来的整个虚拟节点树</h3><h3 id="3-Vue-js因为粒度太细，每一个绑定都会有一个对应的watcher来观察状态的变化，这样就会有一些内存开销以及一些依赖追踪的开销。当状态被越多的节点使用时，开销就越大。"><a href="#3-Vue-js因为粒度太细，每一个绑定都会有一个对应的watcher来观察状态的变化，这样就会有一些内存开销以及一些依赖追踪的开销。当状态被越多的节点使用时，开销就越大。" class="headerlink" title="3.Vue.js因为粒度太细，每一个绑定都会有一个对应的watcher来观察状态的变化，这样就会有一些内存开销以及一些依赖追踪的开销。当状态被越多的节点使用时，开销就越大。"></a>3.Vue.js因为粒度太细，每一个绑定都会有一个对应的watcher来观察状态的变化，这样就会有一些内存开销以及一些依赖追踪的开销。当状态被越多的节点使用时，开销就越大。</h3><h3 id="4-Vue-js开始选择了一个中等粒度的解决方案，那就是引入虚拟DOM。组件级别是一个watcher实例，就是说即便一个组件内有10个节点使用了某个状态，但其实也只有一个watcher在观察这个状态的变化。所以当这个状态发生变化时，只能通知到组件，然后组件内部通过虚拟DOM去进行比对与渲染。这是一个比较折中的方案。"><a href="#4-Vue-js开始选择了一个中等粒度的解决方案，那就是引入虚拟DOM。组件级别是一个watcher实例，就是说即便一个组件内有10个节点使用了某个状态，但其实也只有一个watcher在观察这个状态的变化。所以当这个状态发生变化时，只能通知到组件，然后组件内部通过虚拟DOM去进行比对与渲染。这是一个比较折中的方案。" class="headerlink" title="4.Vue.js开始选择了一个中等粒度的解决方案，那就是引入虚拟DOM。组件级别是一个watcher实例，就是说即便一个组件内有10个节点使用了某个状态，但其实也只有一个watcher在观察这个状态的变化。所以当这个状态发生变化时，只能通知到组件，然后组件内部通过虚拟DOM去进行比对与渲染。这是一个比较折中的方案。"></a>4.Vue.js开始选择了一个中等粒度的解决方案，那就是引入虚拟DOM。组件级别是一个watcher实例，就是说即便一个组件内有10个节点使用了某个状态，但其实也只有一个watcher在观察这个状态的变化。所以当这个状态发生变化时，只能通知到组件，然后组件内部通过虚拟DOM去进行比对与渲染。这是一个比较折中的方案。</h3><h3 id="5-在Vue-js中，我们使用模板来描述状态与DOM之间的映射关系。Vue-js通过编译将模板装换成渲染函数（render），执行渲染函数就可以得到一个虚拟节点树，使用这个虚拟节点树就可以渲染页面。"><a href="#5-在Vue-js中，我们使用模板来描述状态与DOM之间的映射关系。Vue-js通过编译将模板装换成渲染函数（render），执行渲染函数就可以得到一个虚拟节点树，使用这个虚拟节点树就可以渲染页面。" class="headerlink" title="5.在Vue.js中，我们使用模板来描述状态与DOM之间的映射关系。Vue.js通过编译将模板装换成渲染函数（render），执行渲染函数就可以得到一个虚拟节点树，使用这个虚拟节点树就可以渲染页面。"></a>5.在Vue.js中，我们使用模板来描述状态与DOM之间的映射关系。Vue.js通过编译将模板装换成渲染函数（render），执行渲染函数就可以得到一个虚拟节点树，使用这个虚拟节点树就可以渲染页面。</h3><h3 id="6-为了避免不必要的DOM操作，虚拟DOM在虚拟节点映射到视图的过程中，将虚拟节点与上一次渲染视图所使用的旧虚拟节点做对比，展出真正需要更新的节点来进行DOM操作，从而避免操作其他无任何改动的DOM。"><a href="#6-为了避免不必要的DOM操作，虚拟DOM在虚拟节点映射到视图的过程中，将虚拟节点与上一次渲染视图所使用的旧虚拟节点做对比，展出真正需要更新的节点来进行DOM操作，从而避免操作其他无任何改动的DOM。" class="headerlink" title="6.为了避免不必要的DOM操作，虚拟DOM在虚拟节点映射到视图的过程中，将虚拟节点与上一次渲染视图所使用的旧虚拟节点做对比，展出真正需要更新的节点来进行DOM操作，从而避免操作其他无任何改动的DOM。"></a>6.为了避免不必要的DOM操作，虚拟DOM在虚拟节点映射到视图的过程中，将虚拟节点与上一次渲染视图所使用的旧虚拟节点做对比，展出真正需要更新的节点来进行DOM操作，从而避免操作其他无任何改动的DOM。</h3><h3 id="7-虚拟DOM主要做了两件事："><a href="#7-虚拟DOM主要做了两件事：" class="headerlink" title="7.虚拟DOM主要做了两件事："></a>7.虚拟DOM主要做了两件事：</h3><ul>
+<li>提供与真实DOM节点所对应的虚拟节点vnode</li>
+<li>将虚拟节点vnode和旧虚拟节点oldVnode进行对比，然后更新视图</li>
+</ul>
+<h3 id="8-之所以需要先使用状态生成虚拟节点，是因为如果直接用状态生成真是DOM，会有一定程度的性能浪费。而先创建虚拟节点再渲染视图，就可以将虚拟节点缓存，然后使用新创建的虚拟节点和上一次渲染时缓存的虚拟节点进行对比，然后根据对比结果只更新需要更新的真实DOM节点，从而避免不必要的DOM操作，节省一定的性能开销。"><a href="#8-之所以需要先使用状态生成虚拟节点，是因为如果直接用状态生成真是DOM，会有一定程度的性能浪费。而先创建虚拟节点再渲染视图，就可以将虚拟节点缓存，然后使用新创建的虚拟节点和上一次渲染时缓存的虚拟节点进行对比，然后根据对比结果只更新需要更新的真实DOM节点，从而避免不必要的DOM操作，节省一定的性能开销。" class="headerlink" title="8.之所以需要先使用状态生成虚拟节点，是因为如果直接用状态生成真是DOM，会有一定程度的性能浪费。而先创建虚拟节点再渲染视图，就可以将虚拟节点缓存，然后使用新创建的虚拟节点和上一次渲染时缓存的虚拟节点进行对比，然后根据对比结果只更新需要更新的真实DOM节点，从而避免不必要的DOM操作，节省一定的性能开销。"></a>8.之所以需要先使用状态生成虚拟节点，是因为如果直接用状态生成真是DOM，会有一定程度的性能浪费。而先创建虚拟节点再渲染视图，就可以将虚拟节点缓存，然后使用新创建的虚拟节点和上一次渲染时缓存的虚拟节点进行对比，然后根据对比结果只更新需要更新的真实DOM节点，从而避免不必要的DOM操作，节省一定的性能开销。</h3><h2 id="第六章-VNode"><a href="#第六章-VNode" class="headerlink" title="第六章 VNode"></a>第六章 VNode</h2><h3 id="1-vnode只是一个名字，本质上其实是JavaScript中一个普通的对象，是从VNode类实例化的对象。我们用这个JavaScript对象来描述一个真实DOM元素的话，那么该DOM元素上的所有属性在VNode这个对象上都存在对应的属性。"><a href="#1-vnode只是一个名字，本质上其实是JavaScript中一个普通的对象，是从VNode类实例化的对象。我们用这个JavaScript对象来描述一个真实DOM元素的话，那么该DOM元素上的所有属性在VNode这个对象上都存在对应的属性。" class="headerlink" title="1.vnode只是一个名字，本质上其实是JavaScript中一个普通的对象，是从VNode类实例化的对象。我们用这个JavaScript对象来描述一个真实DOM元素的话，那么该DOM元素上的所有属性在VNode这个对象上都存在对应的属性。"></a>1.vnode只是一个名字，本质上其实是JavaScript中一个普通的对象，是从VNode类实例化的对象。我们用这个JavaScript对象来描述一个真实DOM元素的话，那么该DOM元素上的所有属性在VNode这个对象上都存在对应的属性。</h3><h3 id="2-简单地说，vnode可以理解成节点描述对象，它描述了应该怎样去创建真实的DOM节点"><a href="#2-简单地说，vnode可以理解成节点描述对象，它描述了应该怎样去创建真实的DOM节点" class="headerlink" title="2.简单地说，vnode可以理解成节点描述对象，它描述了应该怎样去创建真实的DOM节点"></a>2.简单地说，vnode可以理解成节点描述对象，它描述了应该怎样去创建真实的DOM节点</h3><h3 id="3-静态节点因为它的内容不会改变，所以除了首次渲染需要执行渲染函数获取vnode之外，后续更新不需要执行渲染函数重新生成vnode。"><a href="#3-静态节点因为它的内容不会改变，所以除了首次渲染需要执行渲染函数获取vnode之外，后续更新不需要执行渲染函数重新生成vnode。" class="headerlink" title="3.静态节点因为它的内容不会改变，所以除了首次渲染需要执行渲染函数获取vnode之外，后续更新不需要执行渲染函数重新生成vnode。"></a>3.静态节点因为它的内容不会改变，所以除了首次渲染需要执行渲染函数获取vnode之外，后续更新不需要执行渲染函数重新生成vnode。</h3><h2 id="第七章-patch"><a href="#第七章-patch" class="headerlink" title="第七章 patch"></a>第七章 patch</h2><h3 id="1-因为DOM操作的执行速度远不如JavaScript的运算速度快，因此把大量的DOM操作搬运到JavaScript中，使用patching算法来计算出真正需要更新的节点，最大限度的减少DOM操作，从而显著提升性能。这本质上其实是使用JavaScript的运算成本来替换DOM操作的执行成本，而JavaScript的运算速度要比DOM快得多，这样做很划算，所以才会有虚拟DOM。"><a href="#1-因为DOM操作的执行速度远不如JavaScript的运算速度快，因此把大量的DOM操作搬运到JavaScript中，使用patching算法来计算出真正需要更新的节点，最大限度的减少DOM操作，从而显著提升性能。这本质上其实是使用JavaScript的运算成本来替换DOM操作的执行成本，而JavaScript的运算速度要比DOM快得多，这样做很划算，所以才会有虚拟DOM。" class="headerlink" title="1.因为DOM操作的执行速度远不如JavaScript的运算速度快，因此把大量的DOM操作搬运到JavaScript中，使用patching算法来计算出真正需要更新的节点，最大限度的减少DOM操作，从而显著提升性能。这本质上其实是使用JavaScript的运算成本来替换DOM操作的执行成本，而JavaScript的运算速度要比DOM快得多，这样做很划算，所以才会有虚拟DOM。"></a>1.因为DOM操作的执行速度远不如JavaScript的运算速度快，因此把大量的DOM操作搬运到JavaScript中，使用patching算法来计算出真正需要更新的节点，最大限度的减少DOM操作，从而显著提升性能。这本质上其实是使用JavaScript的运算成本来替换DOM操作的执行成本，而JavaScript的运算速度要比DOM快得多，这样做很划算，所以才会有虚拟DOM。</h3><h3 id="2-patch对现有的DOM进行修改需要做三件事："><a href="#2-patch对现有的DOM进行修改需要做三件事：" class="headerlink" title="2.patch对现有的DOM进行修改需要做三件事："></a>2.patch对现有的DOM进行修改需要做三件事：</h3><ul>
+<li>创建新增节点</li>
+<li>删除已经废弃的节点</li>
+<li>修改需要更新的节点</li>
+</ul>
+<h3 id="2-在更新节点时，首先需要判断新旧两个虚拟节点是否是静态节点，如果是，就不需要进行更新操作，可以直接跳过更新节点的过程。静态节点指的是那些一旦渲染到界面上之后，无论日后状态如何变化，都不会发生任何变化的节点。"><a href="#2-在更新节点时，首先需要判断新旧两个虚拟节点是否是静态节点，如果是，就不需要进行更新操作，可以直接跳过更新节点的过程。静态节点指的是那些一旦渲染到界面上之后，无论日后状态如何变化，都不会发生任何变化的节点。" class="headerlink" title="2.在更新节点时，首先需要判断新旧两个虚拟节点是否是静态节点，如果是，就不需要进行更新操作，可以直接跳过更新节点的过程。静态节点指的是那些一旦渲染到界面上之后，无论日后状态如何变化，都不会发生任何变化的节点。"></a>2.在更新节点时，首先需要判断新旧两个虚拟节点是否是静态节点，如果是，就不需要进行更新操作，可以直接跳过更新节点的过程。静态节点指的是那些一旦渲染到界面上之后，无论日后状态如何变化，都不会发生任何变化的节点。</h3><h3 id="3-对于新增节点，我们需要执行创建节点的操作，并将新创建的节点插入到oldChildren中所有未处理节点（未处理就是没有进行任何更新操作的节点）的前面。"><a href="#3-对于新增节点，我们需要执行创建节点的操作，并将新创建的节点插入到oldChildren中所有未处理节点（未处理就是没有进行任何更新操作的节点）的前面。" class="headerlink" title="3.对于新增节点，我们需要执行创建节点的操作，并将新创建的节点插入到oldChildren中所有未处理节点（未处理就是没有进行任何更新操作的节点）的前面。"></a>3.对于新增节点，我们需要执行创建节点的操作，并将新创建的节点插入到oldChildren中所有未处理节点（未处理就是没有进行任何更新操作的节点）的前面。</h3><h3 id="4-只需要尝试使用相同位置的两个节点来比对是否是同一个节点：如果恰巧是同一个节点，直接就可以进入更新节点的操作；如果尝试失败了，再用循环的方式来查找节点。"><a href="#4-只需要尝试使用相同位置的两个节点来比对是否是同一个节点：如果恰巧是同一个节点，直接就可以进入更新节点的操作；如果尝试失败了，再用循环的方式来查找节点。" class="headerlink" title="4.只需要尝试使用相同位置的两个节点来比对是否是同一个节点：如果恰巧是同一个节点，直接就可以进入更新节点的操作；如果尝试失败了，再用循环的方式来查找节点。"></a>4.只需要尝试使用相同位置的两个节点来比对是否是同一个节点：如果恰巧是同一个节点，直接就可以进入更新节点的操作；如果尝试失败了，再用循环的方式来查找节点。</h3><h3 id="5-当“新后”与“旧前”是同一个节点时，在真实DOM中除了做更新操作外，还需要将节点移动到oldChildren中所有未处理节点的最后面"><a href="#5-当“新后”与“旧前”是同一个节点时，在真实DOM中除了做更新操作外，还需要将节点移动到oldChildren中所有未处理节点的最后面" class="headerlink" title="5.当“新后”与“旧前”是同一个节点时，在真实DOM中除了做更新操作外，还需要将节点移动到oldChildren中所有未处理节点的最后面"></a>5.当“新后”与“旧前”是同一个节点时，在真实DOM中除了做更新操作外，还需要将节点移动到oldChildren中所有未处理节点的最后面</h3><h3 id="6-当“新前”与“旧后”是同一个节点时，在真实DOM中除了做更新操作外，还需要将节点移动到oldChildren中所有未处理节点的最前面"><a href="#6-当“新前”与“旧后”是同一个节点时，在真实DOM中除了做更新操作外，还需要将节点移动到oldChildren中所有未处理节点的最前面" class="headerlink" title="6.当“新前”与“旧后”是同一个节点时，在真实DOM中除了做更新操作外，还需要将节点移动到oldChildren中所有未处理节点的最前面"></a>6.当“新前”与“旧后”是同一个节点时，在真实DOM中除了做更新操作外，还需要将节点移动到oldChildren中所有未处理节点的最前面</h3><h2 id="第八章-模板编译"><a href="#第八章-模板编译" class="headerlink" title="第八章 模板编译"></a>第八章 模板编译</h2><h3 id="1-模板编译的主要目标就是生成渲染函数，而渲染函数的作用是每次执行它，它就会使用当前最新的状态生成一份新的vnode，然后使用这个vnode进行渲染"><a href="#1-模板编译的主要目标就是生成渲染函数，而渲染函数的作用是每次执行它，它就会使用当前最新的状态生成一份新的vnode，然后使用这个vnode进行渲染" class="headerlink" title="1.模板编译的主要目标就是生成渲染函数，而渲染函数的作用是每次执行它，它就会使用当前最新的状态生成一份新的vnode，然后使用这个vnode进行渲染"></a>1.模板编译的主要目标就是生成渲染函数，而渲染函数的作用是每次执行它，它就会使用当前最新的状态生成一份新的vnode，然后使用这个vnode进行渲染</h3><h3 id="2-将模板编译成渲染函数可以分为两个步骤，先将模板解析成AST（抽象语法树），然后再使用AST生成渲染函数"><a href="#2-将模板编译成渲染函数可以分为两个步骤，先将模板解析成AST（抽象语法树），然后再使用AST生成渲染函数" class="headerlink" title="2.将模板编译成渲染函数可以分为两个步骤，先将模板解析成AST（抽象语法树），然后再使用AST生成渲染函数"></a>2.将模板编译成渲染函数可以分为两个步骤，先将模板解析成AST（抽象语法树），然后再使用AST生成渲染函数</h3><h3 id="3-由于静态节点不需要总是重新渲染，所以在生成AST后、生成渲染函数之前这个阶段，需要做一个操作，那就是遍历一遍AST，给所有静态节点做一个标记，这样在虚拟DOM中更新节点时，如果发现节点有这个标记，就不会重新渲染它。"><a href="#3-由于静态节点不需要总是重新渲染，所以在生成AST后、生成渲染函数之前这个阶段，需要做一个操作，那就是遍历一遍AST，给所有静态节点做一个标记，这样在虚拟DOM中更新节点时，如果发现节点有这个标记，就不会重新渲染它。" class="headerlink" title="3.由于静态节点不需要总是重新渲染，所以在生成AST后、生成渲染函数之前这个阶段，需要做一个操作，那就是遍历一遍AST，给所有静态节点做一个标记，这样在虚拟DOM中更新节点时，如果发现节点有这个标记，就不会重新渲染它。"></a>3.由于静态节点不需要总是重新渲染，所以在生成AST后、生成渲染函数之前这个阶段，需要做一个操作，那就是遍历一遍AST，给所有静态节点做一个标记，这样在虚拟DOM中更新节点时，如果发现节点有这个标记，就不会重新渲染它。</h3><ul>
+<li>将模板解析为AST</li>
+<li>遍历AST标记静态节点</li>
+<li>使用AST生成渲染函数</li>
+</ul>
+<h3 id="4-在解析器内部，分成了很多小解析器，其中包括过滤器解析器、文本解析器和HTML解析器。然后通过一条主线将这些解析器组装在一起。"><a href="#4-在解析器内部，分成了很多小解析器，其中包括过滤器解析器、文本解析器和HTML解析器。然后通过一条主线将这些解析器组装在一起。" class="headerlink" title="4.在解析器内部，分成了很多小解析器，其中包括过滤器解析器、文本解析器和HTML解析器。然后通过一条主线将这些解析器组装在一起。"></a>4.在解析器内部，分成了很多小解析器，其中包括过滤器解析器、文本解析器和HTML解析器。然后通过一条主线将这些解析器组装在一起。</h3><h3 id="5-在使用模板时，我们可以在其中使用过滤器，而过滤器解析器的作用就是用来解析过滤器的。其实文本解析器的主要作用是用来解析带变量的文本。最后HTML解析器，它是解析器最核心的模块，它的作用就是解析模板，每当解析到HTML标签的开始位置、结束位置、文本或者注释时，都会触发钩子函数，然后将相关信息通过参数传递出来。"><a href="#5-在使用模板时，我们可以在其中使用过滤器，而过滤器解析器的作用就是用来解析过滤器的。其实文本解析器的主要作用是用来解析带变量的文本。最后HTML解析器，它是解析器最核心的模块，它的作用就是解析模板，每当解析到HTML标签的开始位置、结束位置、文本或者注释时，都会触发钩子函数，然后将相关信息通过参数传递出来。" class="headerlink" title="5.在使用模板时，我们可以在其中使用过滤器，而过滤器解析器的作用就是用来解析过滤器的。其实文本解析器的主要作用是用来解析带变量的文本。最后HTML解析器，它是解析器最核心的模块，它的作用就是解析模板，每当解析到HTML标签的开始位置、结束位置、文本或者注释时，都会触发钩子函数，然后将相关信息通过参数传递出来。"></a>5.在使用模板时，我们可以在其中使用过滤器，而过滤器解析器的作用就是用来解析过滤器的。其实文本解析器的主要作用是用来解析带变量的文本。最后HTML解析器，它是解析器最核心的模块，它的作用就是解析模板，每当解析到HTML标签的开始位置、结束位置、文本或者注释时，都会触发钩子函数，然后将相关信息通过参数传递出来。</h3><h3 id="6-主线上做的事就是监听HTML解析器。每当触发钩子函数时，就生成一个对应的AST节点。生成AST前，会根据类型使用不同的方式生成不同的AST。"><a href="#6-主线上做的事就是监听HTML解析器。每当触发钩子函数时，就生成一个对应的AST节点。生成AST前，会根据类型使用不同的方式生成不同的AST。" class="headerlink" title="6.主线上做的事就是监听HTML解析器。每当触发钩子函数时，就生成一个对应的AST节点。生成AST前，会根据类型使用不同的方式生成不同的AST。"></a>6.主线上做的事就是监听HTML解析器。每当触发钩子函数时，就生成一个对应的AST节点。生成AST前，会根据类型使用不同的方式生成不同的AST。</h3><h3 id="7-优化器的目标是遍历AST，检测出所有静态子树并给其打标记。总的来说，优化器的主要作用是避免一些无用功来提升性能。因为静态节点除了首次渲染，后续不需要任何重新渲染操作。"><a href="#7-优化器的目标是遍历AST，检测出所有静态子树并给其打标记。总的来说，优化器的主要作用是避免一些无用功来提升性能。因为静态节点除了首次渲染，后续不需要任何重新渲染操作。" class="headerlink" title="7.优化器的目标是遍历AST，检测出所有静态子树并给其打标记。总的来说，优化器的主要作用是避免一些无用功来提升性能。因为静态节点除了首次渲染，后续不需要任何重新渲染操作。"></a>7.优化器的目标是遍历AST，检测出所有静态子树并给其打标记。总的来说，优化器的主要作用是避免一些无用功来提升性能。因为静态节点除了首次渲染，后续不需要任何重新渲染操作。</h3><h3 id="8-当AST中的静态子树被打上标记后，每次重新渲染时，就不需要为打上标记的静态节点创建新的虚拟节点，而是直接克隆已存在的虚拟节点。在虚拟DOM的更新操作中，如果发现两个节点是同一个节点，正常情况下会对这两个节点进行更新，但是如果这两个节点是静态节点，则可以直接跳过更新节点的流程。"><a href="#8-当AST中的静态子树被打上标记后，每次重新渲染时，就不需要为打上标记的静态节点创建新的虚拟节点，而是直接克隆已存在的虚拟节点。在虚拟DOM的更新操作中，如果发现两个节点是同一个节点，正常情况下会对这两个节点进行更新，但是如果这两个节点是静态节点，则可以直接跳过更新节点的流程。" class="headerlink" title="8.当AST中的静态子树被打上标记后，每次重新渲染时，就不需要为打上标记的静态节点创建新的虚拟节点，而是直接克隆已存在的虚拟节点。在虚拟DOM的更新操作中，如果发现两个节点是同一个节点，正常情况下会对这两个节点进行更新，但是如果这两个节点是静态节点，则可以直接跳过更新节点的流程。"></a>8.当AST中的静态子树被打上标记后，每次重新渲染时，就不需要为打上标记的静态节点创建新的虚拟节点，而是直接克隆已存在的虚拟节点。在虚拟DOM的更新操作中，如果发现两个节点是同一个节点，正常情况下会对这两个节点进行更新，但是如果这两个节点是静态节点，则可以直接跳过更新节点的流程。</h3><h3 id="9-代码生成器是模板编译的最后一步，它的作用是将AST转换成渲染函数中的内容，这个内容可以称为“代码字符串”"><a href="#9-代码生成器是模板编译的最后一步，它的作用是将AST转换成渲染函数中的内容，这个内容可以称为“代码字符串”" class="headerlink" title="9.代码生成器是模板编译的最后一步，它的作用是将AST转换成渲染函数中的内容，这个内容可以称为“代码字符串”"></a>9.代码生成器是模板编译的最后一步，它的作用是将AST转换成渲染函数中的内容，这个内容可以称为“代码字符串”</h3><h3 id="10-vnode有很多种类型，不同的类型对应不同的创建方法，所以代码字符串中的-C和-v其实都是创建vnode的方法，只是创建的vnode的类型不同-例如，-c可以创建元素类型的vnode，而-v可以创建文本类型的vnode"><a href="#10-vnode有很多种类型，不同的类型对应不同的创建方法，所以代码字符串中的-C和-v其实都是创建vnode的方法，只是创建的vnode的类型不同-例如，-c可以创建元素类型的vnode，而-v可以创建文本类型的vnode" class="headerlink" title="10.vnode有很多种类型，不同的类型对应不同的创建方法，所以代码字符串中的_C和_v其实都是创建vnode的方法，只是创建的vnode的类型不同.例如，_c可以创建元素类型的vnode，而_v可以创建文本类型的vnode"></a>10.vnode有很多种类型，不同的类型对应不同的创建方法，所以代码字符串中的_C和_v其实都是创建vnode的方法，只是创建的vnode的类型不同.例如，_c可以创建元素类型的vnode，而_v可以创建文本类型的vnode</h3>
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
       
   
   
@@ -1020,101 +1121,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/07/28/less/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/touxiang.jpg">
-      <meta itemprop="name" content="丁可">
-      <meta itemprop="description" content="哪来的勇气我就是不灰心">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="DKの博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/07/28/less/" class="post-title-link" itemprop="url">css预处理器less的学习笔记</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-07-28 23:39:28" itemprop="dateCreated datePublished" datetime="2020-07-28T23:39:28+08:00">2020-07-28</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-07-29 18:37:16" itemprop="dateModified" datetime="2020-07-29T18:37:16+08:00">2020-07-29</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">学习笔记</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>5.7k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>5 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="Less为什么出现？"><a href="#Less为什么出现？" class="headerlink" title="Less为什么出现？"></a>Less为什么出现？</h2><p>作为一门标记性语言，CSS 的语法相对简单，对使用者的要求较低，但同时也带来一些问题：CSS 需要书写大量看似没有逻辑的代码，不方便维护及扩展，不利于复用，尤其对于非前端开发工程师来讲，往往会因为缺少 CSS 编写经验而很难写出组织良好且易于维护的 CSS 代码，造成这些困难的很大原因源于 CSS 是一门非程序式语言，没有变量、函数、SCOPE（作用域）等概念。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2020/07/28/less/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1185,7 +1191,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">15</span>
+          <span class="site-state-item-count">16</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -1250,17 +1256,17 @@
       <i class="fa fa-chart-area"></i>
     </span>
       <span class="post-meta-item-text">站点总字数：</span>
-    <span title="站点总字数">137k</span>
+    <span title="站点总字数">139k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">2:04</span>
+    <span title="站点阅读时长">2:07</span>
 </div>
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共53.1k字</span>
+  <span class="post-count">博客全站共55.2k字</span>
 </div>
 
         
