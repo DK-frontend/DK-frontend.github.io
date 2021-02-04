@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+ <!--pjax：防止跳转页面音乐暂停-->
+  <script src="https://cdn.jsdelivr.net/npm/pjax@0.2.8/pjax.js"></script> 
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<script src="//cdn.bootcss.com/pace/1.0.2/pace.min.js"></script>
+<link href="//cdn.bootcss.com/pace/1.0.2/themes/pink/pace-theme-flash.css" rel="stylesheet">
+<style>
+    .pace .pace-progress {
+        background: #1E92FB; /*进度条颜色*/
+        height: 3px;
+    }
+    .pace .pace-progress-inner {
+         box-shadow: 0 0 10px #1E92FB, 0 0 5px     #1E92FB; /*阴影颜色*/
+    }
+    .pace .pace-activity {
+        border-top-color: #1E92FB;    /*上边框颜色*/
+        border-left-color: #1E92FB;    /*左边框颜色*/
+    }
+</style>
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-big-counter.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yoursite.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="深入浅出vue.js学习笔记第三天第九章 解析器1.AST不是什么很神奇的东西，它只是用JavaScript中的对象来描述一个节点，一个对象表示一个节点，对象中的属性用来保存节点所需的各种数据。当很多个独立的节点通过parent属性和children属性连在一起时，就变成了一个树，而这样一个用对象描述的节点树其实就是AST。2.HTML解析器的作用是解析HTML，它在解析HTML的过程中会不断触发">
+<meta property="og:type" content="article">
+<meta property="og:title" content="深入浅出vue.js学习笔记第三天">
+<meta property="og:url" content="http://yoursite.com/2021/02/04/vuetwo/index.html">
+<meta property="og:site_name" content="DKの博客">
+<meta property="og:description" content="深入浅出vue.js学习笔记第三天第九章 解析器1.AST不是什么很神奇的东西，它只是用JavaScript中的对象来描述一个节点，一个对象表示一个节点，对象中的属性用来保存节点所需的各种数据。当很多个独立的节点通过parent属性和children属性连在一起时，就变成了一个树，而这样一个用对象描述的节点树其实就是AST。2.HTML解析器的作用是解析HTML，它在解析HTML的过程中会不断触发">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-02-04T13:37:40.000Z">
+<meta property="article:modified_time" content="2021-02-04T15:12:24.097Z">
+<meta property="article:author" content="丁可">
+<meta property="article:tag" content="vue">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://yoursite.com/2021/02/04/vuetwo/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>深入浅出vue.js学习笔记第三天 | DKの博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+    <a href="https://github.com/DK-frontend" target="_blank" rel="noopener" class="github-corner" aria-label="View source on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" style="fill:#151513; color:#fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a><style>.github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}</style>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">DKの博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">记录前端学习的历程</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">7</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">3</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">17</span></a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/02/04/vuetwo/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/touxiang.jpg">
+      <meta itemprop="name" content="丁可">
+      <meta itemprop="description" content="哪来的勇气我就是不灰心">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="DKの博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          深入浅出vue.js学习笔记第三天
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2021-02-04 21:37:40 / 修改时间：23:12:24" itemprop="dateCreated datePublished" datetime="2021-02-04T21:37:40+08:00">2021-02-04</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">学习笔记</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>3.4k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>3 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="深入浅出vue-js学习笔记第三天"><a href="#深入浅出vue-js学习笔记第三天" class="headerlink" title="深入浅出vue.js学习笔记第三天"></a>深入浅出vue.js学习笔记第三天</h1><h2 id="第九章-解析器"><a href="#第九章-解析器" class="headerlink" title="第九章 解析器"></a>第九章 解析器</h2><h3 id="1-AST不是什么很神奇的东西，它只是用JavaScript中的对象来描述一个节点，一个对象表示一个节点，对象中的属性用来保存节点所需的各种数据。当很多个独立的节点通过parent属性和children属性连在一起时，就变成了一个树，而这样一个用对象描述的节点树其实就是AST。"><a href="#1-AST不是什么很神奇的东西，它只是用JavaScript中的对象来描述一个节点，一个对象表示一个节点，对象中的属性用来保存节点所需的各种数据。当很多个独立的节点通过parent属性和children属性连在一起时，就变成了一个树，而这样一个用对象描述的节点树其实就是AST。" class="headerlink" title="1.AST不是什么很神奇的东西，它只是用JavaScript中的对象来描述一个节点，一个对象表示一个节点，对象中的属性用来保存节点所需的各种数据。当很多个独立的节点通过parent属性和children属性连在一起时，就变成了一个树，而这样一个用对象描述的节点树其实就是AST。"></a>1.AST不是什么很神奇的东西，它只是用JavaScript中的对象来描述一个节点，一个对象表示一个节点，对象中的属性用来保存节点所需的各种数据。当很多个独立的节点通过parent属性和children属性连在一起时，就变成了一个树，而这样一个用对象描述的节点树其实就是AST。</h3><h3 id="2-HTML解析器的作用是解析HTML，它在解析HTML的过程中会不断触发各种钩子函数。这些钩子函数包括开始标签钩子函数、结束标签钩子函数、文本钩子函数以及注释钩子函数。。当HTML解析器不再触发钩子函数时，就说明所有模板都解析完毕，所有类型的节点都在钩子函数中构建完成，即AST构建完成。"><a href="#2-HTML解析器的作用是解析HTML，它在解析HTML的过程中会不断触发各种钩子函数。这些钩子函数包括开始标签钩子函数、结束标签钩子函数、文本钩子函数以及注释钩子函数。。当HTML解析器不再触发钩子函数时，就说明所有模板都解析完毕，所有类型的节点都在钩子函数中构建完成，即AST构建完成。" class="headerlink" title="2.HTML解析器的作用是解析HTML，它在解析HTML的过程中会不断触发各种钩子函数。这些钩子函数包括开始标签钩子函数、结束标签钩子函数、文本钩子函数以及注释钩子函数。。当HTML解析器不再触发钩子函数时，就说明所有模板都解析完毕，所有类型的节点都在钩子函数中构建完成，即AST构建完成。"></a>2.HTML解析器的作用是解析HTML，它在解析HTML的过程中会不断触发各种钩子函数。这些钩子函数包括开始标签钩子函数、结束标签钩子函数、文本钩子函数以及注释钩子函数。。当HTML解析器不再触发钩子函数时，就说明所有模板都解析完毕，所有类型的节点都在钩子函数中构建完成，即AST构建完成。</h3><h3 id="3-构建AST层级关系其实非常简单，我们只需要维护一个栈即可，用栈来记录层级关系，这个层级关系也可以理解为DOM深度。基于HTML解析器的逻辑，我们可以在每次触发钩子函数start时，把当前构建的节点推入栈中；每当触发钩子函数end时，就从栈中弹出一个节点。"><a href="#3-构建AST层级关系其实非常简单，我们只需要维护一个栈即可，用栈来记录层级关系，这个层级关系也可以理解为DOM深度。基于HTML解析器的逻辑，我们可以在每次触发钩子函数start时，把当前构建的节点推入栈中；每当触发钩子函数end时，就从栈中弹出一个节点。" class="headerlink" title="3.构建AST层级关系其实非常简单，我们只需要维护一个栈即可，用栈来记录层级关系，这个层级关系也可以理解为DOM深度。基于HTML解析器的逻辑，我们可以在每次触发钩子函数start时，把当前构建的节点推入栈中；每当触发钩子函数end时，就从栈中弹出一个节点。"></a>3.构建AST层级关系其实非常简单，我们只需要维护一个栈即可，用栈来记录层级关系，这个层级关系也可以理解为DOM深度。基于HTML解析器的逻辑，我们可以在每次触发钩子函数start时，把当前构建的节点推入栈中；每当触发钩子函数end时，就从栈中弹出一个节点。</h3><h3 id="4-解析HTML模板的过程就是循环的过程，简单来说就是用HTML模板字符串来循环，每轮循环都从HTML模板中截取一小段字符串，然后重复以上过程，直到HTML模板被截成一个空字符串时结束循环，解析完毕。"><a href="#4-解析HTML模板的过程就是循环的过程，简单来说就是用HTML模板字符串来循环，每轮循环都从HTML模板中截取一小段字符串，然后重复以上过程，直到HTML模板被截成一个空字符串时结束循环，解析完毕。" class="headerlink" title="4.解析HTML模板的过程就是循环的过程，简单来说就是用HTML模板字符串来循环，每轮循环都从HTML模板中截取一小段字符串，然后重复以上过程，直到HTML模板被截成一个空字符串时结束循环，解析完毕。"></a>4.解析HTML模板的过程就是循环的过程，简单来说就是用HTML模板字符串来循环，每轮循环都从HTML模板中截取一小段字符串，然后重复以上过程，直到HTML模板被截成一个空字符串时结束循环，解析完毕。</h3><h3 id="5-在HTML解析器中，像分辨出模板是否以开始标签开头并不难，我们需要先判断HTML模板是不是以-lt-开头。如果模板以-lt-开头那么它也有可能是以结束标签开头的模板，还有可能是注释等其他标签，因为这些类型的片段都已-lt-开头。那么要进一步确定模板是不是以开始标签开头，还需要借助正则表达式来分辨模板的开始位置是否符合开始标签的特征。"><a href="#5-在HTML解析器中，像分辨出模板是否以开始标签开头并不难，我们需要先判断HTML模板是不是以-lt-开头。如果模板以-lt-开头那么它也有可能是以结束标签开头的模板，还有可能是注释等其他标签，因为这些类型的片段都已-lt-开头。那么要进一步确定模板是不是以开始标签开头，还需要借助正则表达式来分辨模板的开始位置是否符合开始标签的特征。" class="headerlink" title="5.在HTML解析器中，像分辨出模板是否以开始标签开头并不难，我们需要先判断HTML模板是不是以&lt;开头。如果模板以&lt;开头那么它也有可能是以结束标签开头的模板，还有可能是注释等其他标签，因为这些类型的片段都已&lt;开头。那么要进一步确定模板是不是以开始标签开头，还需要借助正则表达式来分辨模板的开始位置是否符合开始标签的特征。"></a>5.在HTML解析器中，像分辨出模板是否以开始标签开头并不难，我们需要先判断HTML模板是不是以&lt;开头。如果模板以&lt;开头那么它也有可能是以结束标签开头的模板，还有可能是注释等其他标签，因为这些类型的片段都已&lt;开头。那么要进一步确定模板是不是以开始标签开头，还需要借助正则表达式来分辨模板的开始位置是否符合开始标签的特征。</h3><h3 id="6-我们只需要每解析一个属性就截取一个属性。如果截取完之后，剩下的HTML模板依然符合标签属性的正则表达式，那么说明还有剩余的属性需要处理，此时就重复执行前面的流程，直到剩余的模板不存在属性，也就是剩余的模板不存在符合正则表达式所预设的规则。"><a href="#6-我们只需要每解析一个属性就截取一个属性。如果截取完之后，剩下的HTML模板依然符合标签属性的正则表达式，那么说明还有剩余的属性需要处理，此时就重复执行前面的流程，直到剩余的模板不存在属性，也就是剩余的模板不存在符合正则表达式所预设的规则。" class="headerlink" title="6.我们只需要每解析一个属性就截取一个属性。如果截取完之后，剩下的HTML模板依然符合标签属性的正则表达式，那么说明还有剩余的属性需要处理，此时就重复执行前面的流程，直到剩余的模板不存在属性，也就是剩余的模板不存在符合正则表达式所预设的规则。"></a>6.我们只需要每解析一个属性就截取一个属性。如果截取完之后，剩下的HTML模板依然符合标签属性的正则表达式，那么说明还有剩余的属性需要处理，此时就重复执行前面的流程，直到剩余的模板不存在属性，也就是剩余的模板不存在符合正则表达式所预设的规则。</h3><a id="more"></a>
+<h3 id="7-自闭合标签是没有子节点的，所以前文中我们提到构建AST层级时，需要维护一个栈，而一个节点是否需要推入到栈中，可以使用这个自闭合标识来判断。"><a href="#7-自闭合标签是没有子节点的，所以前文中我们提到构建AST层级时，需要维护一个栈，而一个节点是否需要推入到栈中，可以使用这个自闭合标识来判断。" class="headerlink" title="7.自闭合标签是没有子节点的，所以前文中我们提到构建AST层级时，需要维护一个栈，而一个节点是否需要推入到栈中，可以使用这个自闭合标识来判断。"></a>7.自闭合标签是没有子节点的，所以前文中我们提到构建AST层级时，需要维护一个栈，而一个节点是否需要推入到栈中，可以使用这个自闭合标识来判断。</h3><h3 id="8-如果HTML模板的第一个字符不是-lt-，那么它一定是文本。要将文本从模板中解析出来，我们只需要找到下一个-lt-在什么位置，这之前的所有字符都属于文本。一种特殊情况是如果-lt-是文本的一部分，那么可以将-lt-前面的字符截取完之后，剩余的模板不符合任何需要被解析的片段类型，就说明这个-lt-是文本的一部分。当判断出-lt-是属于文本的一部分后，我们需要做的事情是找到下一个-lt-，并将其前面的文本截取出来加到前面截取了一半的文本后面。"><a href="#8-如果HTML模板的第一个字符不是-lt-，那么它一定是文本。要将文本从模板中解析出来，我们只需要找到下一个-lt-在什么位置，这之前的所有字符都属于文本。一种特殊情况是如果-lt-是文本的一部分，那么可以将-lt-前面的字符截取完之后，剩余的模板不符合任何需要被解析的片段类型，就说明这个-lt-是文本的一部分。当判断出-lt-是属于文本的一部分后，我们需要做的事情是找到下一个-lt-，并将其前面的文本截取出来加到前面截取了一半的文本后面。" class="headerlink" title="8.如果HTML模板的第一个字符不是&lt;，那么它一定是文本。要将文本从模板中解析出来，我们只需要找到下一个&lt;在什么位置，这之前的所有字符都属于文本。一种特殊情况是如果&lt;是文本的一部分，那么可以将&lt;前面的字符截取完之后，剩余的模板不符合任何需要被解析的片段类型，就说明这个&lt;是文本的一部分。当判断出&lt;是属于文本的一部分后，我们需要做的事情是找到下一个&lt;，并将其前面的文本截取出来加到前面截取了一半的文本后面。"></a>8.如果HTML模板的第一个字符不是&lt;，那么它一定是文本。要将文本从模板中解析出来，我们只需要找到下一个&lt;在什么位置，这之前的所有字符都属于文本。一种特殊情况是如果&lt;是文本的一部分，那么可以将&lt;前面的字符截取完之后，剩余的模板不符合任何需要被解析的片段类型，就说明这个&lt;是文本的一部分。当判断出&lt;是属于文本的一部分后，我们需要做的事情是找到下一个&lt;，并将其前面的文本截取出来加到前面截取了一半的文本后面。</h3><h3 id="9-script、style和textarea这三种元素叫作纯文本内容元素。解析它们的时候，会把这三种标签内包含的所有内容都当作文本处理。"><a href="#9-script、style和textarea这三种元素叫作纯文本内容元素。解析它们的时候，会把这三种标签内包含的所有内容都当作文本处理。" class="headerlink" title="9.script、style和textarea这三种元素叫作纯文本内容元素。解析它们的时候，会把这三种标签内包含的所有内容都当作文本处理。"></a>9.script、style和textarea这三种元素叫作纯文本内容元素。解析它们的时候，会把这三种标签内包含的所有内容都当作文本处理。</h3><h3 id="10-HTML解析器中的栈还有另一个作用，它可以检测出HTML标签是否正确闭合。"><a href="#10-HTML解析器中的栈还有另一个作用，它可以检测出HTML标签是否正确闭合。" class="headerlink" title="10.HTML解析器中的栈还有另一个作用，它可以检测出HTML标签是否正确闭合。"></a>10.HTML解析器中的栈还有另一个作用，它可以检测出HTML标签是否正确闭合。</h3><h3 id="11-文本解析器的作用是解析文本。文本解析器是对HTML解析器解析出来的文本进行二次加工。"><a href="#11-文本解析器的作用是解析文本。文本解析器是对HTML解析器解析出来的文本进行二次加工。" class="headerlink" title="11.文本解析器的作用是解析文本。文本解析器是对HTML解析器解析出来的文本进行二次加工。"></a>11.文本解析器的作用是解析文本。文本解析器是对HTML解析器解析出来的文本进行二次加工。</h3><h3 id="12-在Vue-js模板中，我们可以使用变量来填充模板。而HTML解析器在解析文本时，并不会区分文本是否是带变量的文本。如果是纯文本，不需要进行任何处理；但如果是带变量的文本，那么需要使用文本解析器进一步解析。因为带变量的文本在使用虚拟DOM进行渲染时，需要将变量替换成变量中的值。"><a href="#12-在Vue-js模板中，我们可以使用变量来填充模板。而HTML解析器在解析文本时，并不会区分文本是否是带变量的文本。如果是纯文本，不需要进行任何处理；但如果是带变量的文本，那么需要使用文本解析器进一步解析。因为带变量的文本在使用虚拟DOM进行渲染时，需要将变量替换成变量中的值。" class="headerlink" title="12.在Vue.js模板中，我们可以使用变量来填充模板。而HTML解析器在解析文本时，并不会区分文本是否是带变量的文本。如果是纯文本，不需要进行任何处理；但如果是带变量的文本，那么需要使用文本解析器进一步解析。因为带变量的文本在使用虚拟DOM进行渲染时，需要将变量替换成变量中的值。"></a>12.在Vue.js模板中，我们可以使用变量来填充模板。而HTML解析器在解析文本时，并不会区分文本是否是带变量的文本。如果是纯文本，不需要进行任何处理；但如果是带变量的文本，那么需要使用文本解析器进一步解析。因为带变量的文本在使用虚拟DOM进行渲染时，需要将变量替换成变量中的值。</h3><h3 id="13-对于带变量的文本解决思路是使用正则表达式匹配出文本中的变量，先把变量左边的文本添加到数组中，然后把变量改成-s-x-这样的形式也添加到数组中。如果变量后面还有变量，则重复以上动作，直到所有变量都添加到数组中。如果最后一个变量的后面有文本，就将它添加到数组中。"><a href="#13-对于带变量的文本解决思路是使用正则表达式匹配出文本中的变量，先把变量左边的文本添加到数组中，然后把变量改成-s-x-这样的形式也添加到数组中。如果变量后面还有变量，则重复以上动作，直到所有变量都添加到数组中。如果最后一个变量的后面有文本，就将它添加到数组中。" class="headerlink" title="13.对于带变量的文本解决思路是使用正则表达式匹配出文本中的变量，先把变量左边的文本添加到数组中，然后把变量改成_s(x)这样的形式也添加到数组中。如果变量后面还有变量，则重复以上动作，直到所有变量都添加到数组中。如果最后一个变量的后面有文本，就将它添加到数组中。"></a>13.对于带变量的文本解决思路是使用正则表达式匹配出文本中的变量，先把变量左边的文本添加到数组中，然后把变量改成_s(x)这样的形式也添加到数组中。如果变量后面还有变量，则重复以上动作，直到所有变量都添加到数组中。如果最后一个变量的后面有文本，就将它添加到数组中。</h3><h2 id="第十章-优化器"><a href="#第十章-优化器" class="headerlink" title="第十章 优化器"></a>第十章 优化器</h2><h3 id="1-优化器内部实现的两个步骤是："><a href="#1-优化器内部实现的两个步骤是：" class="headerlink" title="1.优化器内部实现的两个步骤是："></a>1.优化器内部实现的两个步骤是：</h3><ul>
+<li>在AST中找出所有静态节点并打上标记</li>
+<li>在AST中找出所有静态根节点并打上标记</li>
+</ul>
+<h3 id="2-标记静态子树有两点好处："><a href="#2-标记静态子树有两点好处：" class="headerlink" title="2.标记静态子树有两点好处："></a>2.标记静态子树有两点好处：</h3><ul>
+<li>每次重新渲染时，不需要为静态子树创建新节点</li>
+<li>在虚拟DOM中打补丁（patching）的过程可以跳过</li>
+</ul>
+<h3 id="3-在虚拟DOM中，我们每次重新渲染都会使用最新的状态生成一份全新的VNode与旧的VNode进行对比。而在生成VNode的过程中，如果发现一个节点被标记为静态子树，那么除了首次渲染会生成节点之外，在重新渲染时并不会生成新的子节点树，而是克隆已存在的静态子树。"><a href="#3-在虚拟DOM中，我们每次重新渲染都会使用最新的状态生成一份全新的VNode与旧的VNode进行对比。而在生成VNode的过程中，如果发现一个节点被标记为静态子树，那么除了首次渲染会生成节点之外，在重新渲染时并不会生成新的子节点树，而是克隆已存在的静态子树。" class="headerlink" title="3.在虚拟DOM中，我们每次重新渲染都会使用最新的状态生成一份全新的VNode与旧的VNode进行对比。而在生成VNode的过程中，如果发现一个节点被标记为静态子树，那么除了首次渲染会生成节点之外，在重新渲染时并不会生成新的子节点树，而是克隆已存在的静态子树。"></a>3.在虚拟DOM中，我们每次重新渲染都会使用最新的状态生成一份全新的VNode与旧的VNode进行对比。而在生成VNode的过程中，如果发现一个节点被标记为静态子树，那么除了首次渲染会生成节点之外，在重新渲染时并不会生成新的子节点树，而是克隆已存在的静态子树。</h3><h3 id="4-如果两个节点都是静态子树，就不需要进行对比与更新DOM的操作，直接跳过。因为静态子树是不可变的，不需要对比就知道它不可能发生变化。此外，直接跳过后续的各种对比可以节省JavaScript的运算成本。"><a href="#4-如果两个节点都是静态子树，就不需要进行对比与更新DOM的操作，直接跳过。因为静态子树是不可变的，不需要对比就知道它不可能发生变化。此外，直接跳过后续的各种对比可以节省JavaScript的运算成本。" class="headerlink" title="4.如果两个节点都是静态子树，就不需要进行对比与更新DOM的操作，直接跳过。因为静态子树是不可变的，不需要对比就知道它不可能发生变化。此外，直接跳过后续的各种对比可以节省JavaScript的运算成本。"></a>4.如果两个节点都是静态子树，就不需要进行对比与更新DOM的操作，直接跳过。因为静态子树是不可变的，不需要对比就知道它不可能发生变化。此外，直接跳过后续的各种对比可以节省JavaScript的运算成本。</h3><h3 id="5-找出所有静态子节点并不难，我们只需要从根节点开始，先判断根节点是不是静态根节点，再用相同的方式处理子节点，接着用同样的方式去处理子节点的子节点，直到所有节点都被处理之后程序结束，这个过程叫作递归。"><a href="#5-找出所有静态子节点并不难，我们只需要从根节点开始，先判断根节点是不是静态根节点，再用相同的方式处理子节点，接着用同样的方式去处理子节点的子节点，直到所有节点都被处理之后程序结束，这个过程叫作递归。" class="headerlink" title="5.找出所有静态子节点并不难，我们只需要从根节点开始，先判断根节点是不是静态根节点，再用相同的方式处理子节点，接着用同样的方式去处理子节点的子节点，直到所有节点都被处理之后程序结束，这个过程叫作递归。"></a>5.找出所有静态子节点并不难，我们只需要从根节点开始，先判断根节点是不是静态根节点，再用相同的方式处理子节点，接着用同样的方式去处理子节点的子节点，直到所有节点都被处理之后程序结束，这个过程叫作递归。</h3><h3 id="6-当一个节点是元素节点时，想分辨它是否是静态节点时，首先如果元素节点使用了指令v-pre，那么可以直接判定它是一个静态节点。如果元素节点没有使用v-pre，那么它必须同时满足一下条件才会被认为是一个静态节点："><a href="#6-当一个节点是元素节点时，想分辨它是否是静态节点时，首先如果元素节点使用了指令v-pre，那么可以直接判定它是一个静态节点。如果元素节点没有使用v-pre，那么它必须同时满足一下条件才会被认为是一个静态节点：" class="headerlink" title="6.当一个节点是元素节点时，想分辨它是否是静态节点时，首先如果元素节点使用了指令v-pre，那么可以直接判定它是一个静态节点。如果元素节点没有使用v-pre，那么它必须同时满足一下条件才会被认为是一个静态节点："></a>6.当一个节点是元素节点时，想分辨它是否是静态节点时，首先如果元素节点使用了指令v-pre，那么可以直接判定它是一个静态节点。如果元素节点没有使用v-pre，那么它必须同时满足一下条件才会被认为是一个静态节点：</h3><ul>
+<li>不能使用动态绑定语法，也就是说标签上不能有以v-、@、:开头的属性</li>
+<li>不能使用v-if、v-for或者v-else指令。</li>
+<li>不能是内置标签，也就是说标签名不能是slot或者component</li>
+<li>不能是组件，即标签名必须是保留标签</li>
+<li>当前节点的父节点不能是带v-for指令的template标签</li>
+<li>节点中不存在动态节点才会有的属性</li>
+</ul>
+<h3 id="7-在子节点被打完标记之后，我们需要判断它是否是静态节点，如果不是，那么它的父节点也不可能是静态节点，此时需要将父节点的static属性设置为false。"><a href="#7-在子节点被打完标记之后，我们需要判断它是否是静态节点，如果不是，那么它的父节点也不可能是静态节点，此时需要将父节点的static属性设置为false。" class="headerlink" title="7.在子节点被打完标记之后，我们需要判断它是否是静态节点，如果不是，那么它的父节点也不可能是静态节点，此时需要将父节点的static属性设置为false。"></a>7.在子节点被打完标记之后，我们需要判断它是否是静态节点，如果不是，那么它的父节点也不可能是静态节点，此时需要将父节点的static属性设置为false。</h3><h3 id="8-找出静态节点的过程与找出静态节点的过程类似，都是从根节点开始向下一层一层地用递归方式去找。不一样的是，如果一个节点被判定为静态根节点，那么将不会继续像它的子级继续寻找。因为静态子树肯定只有一个根，就是最上面的那个静态节点。我们标记静态节点时，有一个逻辑是静态节点的所有子节点也都是静态节点。如果一个静态节点的子节点是动态节点，那么这个节点也是动态节点。因此，我们从上向下找，找到的第一个静态节点一定是静态根节点，而它的所有子节点一定也是静态节点。静态节点的特征是它的子节点必须是静态节点。"><a href="#8-找出静态节点的过程与找出静态节点的过程类似，都是从根节点开始向下一层一层地用递归方式去找。不一样的是，如果一个节点被判定为静态根节点，那么将不会继续像它的子级继续寻找。因为静态子树肯定只有一个根，就是最上面的那个静态节点。我们标记静态节点时，有一个逻辑是静态节点的所有子节点也都是静态节点。如果一个静态节点的子节点是动态节点，那么这个节点也是动态节点。因此，我们从上向下找，找到的第一个静态节点一定是静态根节点，而它的所有子节点一定也是静态节点。静态节点的特征是它的子节点必须是静态节点。" class="headerlink" title="8.找出静态节点的过程与找出静态节点的过程类似，都是从根节点开始向下一层一层地用递归方式去找。不一样的是，如果一个节点被判定为静态根节点，那么将不会继续像它的子级继续寻找。因为静态子树肯定只有一个根，就是最上面的那个静态节点。我们标记静态节点时，有一个逻辑是静态节点的所有子节点也都是静态节点。如果一个静态节点的子节点是动态节点，那么这个节点也是动态节点。因此，我们从上向下找，找到的第一个静态节点一定是静态根节点，而它的所有子节点一定也是静态节点。静态节点的特征是它的子节点必须是静态节点。"></a>8.找出静态节点的过程与找出静态节点的过程类似，都是从根节点开始向下一层一层地用递归方式去找。不一样的是，如果一个节点被判定为静态根节点，那么将不会继续像它的子级继续寻找。因为静态子树肯定只有一个根，就是最上面的那个静态节点。我们标记静态节点时，有一个逻辑是静态节点的所有子节点也都是静态节点。如果一个静态节点的子节点是动态节点，那么这个节点也是动态节点。因此，我们从上向下找，找到的第一个静态节点一定是静态根节点，而它的所有子节点一定也是静态节点。静态节点的特征是它的子节点必须是静态节点。</h3><h3 id="9-有两种情况较为特殊：一种是如果一个静态根节点的子节点只有一个文本节点，那么不会将它标记成静态根节点，即便它也属于静态根节点；另一种是如果找到的静态根节点是一个没有子节点的静态节点，那么也不会将它标记为静态根节点。因为这两种情况，优化成本大于收益。"><a href="#9-有两种情况较为特殊：一种是如果一个静态根节点的子节点只有一个文本节点，那么不会将它标记成静态根节点，即便它也属于静态根节点；另一种是如果找到的静态根节点是一个没有子节点的静态节点，那么也不会将它标记为静态根节点。因为这两种情况，优化成本大于收益。" class="headerlink" title="9.有两种情况较为特殊：一种是如果一个静态根节点的子节点只有一个文本节点，那么不会将它标记成静态根节点，即便它也属于静态根节点；另一种是如果找到的静态根节点是一个没有子节点的静态节点，那么也不会将它标记为静态根节点。因为这两种情况，优化成本大于收益。"></a>9.有两种情况较为特殊：一种是如果一个静态根节点的子节点只有一个文本节点，那么不会将它标记成静态根节点，即便它也属于静态根节点；另一种是如果找到的静态根节点是一个没有子节点的静态节点，那么也不会将它标记为静态根节点。因为这两种情况，优化成本大于收益。</h3><h2 id="第十一章-代码生成器"><a href="#第十一章-代码生成器" class="headerlink" title="第十一章 代码生成器"></a>第十一章 代码生成器</h2><h3 id="1-代码生成器是模板编译的最后一步，它的作用是将AST转换成渲染函数中的内容，这个内容可以称为代码字符串。"><a href="#1-代码生成器是模板编译的最后一步，它的作用是将AST转换成渲染函数中的内容，这个内容可以称为代码字符串。" class="headerlink" title="1.代码生成器是模板编译的最后一步，它的作用是将AST转换成渲染函数中的内容，这个内容可以称为代码字符串。"></a>1.代码生成器是模板编译的最后一步，它的作用是将AST转换成渲染函数中的内容，这个内容可以称为代码字符串。</h3><h3 id="2-渲染函数被执行之后，可以生成一份VNode，而虚拟DOM可以通过这个VNode来渲染视图。渲染函数其实是执行了createElement，而createElement可以创建一个VNode"><a href="#2-渲染函数被执行之后，可以生成一份VNode，而虚拟DOM可以通过这个VNode来渲染视图。渲染函数其实是执行了createElement，而createElement可以创建一个VNode" class="headerlink" title="2.渲染函数被执行之后，可以生成一份VNode，而虚拟DOM可以通过这个VNode来渲染视图。渲染函数其实是执行了createElement，而createElement可以创建一个VNode"></a>2.渲染函数被执行之后，可以生成一份VNode，而虚拟DOM可以通过这个VNode来渲染视图。渲染函数其实是执行了createElement，而createElement可以创建一个VNode</h3><h2 id="第十二章-架构设计与项目结构"><a href="#第十二章-架构设计与项目结构" class="headerlink" title="第十二章 架构设计与项目结构"></a>第十二章 架构设计与项目结构</h2><h3 id="1-Vue-js的完整版是同时包含编译器和运行时，如果需要在客户端编译模板，那么需要用到编译器，因此需要完整版。运行时版本的体积比完整版要小30-左右，所以应该尽可能使用运行时版本。"><a href="#1-Vue-js的完整版是同时包含编译器和运行时，如果需要在客户端编译模板，那么需要用到编译器，因此需要完整版。运行时版本的体积比完整版要小30-左右，所以应该尽可能使用运行时版本。" class="headerlink" title="1.Vue.js的完整版是同时包含编译器和运行时，如果需要在客户端编译模板，那么需要用到编译器，因此需要完整版。运行时版本的体积比完整版要小30%左右，所以应该尽可能使用运行时版本。"></a>1.Vue.js的完整版是同时包含编译器和运行时，如果需要在客户端编译模板，那么需要用到编译器，因此需要完整版。运行时版本的体积比完整版要小30%左右，所以应该尽可能使用运行时版本。</h3><h3 id="2-Vue-js的整体结构可以分为三个部分：核心代码、跨平台相关和公用工具函数（这部分是一些辅助函数）。其架构是分层的，最底层是一个普通的构造函数，最上层是一个入口，也就是将一个完整的构造函数导出给用户使用。在最底层和最顶层中间，我们需要逐渐添加一些方法和属性，而构造函数上一层的一些方法会最终添加到构造函数的prototype属性中，再上一层的方法最终会添加到构造函数上，这些方法叫作全局API。再往上一层是与跨平台相关的内容。在构建时，首先会选择一个平台，然后将特定于这个平台的代码加载到构建文件中。再上一层是渲染层，其中包含两部分内容：服务端渲染相关的内容和编译器相关的内容。同时这一层的内容是可选的，构建时会根据构建的目标文件来选择是否需要将编译器加载进来。最顶层是入口也是出口，对于构建工具和Vue-js的使用者来说这是入口；对于Vue-js自身来说，这是出口。不同的平台有不同的入口，有一些特定于平台的代码会加载到这部分，而底层的核心代码是通用的，可以在任何平台下运行。"><a href="#2-Vue-js的整体结构可以分为三个部分：核心代码、跨平台相关和公用工具函数（这部分是一些辅助函数）。其架构是分层的，最底层是一个普通的构造函数，最上层是一个入口，也就是将一个完整的构造函数导出给用户使用。在最底层和最顶层中间，我们需要逐渐添加一些方法和属性，而构造函数上一层的一些方法会最终添加到构造函数的prototype属性中，再上一层的方法最终会添加到构造函数上，这些方法叫作全局API。再往上一层是与跨平台相关的内容。在构建时，首先会选择一个平台，然后将特定于这个平台的代码加载到构建文件中。再上一层是渲染层，其中包含两部分内容：服务端渲染相关的内容和编译器相关的内容。同时这一层的内容是可选的，构建时会根据构建的目标文件来选择是否需要将编译器加载进来。最顶层是入口也是出口，对于构建工具和Vue-js的使用者来说这是入口；对于Vue-js自身来说，这是出口。不同的平台有不同的入口，有一些特定于平台的代码会加载到这部分，而底层的核心代码是通用的，可以在任何平台下运行。" class="headerlink" title="2.Vue.js的整体结构可以分为三个部分：核心代码、跨平台相关和公用工具函数（这部分是一些辅助函数）。其架构是分层的，最底层是一个普通的构造函数，最上层是一个入口，也就是将一个完整的构造函数导出给用户使用。在最底层和最顶层中间，我们需要逐渐添加一些方法和属性，而构造函数上一层的一些方法会最终添加到构造函数的prototype属性中，再上一层的方法最终会添加到构造函数上，这些方法叫作全局API。再往上一层是与跨平台相关的内容。在构建时，首先会选择一个平台，然后将特定于这个平台的代码加载到构建文件中。再上一层是渲染层，其中包含两部分内容：服务端渲染相关的内容和编译器相关的内容。同时这一层的内容是可选的，构建时会根据构建的目标文件来选择是否需要将编译器加载进来。最顶层是入口也是出口，对于构建工具和Vue.js的使用者来说这是入口；对于Vue.js自身来说，这是出口。不同的平台有不同的入口，有一些特定于平台的代码会加载到这部分，而底层的核心代码是通用的，可以在任何平台下运行。"></a>2.Vue.js的整体结构可以分为三个部分：核心代码、跨平台相关和公用工具函数（这部分是一些辅助函数）。其架构是分层的，最底层是一个普通的构造函数，最上层是一个入口，也就是将一个完整的构造函数导出给用户使用。在最底层和最顶层中间，我们需要逐渐添加一些方法和属性，而构造函数上一层的一些方法会最终添加到构造函数的prototype属性中，再上一层的方法最终会添加到构造函数上，这些方法叫作全局API。再往上一层是与跨平台相关的内容。在构建时，首先会选择一个平台，然后将特定于这个平台的代码加载到构建文件中。再上一层是渲染层，其中包含两部分内容：服务端渲染相关的内容和编译器相关的内容。同时这一层的内容是可选的，构建时会根据构建的目标文件来选择是否需要将编译器加载进来。最顶层是入口也是出口，对于构建工具和Vue.js的使用者来说这是入口；对于Vue.js自身来说，这是出口。不同的平台有不同的入口，有一些特定于平台的代码会加载到这部分，而底层的核心代码是通用的，可以在任何平台下运行。</h3>
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div>您的支持是我最大的动力</div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/weixin.png" alt="丁可 微信支付">
+        <p>微信支付</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/images/zhifubao.png" alt="丁可 支付宝">
+        <p>支付宝</p>
+      </div>
+
+  </div>
+</div>
+
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>丁可
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://yoursite.com/2021/02/04/vuetwo/" title="深入浅出vue.js学习笔记第三天">http://yoursite.com/2021/02/04/vuetwo/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/vue/" rel="tag"><i class="fa fa-tag"></i> vue</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/02/03/vueone/" rel="prev" title="深入浅出vue.js学习笔记第二天">
+      <i class="fa fa-chevron-left"></i> 深入浅出vue.js学习笔记第二天
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+      <div>
+  
+    <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>感谢您的阅读-------------</div>
+    
+</div>
+
+  
+</div>
+
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    
+  <div class="comments">
+    <div id="lv-container" data-id="city" data-uid="MTAyMC81MTEwOC8yNzU4OQ=="></div>
+  </div>
+  
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#深入浅出vue-js学习笔记第三天"><span class="nav-text">深入浅出vue.js学习笔记第三天</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#第九章-解析器"><span class="nav-text">第九章 解析器</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-AST不是什么很神奇的东西，它只是用JavaScript中的对象来描述一个节点，一个对象表示一个节点，对象中的属性用来保存节点所需的各种数据。当很多个独立的节点通过parent属性和children属性连在一起时，就变成了一个树，而这样一个用对象描述的节点树其实就是AST。"><span class="nav-text">1.AST不是什么很神奇的东西，它只是用JavaScript中的对象来描述一个节点，一个对象表示一个节点，对象中的属性用来保存节点所需的各种数据。当很多个独立的节点通过parent属性和children属性连在一起时，就变成了一个树，而这样一个用对象描述的节点树其实就是AST。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-HTML解析器的作用是解析HTML，它在解析HTML的过程中会不断触发各种钩子函数。这些钩子函数包括开始标签钩子函数、结束标签钩子函数、文本钩子函数以及注释钩子函数。。当HTML解析器不再触发钩子函数时，就说明所有模板都解析完毕，所有类型的节点都在钩子函数中构建完成，即AST构建完成。"><span class="nav-text">2.HTML解析器的作用是解析HTML，它在解析HTML的过程中会不断触发各种钩子函数。这些钩子函数包括开始标签钩子函数、结束标签钩子函数、文本钩子函数以及注释钩子函数。。当HTML解析器不再触发钩子函数时，就说明所有模板都解析完毕，所有类型的节点都在钩子函数中构建完成，即AST构建完成。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-构建AST层级关系其实非常简单，我们只需要维护一个栈即可，用栈来记录层级关系，这个层级关系也可以理解为DOM深度。基于HTML解析器的逻辑，我们可以在每次触发钩子函数start时，把当前构建的节点推入栈中；每当触发钩子函数end时，就从栈中弹出一个节点。"><span class="nav-text">3.构建AST层级关系其实非常简单，我们只需要维护一个栈即可，用栈来记录层级关系，这个层级关系也可以理解为DOM深度。基于HTML解析器的逻辑，我们可以在每次触发钩子函数start时，把当前构建的节点推入栈中；每当触发钩子函数end时，就从栈中弹出一个节点。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-解析HTML模板的过程就是循环的过程，简单来说就是用HTML模板字符串来循环，每轮循环都从HTML模板中截取一小段字符串，然后重复以上过程，直到HTML模板被截成一个空字符串时结束循环，解析完毕。"><span class="nav-text">4.解析HTML模板的过程就是循环的过程，简单来说就是用HTML模板字符串来循环，每轮循环都从HTML模板中截取一小段字符串，然后重复以上过程，直到HTML模板被截成一个空字符串时结束循环，解析完毕。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-在HTML解析器中，像分辨出模板是否以开始标签开头并不难，我们需要先判断HTML模板是不是以-lt-开头。如果模板以-lt-开头那么它也有可能是以结束标签开头的模板，还有可能是注释等其他标签，因为这些类型的片段都已-lt-开头。那么要进一步确定模板是不是以开始标签开头，还需要借助正则表达式来分辨模板的开始位置是否符合开始标签的特征。"><span class="nav-text">5.在HTML解析器中，像分辨出模板是否以开始标签开头并不难，我们需要先判断HTML模板是不是以&lt;开头。如果模板以&lt;开头那么它也有可能是以结束标签开头的模板，还有可能是注释等其他标签，因为这些类型的片段都已&lt;开头。那么要进一步确定模板是不是以开始标签开头，还需要借助正则表达式来分辨模板的开始位置是否符合开始标签的特征。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-我们只需要每解析一个属性就截取一个属性。如果截取完之后，剩下的HTML模板依然符合标签属性的正则表达式，那么说明还有剩余的属性需要处理，此时就重复执行前面的流程，直到剩余的模板不存在属性，也就是剩余的模板不存在符合正则表达式所预设的规则。"><span class="nav-text">6.我们只需要每解析一个属性就截取一个属性。如果截取完之后，剩下的HTML模板依然符合标签属性的正则表达式，那么说明还有剩余的属性需要处理，此时就重复执行前面的流程，直到剩余的模板不存在属性，也就是剩余的模板不存在符合正则表达式所预设的规则。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7-自闭合标签是没有子节点的，所以前文中我们提到构建AST层级时，需要维护一个栈，而一个节点是否需要推入到栈中，可以使用这个自闭合标识来判断。"><span class="nav-text">7.自闭合标签是没有子节点的，所以前文中我们提到构建AST层级时，需要维护一个栈，而一个节点是否需要推入到栈中，可以使用这个自闭合标识来判断。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#8-如果HTML模板的第一个字符不是-lt-，那么它一定是文本。要将文本从模板中解析出来，我们只需要找到下一个-lt-在什么位置，这之前的所有字符都属于文本。一种特殊情况是如果-lt-是文本的一部分，那么可以将-lt-前面的字符截取完之后，剩余的模板不符合任何需要被解析的片段类型，就说明这个-lt-是文本的一部分。当判断出-lt-是属于文本的一部分后，我们需要做的事情是找到下一个-lt-，并将其前面的文本截取出来加到前面截取了一半的文本后面。"><span class="nav-text">8.如果HTML模板的第一个字符不是&lt;，那么它一定是文本。要将文本从模板中解析出来，我们只需要找到下一个&lt;在什么位置，这之前的所有字符都属于文本。一种特殊情况是如果&lt;是文本的一部分，那么可以将&lt;前面的字符截取完之后，剩余的模板不符合任何需要被解析的片段类型，就说明这个&lt;是文本的一部分。当判断出&lt;是属于文本的一部分后，我们需要做的事情是找到下一个&lt;，并将其前面的文本截取出来加到前面截取了一半的文本后面。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#9-script、style和textarea这三种元素叫作纯文本内容元素。解析它们的时候，会把这三种标签内包含的所有内容都当作文本处理。"><span class="nav-text">9.script、style和textarea这三种元素叫作纯文本内容元素。解析它们的时候，会把这三种标签内包含的所有内容都当作文本处理。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#10-HTML解析器中的栈还有另一个作用，它可以检测出HTML标签是否正确闭合。"><span class="nav-text">10.HTML解析器中的栈还有另一个作用，它可以检测出HTML标签是否正确闭合。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#11-文本解析器的作用是解析文本。文本解析器是对HTML解析器解析出来的文本进行二次加工。"><span class="nav-text">11.文本解析器的作用是解析文本。文本解析器是对HTML解析器解析出来的文本进行二次加工。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#12-在Vue-js模板中，我们可以使用变量来填充模板。而HTML解析器在解析文本时，并不会区分文本是否是带变量的文本。如果是纯文本，不需要进行任何处理；但如果是带变量的文本，那么需要使用文本解析器进一步解析。因为带变量的文本在使用虚拟DOM进行渲染时，需要将变量替换成变量中的值。"><span class="nav-text">12.在Vue.js模板中，我们可以使用变量来填充模板。而HTML解析器在解析文本时，并不会区分文本是否是带变量的文本。如果是纯文本，不需要进行任何处理；但如果是带变量的文本，那么需要使用文本解析器进一步解析。因为带变量的文本在使用虚拟DOM进行渲染时，需要将变量替换成变量中的值。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#13-对于带变量的文本解决思路是使用正则表达式匹配出文本中的变量，先把变量左边的文本添加到数组中，然后把变量改成-s-x-这样的形式也添加到数组中。如果变量后面还有变量，则重复以上动作，直到所有变量都添加到数组中。如果最后一个变量的后面有文本，就将它添加到数组中。"><span class="nav-text">13.对于带变量的文本解决思路是使用正则表达式匹配出文本中的变量，先把变量左边的文本添加到数组中，然后把变量改成_s(x)这样的形式也添加到数组中。如果变量后面还有变量，则重复以上动作，直到所有变量都添加到数组中。如果最后一个变量的后面有文本，就将它添加到数组中。</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第十章-优化器"><span class="nav-text">第十章 优化器</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-优化器内部实现的两个步骤是："><span class="nav-text">1.优化器内部实现的两个步骤是：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-标记静态子树有两点好处："><span class="nav-text">2.标记静态子树有两点好处：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-在虚拟DOM中，我们每次重新渲染都会使用最新的状态生成一份全新的VNode与旧的VNode进行对比。而在生成VNode的过程中，如果发现一个节点被标记为静态子树，那么除了首次渲染会生成节点之外，在重新渲染时并不会生成新的子节点树，而是克隆已存在的静态子树。"><span class="nav-text">3.在虚拟DOM中，我们每次重新渲染都会使用最新的状态生成一份全新的VNode与旧的VNode进行对比。而在生成VNode的过程中，如果发现一个节点被标记为静态子树，那么除了首次渲染会生成节点之外，在重新渲染时并不会生成新的子节点树，而是克隆已存在的静态子树。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-如果两个节点都是静态子树，就不需要进行对比与更新DOM的操作，直接跳过。因为静态子树是不可变的，不需要对比就知道它不可能发生变化。此外，直接跳过后续的各种对比可以节省JavaScript的运算成本。"><span class="nav-text">4.如果两个节点都是静态子树，就不需要进行对比与更新DOM的操作，直接跳过。因为静态子树是不可变的，不需要对比就知道它不可能发生变化。此外，直接跳过后续的各种对比可以节省JavaScript的运算成本。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-找出所有静态子节点并不难，我们只需要从根节点开始，先判断根节点是不是静态根节点，再用相同的方式处理子节点，接着用同样的方式去处理子节点的子节点，直到所有节点都被处理之后程序结束，这个过程叫作递归。"><span class="nav-text">5.找出所有静态子节点并不难，我们只需要从根节点开始，先判断根节点是不是静态根节点，再用相同的方式处理子节点，接着用同样的方式去处理子节点的子节点，直到所有节点都被处理之后程序结束，这个过程叫作递归。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-当一个节点是元素节点时，想分辨它是否是静态节点时，首先如果元素节点使用了指令v-pre，那么可以直接判定它是一个静态节点。如果元素节点没有使用v-pre，那么它必须同时满足一下条件才会被认为是一个静态节点："><span class="nav-text">6.当一个节点是元素节点时，想分辨它是否是静态节点时，首先如果元素节点使用了指令v-pre，那么可以直接判定它是一个静态节点。如果元素节点没有使用v-pre，那么它必须同时满足一下条件才会被认为是一个静态节点：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7-在子节点被打完标记之后，我们需要判断它是否是静态节点，如果不是，那么它的父节点也不可能是静态节点，此时需要将父节点的static属性设置为false。"><span class="nav-text">7.在子节点被打完标记之后，我们需要判断它是否是静态节点，如果不是，那么它的父节点也不可能是静态节点，此时需要将父节点的static属性设置为false。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#8-找出静态节点的过程与找出静态节点的过程类似，都是从根节点开始向下一层一层地用递归方式去找。不一样的是，如果一个节点被判定为静态根节点，那么将不会继续像它的子级继续寻找。因为静态子树肯定只有一个根，就是最上面的那个静态节点。我们标记静态节点时，有一个逻辑是静态节点的所有子节点也都是静态节点。如果一个静态节点的子节点是动态节点，那么这个节点也是动态节点。因此，我们从上向下找，找到的第一个静态节点一定是静态根节点，而它的所有子节点一定也是静态节点。静态节点的特征是它的子节点必须是静态节点。"><span class="nav-text">8.找出静态节点的过程与找出静态节点的过程类似，都是从根节点开始向下一层一层地用递归方式去找。不一样的是，如果一个节点被判定为静态根节点，那么将不会继续像它的子级继续寻找。因为静态子树肯定只有一个根，就是最上面的那个静态节点。我们标记静态节点时，有一个逻辑是静态节点的所有子节点也都是静态节点。如果一个静态节点的子节点是动态节点，那么这个节点也是动态节点。因此，我们从上向下找，找到的第一个静态节点一定是静态根节点，而它的所有子节点一定也是静态节点。静态节点的特征是它的子节点必须是静态节点。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#9-有两种情况较为特殊：一种是如果一个静态根节点的子节点只有一个文本节点，那么不会将它标记成静态根节点，即便它也属于静态根节点；另一种是如果找到的静态根节点是一个没有子节点的静态节点，那么也不会将它标记为静态根节点。因为这两种情况，优化成本大于收益。"><span class="nav-text">9.有两种情况较为特殊：一种是如果一个静态根节点的子节点只有一个文本节点，那么不会将它标记成静态根节点，即便它也属于静态根节点；另一种是如果找到的静态根节点是一个没有子节点的静态节点，那么也不会将它标记为静态根节点。因为这两种情况，优化成本大于收益。</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第十一章-代码生成器"><span class="nav-text">第十一章 代码生成器</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-代码生成器是模板编译的最后一步，它的作用是将AST转换成渲染函数中的内容，这个内容可以称为代码字符串。"><span class="nav-text">1.代码生成器是模板编译的最后一步，它的作用是将AST转换成渲染函数中的内容，这个内容可以称为代码字符串。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-渲染函数被执行之后，可以生成一份VNode，而虚拟DOM可以通过这个VNode来渲染视图。渲染函数其实是执行了createElement，而createElement可以创建一个VNode"><span class="nav-text">2.渲染函数被执行之后，可以生成一份VNode，而虚拟DOM可以通过这个VNode来渲染视图。渲染函数其实是执行了createElement，而createElement可以创建一个VNode</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第十二章-架构设计与项目结构"><span class="nav-text">第十二章 架构设计与项目结构</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-Vue-js的完整版是同时包含编译器和运行时，如果需要在客户端编译模板，那么需要用到编译器，因此需要完整版。运行时版本的体积比完整版要小30-左右，所以应该尽可能使用运行时版本。"><span class="nav-text">1.Vue.js的完整版是同时包含编译器和运行时，如果需要在客户端编译模板，那么需要用到编译器，因此需要完整版。运行时版本的体积比完整版要小30%左右，所以应该尽可能使用运行时版本。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-Vue-js的整体结构可以分为三个部分：核心代码、跨平台相关和公用工具函数（这部分是一些辅助函数）。其架构是分层的，最底层是一个普通的构造函数，最上层是一个入口，也就是将一个完整的构造函数导出给用户使用。在最底层和最顶层中间，我们需要逐渐添加一些方法和属性，而构造函数上一层的一些方法会最终添加到构造函数的prototype属性中，再上一层的方法最终会添加到构造函数上，这些方法叫作全局API。再往上一层是与跨平台相关的内容。在构建时，首先会选择一个平台，然后将特定于这个平台的代码加载到构建文件中。再上一层是渲染层，其中包含两部分内容：服务端渲染相关的内容和编译器相关的内容。同时这一层的内容是可选的，构建时会根据构建的目标文件来选择是否需要将编译器加载进来。最顶层是入口也是出口，对于构建工具和Vue-js的使用者来说这是入口；对于Vue-js自身来说，这是出口。不同的平台有不同的入口，有一些特定于平台的代码会加载到这部分，而底层的核心代码是通用的，可以在任何平台下运行。"><span class="nav-text">2.Vue.js的整体结构可以分为三个部分：核心代码、跨平台相关和公用工具函数（这部分是一些辅助函数）。其架构是分层的，最底层是一个普通的构造函数，最上层是一个入口，也就是将一个完整的构造函数导出给用户使用。在最底层和最顶层中间，我们需要逐渐添加一些方法和属性，而构造函数上一层的一些方法会最终添加到构造函数的prototype属性中，再上一层的方法最终会添加到构造函数上，这些方法叫作全局API。再往上一层是与跨平台相关的内容。在构建时，首先会选择一个平台，然后将特定于这个平台的代码加载到构建文件中。再上一层是渲染层，其中包含两部分内容：服务端渲染相关的内容和编译器相关的内容。同时这一层的内容是可选的，构建时会根据构建的目标文件来选择是否需要将编译器加载进来。最顶层是入口也是出口，对于构建工具和Vue.js的使用者来说这是入口；对于Vue.js自身来说，这是出口。不同的平台有不同的入口，有一些特定于平台的代码会加载到这部分，而底层的核心代码是通用的，可以在任何平台下运行。</span></a></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="丁可"
+      src="/images/touxiang.jpg">
+  <p class="site-author-name" itemprop="name">丁可</p>
+  <div class="site-description" itemprop="description">哪来的勇气我就是不灰心</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">17</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/DK-frontend" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;DK-frontend" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/504015629@qq.com" title="E-Mail → 504015629@qq.com"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://blog.csdn.net/DK159753" title="CSDN → https:&#x2F;&#x2F;blog.csdn.net&#x2F;DK159753" rel="noopener" target="_blank"><i class="fab fa-crosshairs fa-fw"></i>CSDN</a>
+      </span>
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+      <iframe allow="autoplay" frameborder="no" border="0" marginwidth="0" marginheight="0" width=330 height=86 src="//music.163.com/outchain/player?type=2&id=1363973661&auto=1&height=66"></iframe>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2020 – 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">丁可</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">143k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">2:10</span>
+</div>
+<div class="theme-info">
+  <div class="powered-by"></div>
+  <span class="post-count">博客全站共58.1k字</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/pjax/pjax.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '#page-configurations',
+    '.content-wrap',
+    '.post-toc-wrap',
+    '.languages',
+    '#pjax'
+  ],
+  switches: {
+    '.post-toc-wrap': Pjax.switches.innerHTML
+  },
+  analytics: false,
+  cacheBust: false,
+  scrollTo : !CONFIG.bookmark.enable
+});
+
+window.addEventListener('pjax:success', () => {
+  document.querySelectorAll('script[data-pjax], script#page-configurations, #pjax script').forEach(element => {
+    var code = element.text || element.textContent || element.innerHTML || '';
+    var parent = element.parentNode;
+    parent.removeChild(element);
+    var script = document.createElement('script');
+    if (element.id) {
+      script.id = element.id;
+    }
+    if (element.className) {
+      script.className = element.className;
+    }
+    if (element.type) {
+      script.type = element.type;
+    }
+    if (element.src) {
+      script.src = element.src;
+      // Force synchronous loading of peripheral JS.
+      script.async = false;
+    }
+    if (element.dataset.pjax !== undefined) {
+      script.dataset.pjax = '';
+    }
+    if (code !== '') {
+      script.appendChild(document.createTextNode(code));
+    }
+    parent.appendChild(script);
+  });
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <div id="pjax">
+  
+
+  
+
+<script>
+NexT.utils.loadComments(document.querySelector('#lv-container'), () => {
+  window.livereOptions = {
+    refer: location.pathname.replace(CONFIG.root, '').replace('index.html', '')
+  };
+  (function(d, s) {
+    var j, e = d.getElementsByTagName(s)[0];
+    if (typeof LivereTower === 'function') { return; }
+    j = d.createElement(s);
+    j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+    j.async = true;
+    e.parentNode.insertBefore(j, e);
+  })(document, 'script');
+});
+</script>
+
+    </div>
+  
+   <canvas class="fireworks" style="position: fixed;left: 0;top: 0;z-index: 1; pointer-events: none;" ></canvas> 
+   <script type="text/javascript" src="//cdn.bootcss.com/animejs/2.2.0/anime.min.js"></script> 
+   <script type="text/javascript" src="/js/src/fireworks.js"></script>
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"model":{"jsonPath":"/live2dw/assets/wanko.model.json"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":false},"log":false});</script></body>
+</html>
+
+
