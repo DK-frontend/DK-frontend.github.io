@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+ <!--pjax：防止跳转页面音乐暂停-->
+  <script src="https://cdn.jsdelivr.net/npm/pjax@0.2.8/pjax.js"></script> 
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<script src="//cdn.bootcss.com/pace/1.0.2/pace.min.js"></script>
+<link href="//cdn.bootcss.com/pace/1.0.2/themes/pink/pace-theme-flash.css" rel="stylesheet">
+<style>
+    .pace .pace-progress {
+        background: #1E92FB; /*进度条颜色*/
+        height: 3px;
+    }
+    .pace .pace-progress-inner {
+         box-shadow: 0 0 10px #1E92FB, 0 0 5px     #1E92FB; /*阴影颜色*/
+    }
+    .pace .pace-activity {
+        border-top-color: #1E92FB;    /*上边框颜色*/
+        border-left-color: #1E92FB;    /*左边框颜色*/
+    }
+</style>
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-big-counter.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yoursite.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="深入浅出vue.js学习笔记第六天第十五章 指令的奥秘1.在模板解析阶段，我们在将指令解析到AST，然后使用AST生成代码字符串的过程中实现某些内置指令的功能，最后在虚拟DOM渲染的过程中触发自定义指令的钩子函数使指令生效。2.当虚拟DOM进行修补时，会根据节点的对比结果触发一些钩子函数。更新指令的程序会监听creat、update和destroy钩子函数，并在这三个钩子函数触发时对VNode和o">
+<meta property="og:type" content="article">
+<meta property="og:title" content="深入浅出vue.js学习笔记第六天">
+<meta property="og:url" content="http://yoursite.com/2021/02/07/vuefive/index.html">
+<meta property="og:site_name" content="DKの博客">
+<meta property="og:description" content="深入浅出vue.js学习笔记第六天第十五章 指令的奥秘1.在模板解析阶段，我们在将指令解析到AST，然后使用AST生成代码字符串的过程中实现某些内置指令的功能，最后在虚拟DOM渲染的过程中触发自定义指令的钩子函数使指令生效。2.当虚拟DOM进行修补时，会根据节点的对比结果触发一些钩子函数。更新指令的程序会监听creat、update和destroy钩子函数，并在这三个钩子函数触发时对VNode和o">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-02-07T14:53:37.000Z">
+<meta property="article:modified_time" content="2021-02-07T16:16:25.680Z">
+<meta property="article:author" content="丁可">
+<meta property="article:tag" content="vue">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://yoursite.com/2021/02/07/vuefive/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>深入浅出vue.js学习笔记第六天 | DKの博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+    <a href="https://github.com/DK-frontend" target="_blank" rel="noopener" class="github-corner" aria-label="View source on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" style="fill:#151513; color:#fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a><style>.github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}</style>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">DKの博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">记录前端学习的历程</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">7</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">3</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">20</span></a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/02/07/vuefive/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/touxiang.jpg">
+      <meta itemprop="name" content="丁可">
+      <meta itemprop="description" content="哪来的勇气我就是不灰心">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="DKの博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          深入浅出vue.js学习笔记第六天
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-02-07 22:53:37" itemprop="dateCreated datePublished" datetime="2021-02-07T22:53:37+08:00">2021-02-07</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-02-08 00:16:25" itemprop="dateModified" datetime="2021-02-08T00:16:25+08:00">2021-02-08</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">学习笔记</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>3k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>3 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="深入浅出vue-js学习笔记第六天"><a href="#深入浅出vue-js学习笔记第六天" class="headerlink" title="深入浅出vue.js学习笔记第六天"></a>深入浅出vue.js学习笔记第六天</h1><h2 id="第十五章-指令的奥秘"><a href="#第十五章-指令的奥秘" class="headerlink" title="第十五章 指令的奥秘"></a>第十五章 指令的奥秘</h2><h3 id="1-在模板解析阶段，我们在将指令解析到AST，然后使用AST生成代码字符串的过程中实现某些内置指令的功能，最后在虚拟DOM渲染的过程中触发自定义指令的钩子函数使指令生效。"><a href="#1-在模板解析阶段，我们在将指令解析到AST，然后使用AST生成代码字符串的过程中实现某些内置指令的功能，最后在虚拟DOM渲染的过程中触发自定义指令的钩子函数使指令生效。" class="headerlink" title="1.在模板解析阶段，我们在将指令解析到AST，然后使用AST生成代码字符串的过程中实现某些内置指令的功能，最后在虚拟DOM渲染的过程中触发自定义指令的钩子函数使指令生效。"></a>1.在模板解析阶段，我们在将指令解析到AST，然后使用AST生成代码字符串的过程中实现某些内置指令的功能，最后在虚拟DOM渲染的过程中触发自定义指令的钩子函数使指令生效。</h3><h3 id="2-当虚拟DOM进行修补时，会根据节点的对比结果触发一些钩子函数。更新指令的程序会监听creat、update和destroy钩子函数，并在这三个钩子函数触发时对VNode和oldVNode进行对比，最终根据对比结果触发指令的钩子函数。"><a href="#2-当虚拟DOM进行修补时，会根据节点的对比结果触发一些钩子函数。更新指令的程序会监听creat、update和destroy钩子函数，并在这三个钩子函数触发时对VNode和oldVNode进行对比，最终根据对比结果触发指令的钩子函数。" class="headerlink" title="2.当虚拟DOM进行修补时，会根据节点的对比结果触发一些钩子函数。更新指令的程序会监听creat、update和destroy钩子函数，并在这三个钩子函数触发时对VNode和oldVNode进行对比，最终根据对比结果触发指令的钩子函数。"></a>2.当虚拟DOM进行修补时，会根据节点的对比结果触发一些钩子函数。更新指令的程序会监听creat、update和destroy钩子函数，并在这三个钩子函数触发时对VNode和oldVNode进行对比，最终根据对比结果触发指令的钩子函数。</h3><h2 id="第十六章-过滤器的奥秘"><a href="#第十六章-过滤器的奥秘" class="headerlink" title="第十六章 过滤器的奥秘"></a>第十六章 过滤器的奥秘</h2><h3 id="1-过滤器函数总是将表达式的值-之前的操作链的结果-作为第一个参数。"><a href="#1-过滤器函数总是将表达式的值-之前的操作链的结果-作为第一个参数。" class="headerlink" title="1.过滤器函数总是将表达式的值(之前的操作链的结果)作为第一个参数。"></a>1.过滤器函数总是将表达式的值(之前的操作链的结果)作为第一个参数。</h3><h3 id="2-过滤器可以串联，如，在这个例子中，filterA被定义为接收单个参数的过滤器函数，表达式message的值将作为参数传入到filterA过滤器函数中。然后继续调用同样被定义为接收单个参数的过滤器函数filterB。将过滤器函数filterA的执行结果当作参数传递给filterB函数。"><a href="#2-过滤器可以串联，如，在这个例子中，filterA被定义为接收单个参数的过滤器函数，表达式message的值将作为参数传入到filterA过滤器函数中。然后继续调用同样被定义为接收单个参数的过滤器函数filterB。将过滤器函数filterA的执行结果当作参数传递给filterB函数。" class="headerlink" title="2.过滤器可以串联，如，在这个例子中，filterA被定义为接收单个参数的过滤器函数，表达式message的值将作为参数传入到filterA过滤器函数中。然后继续调用同样被定义为接收单个参数的过滤器函数filterB。将过滤器函数filterA的执行结果当作参数传递给filterB函数。"></a>2.过滤器可以串联，如{{ message | filterA | filterB }}，在这个例子中，filterA被定义为接收单个参数的过滤器函数，表达式message的值将作为参数传入到filterA过滤器函数中。然后继续调用同样被定义为接收单个参数的过滤器函数filterB。将过滤器函数filterA的执行结果当作参数传递给filterB函数。</h3><h3 id="3-过滤器是JavaScript函数，因此可以接收参数：，这里，filterA被定义为接收三个参数的过滤器函数。其中message的值作为第一个参数，普通字符串‘arg1’作为第二个参数，表达式arg2的值作为第三个参数。"><a href="#3-过滤器是JavaScript函数，因此可以接收参数：，这里，filterA被定义为接收三个参数的过滤器函数。其中message的值作为第一个参数，普通字符串‘arg1’作为第二个参数，表达式arg2的值作为第三个参数。" class="headerlink" title="3.过滤器是JavaScript函数，因此可以接收参数：，这里，filterA被定义为接收三个参数的过滤器函数。其中message的值作为第一个参数，普通字符串‘arg1’作为第二个参数，表达式arg2的值作为第三个参数。"></a>3.过滤器是JavaScript函数，因此可以接收参数：{{ message | filter('arg1'，'arg2') }}，这里，filterA被定义为接收三个参数的过滤器函数。其中message的值作为第一个参数，普通字符串‘arg1’作为第二个参数，表达式arg2的值作为第三个参数。</h3><h3 id="4-加了参数的过滤器与不加参数的过滤器之间的唯一区别就是，当模板编译之后，会将在模板中给过滤器设置的参数添加在过滤器函数的参数中。注意：这里是从第二个参数开始，这是因为第一个参数永远都是之前操作链的结果。"><a href="#4-加了参数的过滤器与不加参数的过滤器之间的唯一区别就是，当模板编译之后，会将在模板中给过滤器设置的参数添加在过滤器函数的参数中。注意：这里是从第二个参数开始，这是因为第一个参数永远都是之前操作链的结果。" class="headerlink" title="4.加了参数的过滤器与不加参数的过滤器之间的唯一区别就是，当模板编译之后，会将在模板中给过滤器设置的参数添加在过滤器函数的参数中。注意：这里是从第二个参数开始，这是因为第一个参数永远都是之前操作链的结果。"></a>4.加了参数的过滤器与不加参数的过滤器之间的唯一区别就是，当模板编译之后，会将在模板中给过滤器设置的参数添加在过滤器函数的参数中。注意：这里是从第二个参数开始，这是因为第一个参数永远都是之前操作链的结果。</h3><h3 id="5-resolveAsset函数在查找过滤器的过程中并没有去Vue构造函数中搜索过滤器。这是因为在初始化Vue-js实例时，把全局过滤器与组件内注册的过滤器合并到this-options-filters中了，而this-options-filters其实同时保存了全局过滤器和组件内注册的过滤器。resolveAsset只需要从this-optionsfilters中查找过滤器即可。"><a href="#5-resolveAsset函数在查找过滤器的过程中并没有去Vue构造函数中搜索过滤器。这是因为在初始化Vue-js实例时，把全局过滤器与组件内注册的过滤器合并到this-options-filters中了，而this-options-filters其实同时保存了全局过滤器和组件内注册的过滤器。resolveAsset只需要从this-optionsfilters中查找过滤器即可。" class="headerlink" title="5.resolveAsset函数在查找过滤器的过程中并没有去Vue构造函数中搜索过滤器。这是因为在初始化Vue.js实例时，把全局过滤器与组件内注册的过滤器合并到this.$options.filters中了，而this.$options.filters其实同时保存了全局过滤器和组件内注册的过滤器。resolveAsset只需要从this.$optionsfilters中查找过滤器即可。"></a>5.resolveAsset函数在查找过滤器的过程中并没有去Vue构造函数中搜索过滤器。这是因为在初始化Vue.js实例时，把全局过滤器与组件内注册的过滤器合并到this.$options.filters中了，而this.$options.filters其实同时保存了全局过滤器和组件内注册的过滤器。resolveAsset只需要从this.$optionsfilters中查找过滤器即可。</h3><a id="more"></a>
+<h2 id="第十七章-最佳实践"><a href="#第十七章-最佳实践" class="headerlink" title="第十七章 最佳实践"></a>第十七章 最佳实践</h2><h3 id="1-默认情况下，Vue-js会尽可能高效地更新DOM。这意味着，当它在相同类型的元素之间切换时，会修补已存在的元素，而不是将旧的元素移除，然后在同一位置添加一个新元素。如果本不相同的元素被识别为相同，则会出现意料之外的副作用。"><a href="#1-默认情况下，Vue-js会尽可能高效地更新DOM。这意味着，当它在相同类型的元素之间切换时，会修补已存在的元素，而不是将旧的元素移除，然后在同一位置添加一个新元素。如果本不相同的元素被识别为相同，则会出现意料之外的副作用。" class="headerlink" title="1.默认情况下，Vue.js会尽可能高效地更新DOM。这意味着，当它在相同类型的元素之间切换时，会修补已存在的元素，而不是将旧的元素移除，然后在同一位置添加一个新元素。如果本不相同的元素被识别为相同，则会出现意料之外的副作用。"></a>1.默认情况下，Vue.js会尽可能高效地更新DOM。这意味着，当它在相同类型的元素之间切换时，会修补已存在的元素，而不是将旧的元素移除，然后在同一位置添加一个新元素。如果本不相同的元素被识别为相同，则会出现意料之外的副作用。</h3><h3 id="2-在使用Vue-js开发项目时，最常遇到的一个典型问题就是，当页面切换到同一个路由但不同参数的地址时，组件的生命周期钩子并不会重新触发。这是因为vue-router会识别出两个路由使用的是同一个组件从而进行复用，并不会重新创建组件，因此组件的生命周期钩子自然也不会触发。组件本质上是一个映射关系，所以先销毁再重建一个相同的组件会存在很大程度上的性能浪费，复用组件才是正确的选择。但是这也意味着组件的生命周期钩子不会再被调用。"><a href="#2-在使用Vue-js开发项目时，最常遇到的一个典型问题就是，当页面切换到同一个路由但不同参数的地址时，组件的生命周期钩子并不会重新触发。这是因为vue-router会识别出两个路由使用的是同一个组件从而进行复用，并不会重新创建组件，因此组件的生命周期钩子自然也不会触发。组件本质上是一个映射关系，所以先销毁再重建一个相同的组件会存在很大程度上的性能浪费，复用组件才是正确的选择。但是这也意味着组件的生命周期钩子不会再被调用。" class="headerlink" title="2.在使用Vue.js开发项目时，最常遇到的一个典型问题就是，当页面切换到同一个路由但不同参数的地址时，组件的生命周期钩子并不会重新触发。这是因为vue-router会识别出两个路由使用的是同一个组件从而进行复用，并不会重新创建组件，因此组件的生命周期钩子自然也不会触发。组件本质上是一个映射关系，所以先销毁再重建一个相同的组件会存在很大程度上的性能浪费，复用组件才是正确的选择。但是这也意味着组件的生命周期钩子不会再被调用。"></a>2.在使用Vue.js开发项目时，最常遇到的一个典型问题就是，当页面切换到同一个路由但不同参数的地址时，组件的生命周期钩子并不会重新触发。这是因为vue-router会识别出两个路由使用的是同一个组件从而进行复用，并不会重新创建组件，因此组件的生命周期钩子自然也不会触发。组件本质上是一个映射关系，所以先销毁再重建一个相同的组件会存在很大程度上的性能浪费，复用组件才是正确的选择。但是这也意味着组件的生命周期钩子不会再被调用。</h3><h3 id="3-vue-router提供了导航守卫beforeRouteUpdate，该守卫在当前路由改变且组件被复用时调用，所以可以在组件内定义路由导航守卫来解决这个问题。组件的生命周期钩子虽然不会重新触发，但是路由提供的beforeRouteUpdate守卫可以被触发。因此，只需要把每次切换路由时需要执行的逻辑放到beforeRouteUpdate守卫即可。"><a href="#3-vue-router提供了导航守卫beforeRouteUpdate，该守卫在当前路由改变且组件被复用时调用，所以可以在组件内定义路由导航守卫来解决这个问题。组件的生命周期钩子虽然不会重新触发，但是路由提供的beforeRouteUpdate守卫可以被触发。因此，只需要把每次切换路由时需要执行的逻辑放到beforeRouteUpdate守卫即可。" class="headerlink" title="3.vue-router提供了导航守卫beforeRouteUpdate，该守卫在当前路由改变且组件被复用时调用，所以可以在组件内定义路由导航守卫来解决这个问题。组件的生命周期钩子虽然不会重新触发，但是路由提供的beforeRouteUpdate守卫可以被触发。因此，只需要把每次切换路由时需要执行的逻辑放到beforeRouteUpdate守卫即可。"></a>3.vue-router提供了导航守卫beforeRouteUpdate，该守卫在当前路由改变且组件被复用时调用，所以可以在组件内定义路由导航守卫来解决这个问题。组件的生命周期钩子虽然不会重新触发，但是路由提供的beforeRouteUpdate守卫可以被触发。因此，只需要把每次切换路由时需要执行的逻辑放到beforeRouteUpdate守卫即可。</h3><h3 id="4-通过watch可以监听到路由对象发生的变化，从而对路由变化作出响应。这种方式也可以解决上述问题，但代价是组件内多了一个watch，这会带来依赖追踪内存开销。"><a href="#4-通过watch可以监听到路由对象发生的变化，从而对路由变化作出响应。这种方式也可以解决上述问题，但代价是组件内多了一个watch，这会带来依赖追踪内存开销。" class="headerlink" title="4.通过watch可以监听到路由对象发生的变化，从而对路由变化作出响应。这种方式也可以解决上述问题，但代价是组件内多了一个watch，这会带来依赖追踪内存开销。"></a>4.通过watch可以监听到路由对象发生的变化，从而对路由变化作出响应。这种方式也可以解决上述问题，但代价是组件内多了一个watch，这会带来依赖追踪内存开销。</h3><h3 id="利用虚拟DOM在渲染时通过key来对比两个节点是否相同的原理。通过给router-view组件设置key，可以使每次切换路由时的key都不一样，让虚拟DOM认为router-view组件是一个新节点，从而先销毁组件，然后再重新创建新组件。即使是相同的组件，但是如果url变了，key就变了，Vue-js就会重新创建这个组件。这种方式的坏处很明显，每次切换路由组件时都会被销毁并且重新创建，非常浪费性能。其优点更明显，简单粗暴，改动小。"><a href="#利用虚拟DOM在渲染时通过key来对比两个节点是否相同的原理。通过给router-view组件设置key，可以使每次切换路由时的key都不一样，让虚拟DOM认为router-view组件是一个新节点，从而先销毁组件，然后再重新创建新组件。即使是相同的组件，但是如果url变了，key就变了，Vue-js就会重新创建这个组件。这种方式的坏处很明显，每次切换路由组件时都会被销毁并且重新创建，非常浪费性能。其优点更明显，简单粗暴，改动小。" class="headerlink" title="利用虚拟DOM在渲染时通过key来对比两个节点是否相同的原理。通过给router-view组件设置key，可以使每次切换路由时的key都不一样，让虚拟DOM认为router-view组件是一个新节点，从而先销毁组件，然后再重新创建新组件。即使是相同的组件，但是如果url变了，key就变了，Vue.js就会重新创建这个组件。这种方式的坏处很明显，每次切换路由组件时都会被销毁并且重新创建，非常浪费性能。其优点更明显，简单粗暴，改动小。"></a>利用虚拟DOM在渲染时通过key来对比两个节点是否相同的原理。通过给router-view组件设置key，可以使每次切换路由时的key都不一样，让虚拟DOM认为router-view组件是一个新节点，从而先销毁组件，然后再重新创建新组件。即使是相同的组件，但是如果url变了，key就变了，Vue.js就会重新创建这个组件。这种方式的坏处很明显，每次切换路由组件时都会被销毁并且重新创建，非常浪费性能。其优点更明显，简单粗暴，改动小。</h3><h3 id="5-为所有路由统一添加query"><a href="#5-为所有路由统一添加query" class="headerlink" title="5.为所有路由统一添加query"></a>5.为所有路由统一添加query</h3><ul>
+<li>解决办法是在beforeEach中判断这个全局添加的参数在路由对象中是否存在，如果存在，则不开启新导航。这种方式的优点是，可以全局统一配置公共的query参数，并且在组件内切换路由时无须进行特殊处理。缺点是每次切换路由时，全局守卫beforeEach会执行两次，即每次切换路由其实是切换两次。</li>
+<li>还可以使用函数劫持的方式，通过拦截router.history.transitionTo方法，在vue-router内部再切换路由之前将参数添加到query中</li>
+</ul>
+<h3 id="6-通常，在项目开发中，业务组件会使用Vuex维护状态，使用不同组件统一操作Vuex中的状态。这样不论是父子组件间的通信还是兄弟组件间的通信，都很容易。对于通用组件，会更倾向于使用props以及事件进行父子组件间的通信-通用组件不需要兄弟组件间的通信-。这样做是因为通用组件会拿到各个业务组件中使用，它要与业务解耦，所以需要使用props获取状态。"><a href="#6-通常，在项目开发中，业务组件会使用Vuex维护状态，使用不同组件统一操作Vuex中的状态。这样不论是父子组件间的通信还是兄弟组件间的通信，都很容易。对于通用组件，会更倾向于使用props以及事件进行父子组件间的通信-通用组件不需要兄弟组件间的通信-。这样做是因为通用组件会拿到各个业务组件中使用，它要与业务解耦，所以需要使用props获取状态。" class="headerlink" title="6.通常，在项目开发中，业务组件会使用Vuex维护状态，使用不同组件统一操作Vuex中的状态。这样不论是父子组件间的通信还是兄弟组件间的通信，都很容易。对于通用组件，会更倾向于使用props以及事件进行父子组件间的通信(通用组件不需要兄弟组件间的通信)。这样做是因为通用组件会拿到各个业务组件中使用，它要与业务解耦，所以需要使用props获取状态。"></a>6.通常，在项目开发中，业务组件会使用Vuex维护状态，使用不同组件统一操作Vuex中的状态。这样不论是父子组件间的通信还是兄弟组件间的通信，都很容易。对于通用组件，会更倾向于使用props以及事件进行父子组件间的通信(通用组件不需要兄弟组件间的通信)。这样做是因为通用组件会拿到各个业务组件中使用，它要与业务解耦，所以需要使用props获取状态。</h3><h3 id="7-为了过滤一个列表中的项目-比如v-for-”user-in-users”-v-if-”user-isActive”-请将users替换为一个计算属性-比如activeUsers-，让它返回过滤后的列表。为了避免渲染本应该被隐藏的列表-比如v-for-”user-in-users”-v-if-”shouldShowUsers”-请将v-if移动至容器元素上-比如ul和ol"><a href="#7-为了过滤一个列表中的项目-比如v-for-”user-in-users”-v-if-”user-isActive”-请将users替换为一个计算属性-比如activeUsers-，让它返回过滤后的列表。为了避免渲染本应该被隐藏的列表-比如v-for-”user-in-users”-v-if-”shouldShowUsers”-请将v-if移动至容器元素上-比如ul和ol" class="headerlink" title="7.为了过滤一个列表中的项目(比如v-for=”user in users” v-if=”user.isActive”),请将users替换为一个计算属性(比如activeUsers)，让它返回过滤后的列表。为了避免渲染本应该被隐藏的列表(比如v-for=”user in users” v-if=”shouldShowUsers”),请将v-if移动至容器元素上(比如ul和ol)"></a>7.为了过滤一个列表中的项目(比如v-for=”user in users” v-if=”user.isActive”),请将users替换为一个计算属性(比如activeUsers)，让它返回过滤后的列表。为了避免渲染本应该被隐藏的列表(比如v-for=”user in users” v-if=”shouldShowUsers”),请将v-if移动至容器元素上(比如ul和ol)</h3><p>对于第一种情况，Vue.js官方给出的解释是：当Vue.js处理指令时，v-for比v-if具有更高的优先级，所以即使我们只渲染列表中的一小部分元素，也得在每次重渲染的时候遍历整个列表，而不考虑活跃用户是否发生了变化。通过将列表更换为在一个计算属性上遍历并过滤掉不需要渲染的数据，我们将会获得如下好处。</p>
+<ul>
+<li>过滤后的列表只会在数组发生相关变化时才被重新运算，过滤更高效。</li>
+<li>使用v-for=”user in activeUsers”之后，我们在渲染时只遍历活跃用户，渲染更高效。</li>
+<li>解耦渲染层的逻辑，可维护性(对逻辑的更改和扩展)更强。<br>对于第二种情况也是为了获得同样的好处。通过将v-if移动到容器元素，我们不会再检查每个用户的shouldShowUsers，取而代之的是，我们只检查它一次，且不会在shouldShowUsers为false的时候运算v-for。</li>
+</ul>
+<h3 id="8-CSS的规则都是全局的，任何一个组件的样式规则都对整个页面有效。因此，我们很容易在一个组件中写了某个样式，而不小心影响了另一个组件的样式，或者自己的组件被第三方库的CSS影响了。在Vue-js中，可以通过scoped特性或CSS-Modules-一个基于class的类似BEM的策略-来设置组件样式作用域。"><a href="#8-CSS的规则都是全局的，任何一个组件的样式规则都对整个页面有效。因此，我们很容易在一个组件中写了某个样式，而不小心影响了另一个组件的样式，或者自己的组件被第三方库的CSS影响了。在Vue-js中，可以通过scoped特性或CSS-Modules-一个基于class的类似BEM的策略-来设置组件样式作用域。" class="headerlink" title="8.CSS的规则都是全局的，任何一个组件的样式规则都对整个页面有效。因此，我们很容易在一个组件中写了某个样式，而不小心影响了另一个组件的样式，或者自己的组件被第三方库的CSS影响了。在Vue.js中，可以通过scoped特性或CSS Modules(一个基于class的类似BEM的策略)来设置组件样式作用域。"></a>8.CSS的规则都是全局的，任何一个组件的样式规则都对整个页面有效。因此，我们很容易在一个组件中写了某个样式，而不小心影响了另一个组件的样式，或者自己的组件被第三方库的CSS影响了。在Vue.js中，可以通过scoped特性或CSS Modules(一个基于class的类似BEM的策略)来设置组件样式作用域。</h3><h3 id="9-在scoped样式中，类选择器比元素选择器更好，因为大量使用元素选择器是很慢的。"><a href="#9-在scoped样式中，类选择器比元素选择器更好，因为大量使用元素选择器是很慢的。" class="headerlink" title="9.在scoped样式中，类选择器比元素选择器更好，因为大量使用元素选择器是很慢的。"></a>9.在scoped样式中，类选择器比元素选择器更好，因为大量使用元素选择器是很慢的。</h3><h3 id="10-在单文件组件、字符串模板和JSX中，没有内容的组件应该是自闭合的，但在DOM模板中永远不要这样做。"><a href="#10-在单文件组件、字符串模板和JSX中，没有内容的组件应该是自闭合的，但在DOM模板中永远不要这样做。" class="headerlink" title="10.在单文件组件、字符串模板和JSX中，没有内容的组件应该是自闭合的，但在DOM模板中永远不要这样做。"></a>10.在单文件组件、字符串模板和JSX中，没有内容的组件应该是自闭合的，但在DOM模板中永远不要这样做。</h3><h3 id="11-在声明prop的时候，其命名应该始终使用驼峰式命名规则，而在模板和JSX中应该始终使用横线连接的方式。"><a href="#11-在声明prop的时候，其命名应该始终使用驼峰式命名规则，而在模板和JSX中应该始终使用横线连接的方式。" class="headerlink" title="11.在声明prop的时候，其命名应该始终使用驼峰式命名规则，而在模板和JSX中应该始终使用横线连接的方式。"></a>11.在声明prop的时候，其命名应该始终使用驼峰式命名规则，而在模板和JSX中应该始终使用横线连接的方式。</h3>
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div>您的支持是我最大的动力</div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/weixin.png" alt="丁可 微信支付">
+        <p>微信支付</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/images/zhifubao.png" alt="丁可 支付宝">
+        <p>支付宝</p>
+      </div>
+
+  </div>
+</div>
+
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>丁可
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://yoursite.com/2021/02/07/vuefive/" title="深入浅出vue.js学习笔记第六天">http://yoursite.com/2021/02/07/vuefive/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/vue/" rel="tag"><i class="fa fa-tag"></i> vue</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/02/06/vuefour/" rel="prev" title="深入浅出vue.js学习笔记第五天">
+      <i class="fa fa-chevron-left"></i> 深入浅出vue.js学习笔记第五天
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+      <div>
+  
+    <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>感谢您的阅读-------------</div>
+    
+</div>
+
+  
+</div>
+
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    
+  <div class="comments">
+    <div id="lv-container" data-id="city" data-uid="MTAyMC81MTEwOC8yNzU4OQ=="></div>
+  </div>
+  
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#深入浅出vue-js学习笔记第六天"><span class="nav-text">深入浅出vue.js学习笔记第六天</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#第十五章-指令的奥秘"><span class="nav-text">第十五章 指令的奥秘</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-在模板解析阶段，我们在将指令解析到AST，然后使用AST生成代码字符串的过程中实现某些内置指令的功能，最后在虚拟DOM渲染的过程中触发自定义指令的钩子函数使指令生效。"><span class="nav-text">1.在模板解析阶段，我们在将指令解析到AST，然后使用AST生成代码字符串的过程中实现某些内置指令的功能，最后在虚拟DOM渲染的过程中触发自定义指令的钩子函数使指令生效。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-当虚拟DOM进行修补时，会根据节点的对比结果触发一些钩子函数。更新指令的程序会监听creat、update和destroy钩子函数，并在这三个钩子函数触发时对VNode和oldVNode进行对比，最终根据对比结果触发指令的钩子函数。"><span class="nav-text">2.当虚拟DOM进行修补时，会根据节点的对比结果触发一些钩子函数。更新指令的程序会监听creat、update和destroy钩子函数，并在这三个钩子函数触发时对VNode和oldVNode进行对比，最终根据对比结果触发指令的钩子函数。</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第十六章-过滤器的奥秘"><span class="nav-text">第十六章 过滤器的奥秘</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-过滤器函数总是将表达式的值-之前的操作链的结果-作为第一个参数。"><span class="nav-text">1.过滤器函数总是将表达式的值(之前的操作链的结果)作为第一个参数。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-过滤器可以串联，如，在这个例子中，filterA被定义为接收单个参数的过滤器函数，表达式message的值将作为参数传入到filterA过滤器函数中。然后继续调用同样被定义为接收单个参数的过滤器函数filterB。将过滤器函数filterA的执行结果当作参数传递给filterB函数。"><span class="nav-text">2.过滤器可以串联，如{{ message | filterA | filterB }}，在这个例子中，filterA被定义为接收单个参数的过滤器函数，表达式message的值将作为参数传入到filterA过滤器函数中。然后继续调用同样被定义为接收单个参数的过滤器函数filterB。将过滤器函数filterA的执行结果当作参数传递给filterB函数。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-过滤器是JavaScript函数，因此可以接收参数：，这里，filterA被定义为接收三个参数的过滤器函数。其中message的值作为第一个参数，普通字符串‘arg1’作为第二个参数，表达式arg2的值作为第三个参数。"><span class="nav-text">3.过滤器是JavaScript函数，因此可以接收参数：{{ message | filter(&#39;arg1&#39;，&#39;arg2&#39;) }}，这里，filterA被定义为接收三个参数的过滤器函数。其中message的值作为第一个参数，普通字符串‘arg1’作为第二个参数，表达式arg2的值作为第三个参数。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-加了参数的过滤器与不加参数的过滤器之间的唯一区别就是，当模板编译之后，会将在模板中给过滤器设置的参数添加在过滤器函数的参数中。注意：这里是从第二个参数开始，这是因为第一个参数永远都是之前操作链的结果。"><span class="nav-text">4.加了参数的过滤器与不加参数的过滤器之间的唯一区别就是，当模板编译之后，会将在模板中给过滤器设置的参数添加在过滤器函数的参数中。注意：这里是从第二个参数开始，这是因为第一个参数永远都是之前操作链的结果。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-resolveAsset函数在查找过滤器的过程中并没有去Vue构造函数中搜索过滤器。这是因为在初始化Vue-js实例时，把全局过滤器与组件内注册的过滤器合并到this-options-filters中了，而this-options-filters其实同时保存了全局过滤器和组件内注册的过滤器。resolveAsset只需要从this-optionsfilters中查找过滤器即可。"><span class="nav-text">5.resolveAsset函数在查找过滤器的过程中并没有去Vue构造函数中搜索过滤器。这是因为在初始化Vue.js实例时，把全局过滤器与组件内注册的过滤器合并到this.$options.filters中了，而this.$options.filters其实同时保存了全局过滤器和组件内注册的过滤器。resolveAsset只需要从this.$optionsfilters中查找过滤器即可。</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第十七章-最佳实践"><span class="nav-text">第十七章 最佳实践</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-默认情况下，Vue-js会尽可能高效地更新DOM。这意味着，当它在相同类型的元素之间切换时，会修补已存在的元素，而不是将旧的元素移除，然后在同一位置添加一个新元素。如果本不相同的元素被识别为相同，则会出现意料之外的副作用。"><span class="nav-text">1.默认情况下，Vue.js会尽可能高效地更新DOM。这意味着，当它在相同类型的元素之间切换时，会修补已存在的元素，而不是将旧的元素移除，然后在同一位置添加一个新元素。如果本不相同的元素被识别为相同，则会出现意料之外的副作用。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-在使用Vue-js开发项目时，最常遇到的一个典型问题就是，当页面切换到同一个路由但不同参数的地址时，组件的生命周期钩子并不会重新触发。这是因为vue-router会识别出两个路由使用的是同一个组件从而进行复用，并不会重新创建组件，因此组件的生命周期钩子自然也不会触发。组件本质上是一个映射关系，所以先销毁再重建一个相同的组件会存在很大程度上的性能浪费，复用组件才是正确的选择。但是这也意味着组件的生命周期钩子不会再被调用。"><span class="nav-text">2.在使用Vue.js开发项目时，最常遇到的一个典型问题就是，当页面切换到同一个路由但不同参数的地址时，组件的生命周期钩子并不会重新触发。这是因为vue-router会识别出两个路由使用的是同一个组件从而进行复用，并不会重新创建组件，因此组件的生命周期钩子自然也不会触发。组件本质上是一个映射关系，所以先销毁再重建一个相同的组件会存在很大程度上的性能浪费，复用组件才是正确的选择。但是这也意味着组件的生命周期钩子不会再被调用。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-vue-router提供了导航守卫beforeRouteUpdate，该守卫在当前路由改变且组件被复用时调用，所以可以在组件内定义路由导航守卫来解决这个问题。组件的生命周期钩子虽然不会重新触发，但是路由提供的beforeRouteUpdate守卫可以被触发。因此，只需要把每次切换路由时需要执行的逻辑放到beforeRouteUpdate守卫即可。"><span class="nav-text">3.vue-router提供了导航守卫beforeRouteUpdate，该守卫在当前路由改变且组件被复用时调用，所以可以在组件内定义路由导航守卫来解决这个问题。组件的生命周期钩子虽然不会重新触发，但是路由提供的beforeRouteUpdate守卫可以被触发。因此，只需要把每次切换路由时需要执行的逻辑放到beforeRouteUpdate守卫即可。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-通过watch可以监听到路由对象发生的变化，从而对路由变化作出响应。这种方式也可以解决上述问题，但代价是组件内多了一个watch，这会带来依赖追踪内存开销。"><span class="nav-text">4.通过watch可以监听到路由对象发生的变化，从而对路由变化作出响应。这种方式也可以解决上述问题，但代价是组件内多了一个watch，这会带来依赖追踪内存开销。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#利用虚拟DOM在渲染时通过key来对比两个节点是否相同的原理。通过给router-view组件设置key，可以使每次切换路由时的key都不一样，让虚拟DOM认为router-view组件是一个新节点，从而先销毁组件，然后再重新创建新组件。即使是相同的组件，但是如果url变了，key就变了，Vue-js就会重新创建这个组件。这种方式的坏处很明显，每次切换路由组件时都会被销毁并且重新创建，非常浪费性能。其优点更明显，简单粗暴，改动小。"><span class="nav-text">利用虚拟DOM在渲染时通过key来对比两个节点是否相同的原理。通过给router-view组件设置key，可以使每次切换路由时的key都不一样，让虚拟DOM认为router-view组件是一个新节点，从而先销毁组件，然后再重新创建新组件。即使是相同的组件，但是如果url变了，key就变了，Vue.js就会重新创建这个组件。这种方式的坏处很明显，每次切换路由组件时都会被销毁并且重新创建，非常浪费性能。其优点更明显，简单粗暴，改动小。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-为所有路由统一添加query"><span class="nav-text">5.为所有路由统一添加query</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-通常，在项目开发中，业务组件会使用Vuex维护状态，使用不同组件统一操作Vuex中的状态。这样不论是父子组件间的通信还是兄弟组件间的通信，都很容易。对于通用组件，会更倾向于使用props以及事件进行父子组件间的通信-通用组件不需要兄弟组件间的通信-。这样做是因为通用组件会拿到各个业务组件中使用，它要与业务解耦，所以需要使用props获取状态。"><span class="nav-text">6.通常，在项目开发中，业务组件会使用Vuex维护状态，使用不同组件统一操作Vuex中的状态。这样不论是父子组件间的通信还是兄弟组件间的通信，都很容易。对于通用组件，会更倾向于使用props以及事件进行父子组件间的通信(通用组件不需要兄弟组件间的通信)。这样做是因为通用组件会拿到各个业务组件中使用，它要与业务解耦，所以需要使用props获取状态。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7-为了过滤一个列表中的项目-比如v-for-”user-in-users”-v-if-”user-isActive”-请将users替换为一个计算属性-比如activeUsers-，让它返回过滤后的列表。为了避免渲染本应该被隐藏的列表-比如v-for-”user-in-users”-v-if-”shouldShowUsers”-请将v-if移动至容器元素上-比如ul和ol"><span class="nav-text">7.为了过滤一个列表中的项目(比如v-for&#x3D;”user in users” v-if&#x3D;”user.isActive”),请将users替换为一个计算属性(比如activeUsers)，让它返回过滤后的列表。为了避免渲染本应该被隐藏的列表(比如v-for&#x3D;”user in users” v-if&#x3D;”shouldShowUsers”),请将v-if移动至容器元素上(比如ul和ol)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#8-CSS的规则都是全局的，任何一个组件的样式规则都对整个页面有效。因此，我们很容易在一个组件中写了某个样式，而不小心影响了另一个组件的样式，或者自己的组件被第三方库的CSS影响了。在Vue-js中，可以通过scoped特性或CSS-Modules-一个基于class的类似BEM的策略-来设置组件样式作用域。"><span class="nav-text">8.CSS的规则都是全局的，任何一个组件的样式规则都对整个页面有效。因此，我们很容易在一个组件中写了某个样式，而不小心影响了另一个组件的样式，或者自己的组件被第三方库的CSS影响了。在Vue.js中，可以通过scoped特性或CSS Modules(一个基于class的类似BEM的策略)来设置组件样式作用域。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#9-在scoped样式中，类选择器比元素选择器更好，因为大量使用元素选择器是很慢的。"><span class="nav-text">9.在scoped样式中，类选择器比元素选择器更好，因为大量使用元素选择器是很慢的。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#10-在单文件组件、字符串模板和JSX中，没有内容的组件应该是自闭合的，但在DOM模板中永远不要这样做。"><span class="nav-text">10.在单文件组件、字符串模板和JSX中，没有内容的组件应该是自闭合的，但在DOM模板中永远不要这样做。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#11-在声明prop的时候，其命名应该始终使用驼峰式命名规则，而在模板和JSX中应该始终使用横线连接的方式。"><span class="nav-text">11.在声明prop的时候，其命名应该始终使用驼峰式命名规则，而在模板和JSX中应该始终使用横线连接的方式。</span></a></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="丁可"
+      src="/images/touxiang.jpg">
+  <p class="site-author-name" itemprop="name">丁可</p>
+  <div class="site-description" itemprop="description">哪来的勇气我就是不灰心</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">20</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/DK-frontend" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;DK-frontend" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/504015629@qq.com" title="E-Mail → 504015629@qq.com"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://blog.csdn.net/DK159753" title="CSDN → https:&#x2F;&#x2F;blog.csdn.net&#x2F;DK159753" rel="noopener" target="_blank"><i class="fab fa-crosshairs fa-fw"></i>CSDN</a>
+      </span>
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+      <iframe allow="autoplay" frameborder="no" border="0" marginwidth="0" marginheight="0" width=330 height=86 src="//music.163.com/outchain/player?type=2&id=1363973661&auto=1&height=66"></iframe>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2020 – 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">丁可</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">153k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">2:19</span>
+</div>
+<div class="theme-info">
+  <div class="powered-by"></div>
+  <span class="post-count">博客全站共65.5k字</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/pjax/pjax.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '#page-configurations',
+    '.content-wrap',
+    '.post-toc-wrap',
+    '.languages',
+    '#pjax'
+  ],
+  switches: {
+    '.post-toc-wrap': Pjax.switches.innerHTML
+  },
+  analytics: false,
+  cacheBust: false,
+  scrollTo : !CONFIG.bookmark.enable
+});
+
+window.addEventListener('pjax:success', () => {
+  document.querySelectorAll('script[data-pjax], script#page-configurations, #pjax script').forEach(element => {
+    var code = element.text || element.textContent || element.innerHTML || '';
+    var parent = element.parentNode;
+    parent.removeChild(element);
+    var script = document.createElement('script');
+    if (element.id) {
+      script.id = element.id;
+    }
+    if (element.className) {
+      script.className = element.className;
+    }
+    if (element.type) {
+      script.type = element.type;
+    }
+    if (element.src) {
+      script.src = element.src;
+      // Force synchronous loading of peripheral JS.
+      script.async = false;
+    }
+    if (element.dataset.pjax !== undefined) {
+      script.dataset.pjax = '';
+    }
+    if (code !== '') {
+      script.appendChild(document.createTextNode(code));
+    }
+    parent.appendChild(script);
+  });
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <div id="pjax">
+  
+
+  
+
+<script>
+NexT.utils.loadComments(document.querySelector('#lv-container'), () => {
+  window.livereOptions = {
+    refer: location.pathname.replace(CONFIG.root, '').replace('index.html', '')
+  };
+  (function(d, s) {
+    var j, e = d.getElementsByTagName(s)[0];
+    if (typeof LivereTower === 'function') { return; }
+    j = d.createElement(s);
+    j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+    j.async = true;
+    e.parentNode.insertBefore(j, e);
+  })(document, 'script');
+});
+</script>
+
+    </div>
+  
+   <canvas class="fireworks" style="position: fixed;left: 0;top: 0;z-index: 1; pointer-events: none;" ></canvas> 
+   <script type="text/javascript" src="//cdn.bootcss.com/animejs/2.2.0/anime.min.js"></script> 
+   <script type="text/javascript" src="/js/src/fireworks.js"></script>
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"model":{"jsonPath":"/live2dw/assets/wanko.model.json"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":false},"log":false});</script></body>
+</html>
+
+
