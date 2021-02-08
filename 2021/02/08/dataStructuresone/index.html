@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+ <!--pjax：防止跳转页面音乐暂停-->
+  <script src="https://cdn.jsdelivr.net/npm/pjax@0.2.8/pjax.js"></script> 
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<script src="//cdn.bootcss.com/pace/1.0.2/pace.min.js"></script>
+<link href="//cdn.bootcss.com/pace/1.0.2/themes/pink/pace-theme-flash.css" rel="stylesheet">
+<style>
+    .pace .pace-progress {
+        background: #1E92FB; /*进度条颜色*/
+        height: 3px;
+    }
+    .pace .pace-progress-inner {
+         box-shadow: 0 0 10px #1E92FB, 0 0 5px     #1E92FB; /*阴影颜色*/
+    }
+    .pace .pace-activity {
+        border-top-color: #1E92FB;    /*上边框颜色*/
+        border-left-color: #1E92FB;    /*左边框颜色*/
+    }
+</style>
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-big-counter.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yoursite.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="学习JavaScript数据结构与算法第一天第一章 JavaScript简介1.null表示变量没有值，undefined表示变量已被声明，但尚未赋值。2.作用域是指，在编写的算法函数中，我们能访问变量(在使用函数作用域时，也可以是一个函数)的地方。有局部变量和全局变量两种。3.在JavaScript中有两种数据类型 原始数据类型：null、undefined、字符串、数、布尔值和Symbol 派">
+<meta property="og:type" content="article">
+<meta property="og:title" content="学习JavaScript数据结构与算法第一天">
+<meta property="og:url" content="http://yoursite.com/2021/02/08/dataStructuresone/index.html">
+<meta property="og:site_name" content="DKの博客">
+<meta property="og:description" content="学习JavaScript数据结构与算法第一天第一章 JavaScript简介1.null表示变量没有值，undefined表示变量已被声明，但尚未赋值。2.作用域是指，在编写的算法函数中，我们能访问变量(在使用函数作用域时，也可以是一个函数)的地方。有局部变量和全局变量两种。3.在JavaScript中有两种数据类型 原始数据类型：null、undefined、字符串、数、布尔值和Symbol 派">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-02-08T11:10:15.000Z">
+<meta property="article:modified_time" content="2021-02-08T12:37:12.561Z">
+<meta property="article:author" content="丁可">
+<meta property="article:tag" content="数据结构">
+<meta property="article:tag" content="算法">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://yoursite.com/2021/02/08/dataStructuresone/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>学习JavaScript数据结构与算法第一天 | DKの博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+    <a href="https://github.com/DK-frontend" target="_blank" rel="noopener" class="github-corner" aria-label="View source on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" style="fill:#151513; color:#fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a><style>.github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}</style>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">DKの博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">记录前端学习的历程</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">9</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">3</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">21</span></a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/02/08/dataStructuresone/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/touxiang.jpg">
+      <meta itemprop="name" content="丁可">
+      <meta itemprop="description" content="哪来的勇气我就是不灰心">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="DKの博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          学习JavaScript数据结构与算法第一天
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2021-02-08 19:10:15 / 修改时间：20:37:12" itemprop="dateCreated datePublished" datetime="2021-02-08T19:10:15+08:00">2021-02-08</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">学习笔记</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>3.1k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>3 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="学习JavaScript数据结构与算法第一天"><a href="#学习JavaScript数据结构与算法第一天" class="headerlink" title="学习JavaScript数据结构与算法第一天"></a>学习JavaScript数据结构与算法第一天</h1><h2 id="第一章-JavaScript简介"><a href="#第一章-JavaScript简介" class="headerlink" title="第一章 JavaScript简介"></a>第一章 JavaScript简介</h2><h3 id="1-null表示变量没有值，undefined表示变量已被声明，但尚未赋值。"><a href="#1-null表示变量没有值，undefined表示变量已被声明，但尚未赋值。" class="headerlink" title="1.null表示变量没有值，undefined表示变量已被声明，但尚未赋值。"></a>1.null表示变量没有值，undefined表示变量已被声明，但尚未赋值。</h3><h3 id="2-作用域是指，在编写的算法函数中，我们能访问变量-在使用函数作用域时，也可以是一个函数-的地方。有局部变量和全局变量两种。"><a href="#2-作用域是指，在编写的算法函数中，我们能访问变量-在使用函数作用域时，也可以是一个函数-的地方。有局部变量和全局变量两种。" class="headerlink" title="2.作用域是指，在编写的算法函数中，我们能访问变量(在使用函数作用域时，也可以是一个函数)的地方。有局部变量和全局变量两种。"></a>2.作用域是指，在编写的算法函数中，我们能访问变量(在使用函数作用域时，也可以是一个函数)的地方。有局部变量和全局变量两种。</h3><h3 id="3-在JavaScript中有两种数据类型"><a href="#3-在JavaScript中有两种数据类型" class="headerlink" title="3.在JavaScript中有两种数据类型"></a>3.在JavaScript中有两种数据类型</h3><ul>
+<li>原始数据类型：null、undefined、字符串、数、布尔值和Symbol</li>
+<li>派生数据类型/对象：JavaScript对象、包括函数、数组和正则表达式</li>
+</ul>
+<h3 id="4-new-Boolean-false-会被转化为true，因为对象始终转换为布尔值true"><a href="#4-new-Boolean-false-会被转化为true，因为对象始终转换为布尔值true" class="headerlink" title="4.new Boolean(false)会被转化为true，因为对象始终转换为布尔值true"></a>4.new Boolean(false)会被转化为true，因为对象始终转换为布尔值true</h3><h3 id="5-toNumber方法对于undefined类型返回的结果为NaN。toPrimitive对于对象类型，如果对象的valueOf方法的结果是原始值，返回原始值；如果对象的toString方法返回原始值，就返回这个值；其他情况都返回一个错误。"><a href="#5-toNumber方法对于undefined类型返回的结果为NaN。toPrimitive对于对象类型，如果对象的valueOf方法的结果是原始值，返回原始值；如果对象的toString方法返回原始值，就返回这个值；其他情况都返回一个错误。" class="headerlink" title="5.toNumber方法对于undefined类型返回的结果为NaN。toPrimitive对于对象类型，如果对象的valueOf方法的结果是原始值，返回原始值；如果对象的toString方法返回原始值，就返回这个值；其他情况都返回一个错误。"></a>5.toNumber方法对于undefined类型返回的结果为NaN。toPrimitive对于对象类型，如果对象的valueOf方法的结果是原始值，返回原始值；如果对象的toString方法返回原始值，就返回这个值；其他情况都返回一个错误。</h3><h3 id="6-console-log-‘packt’-true-和console-log-‘packt’-false-都会输出false。"><a href="#6-console-log-‘packt’-true-和console-log-‘packt’-false-都会输出false。" class="headerlink" title="6.console.log(‘packt’ == true)和console.log(‘packt’ == false)都会输出false。"></a>6.console.log(‘packt’ == true)和console.log(‘packt’ == false)都会输出false。</h3><ul>
+<li>首先，布尔值会被toNumber方法转成数，因此得到packt == 1/0。</li>
+<li>其次，用toNumber转换字符串值。因为字符串包含字母，所以会被转成NaN，表达式就变成了NaN == 1/0，结果就是false。<a id="more"></a>
+<h3 id="7-运算符对于对象类型的比较，只有两者引用同一个对象，才会返回true。两者只是有相同的键值对不算引用同一个对象。"><a href="#7-运算符对于对象类型的比较，只有两者引用同一个对象，才会返回true。两者只是有相同的键值对不算引用同一个对象。" class="headerlink" title="7.===运算符对于对象类型的比较，只有两者引用同一个对象，才会返回true。两者只是有相同的键值对不算引用同一个对象。"></a>7.===运算符对于对象类型的比较，只有两者引用同一个对象，才会返回true。两者只是有相同的键值对不算引用同一个对象。</h3><h3 id="8-构建构造函数时，在prototype上定义函数时，该函数只会创建一次，在所有实例中共享。如果在构造函数的定义里声明，则在每个实例都会创建自己的函数副本。使用prototype方法可以节约内存和降低实例化的开销。不过prototype方法只能声明public函数和属性，而构造函数定义可以声明只在该构造函数内部访问的private函数和属性。"><a href="#8-构建构造函数时，在prototype上定义函数时，该函数只会创建一次，在所有实例中共享。如果在构造函数的定义里声明，则在每个实例都会创建自己的函数副本。使用prototype方法可以节约内存和降低实例化的开销。不过prototype方法只能声明public函数和属性，而构造函数定义可以声明只在该构造函数内部访问的private函数和属性。" class="headerlink" title="8.构建构造函数时，在prototype上定义函数时，该函数只会创建一次，在所有实例中共享。如果在构造函数的定义里声明，则在每个实例都会创建自己的函数副本。使用prototype方法可以节约内存和降低实例化的开销。不过prototype方法只能声明public函数和属性，而构造函数定义可以声明只在该构造函数内部访问的private函数和属性。"></a>8.构建构造函数时，在prototype上定义函数时，该函数只会创建一次，在所有实例中共享。如果在构造函数的定义里声明，则在每个实例都会创建自己的函数副本。使用prototype方法可以节约内存和降低实例化的开销。不过prototype方法只能声明public函数和属性，而构造函数定义可以声明只在该构造函数内部访问的private函数和属性。</h3></li>
+</ul>
+<h2 id="第二章-ECMAScript和TypeScript概述"><a href="#第二章-ECMAScript和TypeScript概述" class="headerlink" title="第二章 ECMAScript和TypeScript概述"></a>第二章 ECMAScript和TypeScript概述</h2><h3 id="1-ECMA是一个将信息标准化的组织，JavaScript被提交到ECMA进行标准化，由此诞生了一个新的语言标准，也就是我们所知道的ECMAScript。JavaScript是该标准-最流行-的一个实现。"><a href="#1-ECMA是一个将信息标准化的组织，JavaScript被提交到ECMA进行标准化，由此诞生了一个新的语言标准，也就是我们所知道的ECMAScript。JavaScript是该标准-最流行-的一个实现。" class="headerlink" title="1.ECMA是一个将信息标准化的组织，JavaScript被提交到ECMA进行标准化，由此诞生了一个新的语言标准，也就是我们所知道的ECMAScript。JavaScript是该标准(最流行)的一个实现。"></a>1.ECMA是一个将信息标准化的组织，JavaScript被提交到ECMA进行标准化，由此诞生了一个新的语言标准，也就是我们所知道的ECMAScript。JavaScript是该标准(最流行)的一个实现。</h3><h3 id="2-我们可以开启浏览器的实验性JavaScript功能来使用ES6的新特性。可以通过开启Experimental-JavaScript标志来使用这一功能。"><a href="#2-我们可以开启浏览器的实验性JavaScript功能来使用ES6的新特性。可以通过开启Experimental-JavaScript标志来使用这一功能。" class="headerlink" title="2.我们可以开启浏览器的实验性JavaScript功能来使用ES6的新特性。可以通过开启Experimental JavaScript标志来使用这一功能。"></a>2.我们可以开启浏览器的实验性JavaScript功能来使用ES6的新特性。可以通过开启Experimental JavaScript标志来使用这一功能。</h3><h3 id="3-模板字面量用一对-包裹。要插入变量的值，只要把变量放在-里就可以了，就像例子中的book-name。模板字面量也可以用于多行的字符串，再也不需要用-n了。"><a href="#3-模板字面量用一对-包裹。要插入变量的值，只要把变量放在-里就可以了，就像例子中的book-name。模板字面量也可以用于多行的字符串，再也不需要用-n了。" class="headerlink" title="3.模板字面量用一对`包裹。要插入变量的值，只要把变量放在${}里就可以了，就像例子中的book.name。模板字面量也可以用于多行的字符串，再也不需要用\n了。"></a>3.模板字面量用一对`包裹。要插入变量的值，只要把变量放在${}里就可以了，就像例子中的book.name。模板字面量也可以用于多行的字符串，再也不需要用\n了。</h3><h3 id="4-在箭头函数中，如果函数不接受任何参数，我们就使用一对空的圆括号。"><a href="#4-在箭头函数中，如果函数不接受任何参数，我们就使用一对空的圆括号。" class="headerlink" title="4.在箭头函数中，如果函数不接受任何参数，我们就使用一对空的圆括号。"></a>4.在箭头函数中，如果函数不接受任何参数，我们就使用一对空的圆括号。</h3><h3 id="5-在ES6中，函数的参数还可以定义默认值，展开运算符-…-也可以代替arguments，当作剩余参数使用。"><a href="#5-在ES6中，函数的参数还可以定义默认值，展开运算符-…-也可以代替arguments，当作剩余参数使用。" class="headerlink" title="5.在ES6中，函数的参数还可以定义默认值，展开运算符(…)也可以代替arguments，当作剩余参数使用。"></a>5.在ES6中，函数的参数还可以定义默认值，展开运算符(…)也可以代替arguments，当作剩余参数使用。</h3><h3 id="6-假设模块中只有一个成员，而且需要将其导出。可以使用export-default关键字将其导出。在这种情况下，我们不需要将类名包含在花括号-中。只在模块有多个成员被导出时使用花括号。"><a href="#6-假设模块中只有一个成员，而且需要将其导出。可以使用export-default关键字将其导出。在这种情况下，我们不需要将类名包含在花括号-中。只在模块有多个成员被导出时使用花括号。" class="headerlink" title="6.假设模块中只有一个成员，而且需要将其导出。可以使用export default关键字将其导出。在这种情况下，我们不需要将类名包含在花括号({})中。只在模块有多个成员被导出时使用花括号。"></a>6.假设模块中只有一个成员，而且需要将其导出。可以使用export default关键字将其导出。在这种情况下，我们不需要将类名包含在花括号({})中。只在模块有多个成员被导出时使用花括号。</h3><h3 id="7-TypeScript是一个开源的、渐进式包含类型的JavaScript超集。它的主要功能之一是为JavaScript变量提供类型支持。使用tsc命令将ts文件编译成js文件时，即使在终端输出了错误信息-实际上是警告，而不是错误-，TypeScript编译器还是会生成ES5代码。这表明尽管TypeScript在编译时进行了类型和错误检测，但并不会阻止编译器生成JavaScript代码。"><a href="#7-TypeScript是一个开源的、渐进式包含类型的JavaScript超集。它的主要功能之一是为JavaScript变量提供类型支持。使用tsc命令将ts文件编译成js文件时，即使在终端输出了错误信息-实际上是警告，而不是错误-，TypeScript编译器还是会生成ES5代码。这表明尽管TypeScript在编译时进行了类型和错误检测，但并不会阻止编译器生成JavaScript代码。" class="headerlink" title="7.TypeScript是一个开源的、渐进式包含类型的JavaScript超集。它的主要功能之一是为JavaScript变量提供类型支持。使用tsc命令将ts文件编译成js文件时，即使在终端输出了错误信息(实际上是警告，而不是错误)，TypeScript编译器还是会生成ES5代码。这表明尽管TypeScript在编译时进行了类型和错误检测，但并不会阻止编译器生成JavaScript代码。"></a>7.TypeScript是一个开源的、渐进式包含类型的JavaScript超集。它的主要功能之一是为JavaScript变量提供类型支持。使用tsc命令将ts文件编译成js文件时，即使在终端输出了错误信息(实际上是警告，而不是错误)，TypeScript编译器还是会生成ES5代码。这表明尽管TypeScript在编译时进行了类型和错误检测，但并不会阻止编译器生成JavaScript代码。</h3><h3 id="8-TypeScript允许我们给变量设置一个类型。同时TypeScript也支持类型推断机制，也就是说TypeScript会根据为变量赋的值自动给该变量设置一个类型。如果声明了一个变量但没有设置其初始值，推荐为其设置一个类型。如果没有为变量设置类型，它的类型会被自动设置为any，意思是可以接受任何值，就像在普通JavaScript中一样。"><a href="#8-TypeScript允许我们给变量设置一个类型。同时TypeScript也支持类型推断机制，也就是说TypeScript会根据为变量赋的值自动给该变量设置一个类型。如果声明了一个变量但没有设置其初始值，推荐为其设置一个类型。如果没有为变量设置类型，它的类型会被自动设置为any，意思是可以接受任何值，就像在普通JavaScript中一样。" class="headerlink" title="8.TypeScript允许我们给变量设置一个类型。同时TypeScript也支持类型推断机制，也就是说TypeScript会根据为变量赋的值自动给该变量设置一个类型。如果声明了一个变量但没有设置其初始值，推荐为其设置一个类型。如果没有为变量设置类型，它的类型会被自动设置为any，意思是可以接受任何值，就像在普通JavaScript中一样。"></a>8.TypeScript允许我们给变量设置一个类型。同时TypeScript也支持类型推断机制，也就是说TypeScript会根据为变量赋的值自动给该变量设置一个类型。如果声明了一个变量但没有设置其初始值，推荐为其设置一个类型。如果没有为变量设置类型，它的类型会被自动设置为any，意思是可以接受任何值，就像在普通JavaScript中一样。</h3><h3 id="9-在TypeScript中，有两种接口的概念。第一种就像给变量设置一个类型，第一种TypeScript接口的概念是把接口看作一个实际的东西。它是对一个对象必须包含的属性和方法的描述。TypeScript有一个名为鸭子类型的概念：如果它看起来像鸭子，像鸭子一样游泳，像鸭子一样叫，那么他一定是一只鸭子。第二章TypeScript接口的概念和面向对象编程相关，与其他面向对象语言中的概念是一样的。接口就是一份合约。在这份合约里，我们可以定义实现这份合约的类或接口的行为。另一个对数据结构和算法有用的强大TypeScript特性是泛型这一概念，来为接口中定义的行为规定接受的对象的什么类型。"><a href="#9-在TypeScript中，有两种接口的概念。第一种就像给变量设置一个类型，第一种TypeScript接口的概念是把接口看作一个实际的东西。它是对一个对象必须包含的属性和方法的描述。TypeScript有一个名为鸭子类型的概念：如果它看起来像鸭子，像鸭子一样游泳，像鸭子一样叫，那么他一定是一只鸭子。第二章TypeScript接口的概念和面向对象编程相关，与其他面向对象语言中的概念是一样的。接口就是一份合约。在这份合约里，我们可以定义实现这份合约的类或接口的行为。另一个对数据结构和算法有用的强大TypeScript特性是泛型这一概念，来为接口中定义的行为规定接受的对象的什么类型。" class="headerlink" title="9.在TypeScript中，有两种接口的概念。第一种就像给变量设置一个类型，第一种TypeScript接口的概念是把接口看作一个实际的东西。它是对一个对象必须包含的属性和方法的描述。TypeScript有一个名为鸭子类型的概念：如果它看起来像鸭子，像鸭子一样游泳，像鸭子一样叫，那么他一定是一只鸭子。第二章TypeScript接口的概念和面向对象编程相关，与其他面向对象语言中的概念是一样的。接口就是一份合约。在这份合约里，我们可以定义实现这份合约的类或接口的行为。另一个对数据结构和算法有用的强大TypeScript特性是泛型这一概念，来为接口中定义的行为规定接受的对象的什么类型。"></a>9.在TypeScript中，有两种接口的概念。第一种就像给变量设置一个类型，第一种TypeScript接口的概念是把接口看作一个实际的东西。它是对一个对象必须包含的属性和方法的描述。TypeScript有一个名为鸭子类型的概念：如果它看起来像鸭子，像鸭子一样游泳，像鸭子一样叫，那么他一定是一只鸭子。第二章TypeScript接口的概念和面向对象编程相关，与其他面向对象语言中的概念是一样的。接口就是一份合约。在这份合约里，我们可以定义实现这份合约的类或接口的行为。另一个对数据结构和算法有用的强大TypeScript特性是泛型这一概念，来为接口中定义的行为规定接受的对象的什么类型。</h3><h3 id="10-TypeScript提供了一个特殊的功能，允许我们在编译时对代码进行错误检测和类型检测！要开启这个功能只用在全局安装TypeScript，然后再JavaScript文件的第一行添加一句-ts-check。"><a href="#10-TypeScript提供了一个特殊的功能，允许我们在编译时对代码进行错误检测和类型检测！要开启这个功能只用在全局安装TypeScript，然后再JavaScript文件的第一行添加一句-ts-check。" class="headerlink" title="10.TypeScript提供了一个特殊的功能，允许我们在编译时对代码进行错误检测和类型检测！要开启这个功能只用在全局安装TypeScript，然后再JavaScript文件的第一行添加一句//@ts-check。"></a>10.TypeScript提供了一个特殊的功能，允许我们在编译时对代码进行错误检测和类型检测！要开启这个功能只用在全局安装TypeScript，然后再JavaScript文件的第一行添加一句//@ts-check。</h3><h2 id="第三章-数组"><a href="#第三章-数组" class="headerlink" title="第三章 数组"></a>第三章 数组</h2><h3 id="1-为了实现在数组开头插入元素的需求，首先要腾出数组里第一个元素的位置，把所有的元素向右移动一位。我们可以循环数组中的元素，从最后一位-长度值就是数组的末尾位置-开始，将对应的前一个元素-i-1-的值赋给它-i-，依次处理，最后把我们想要的值赋给第一个位置-索引0-上。"><a href="#1-为了实现在数组开头插入元素的需求，首先要腾出数组里第一个元素的位置，把所有的元素向右移动一位。我们可以循环数组中的元素，从最后一位-长度值就是数组的末尾位置-开始，将对应的前一个元素-i-1-的值赋给它-i-，依次处理，最后把我们想要的值赋给第一个位置-索引0-上。" class="headerlink" title="1.为了实现在数组开头插入元素的需求，首先要腾出数组里第一个元素的位置，把所有的元素向右移动一位。我们可以循环数组中的元素，从最后一位(长度值就是数组的末尾位置)开始，将对应的前一个元素(i-1)的值赋给它(i)，依次处理，最后把我们想要的值赋给第一个位置(索引0)上。"></a>1.为了实现在数组开头插入元素的需求，首先要腾出数组里第一个元素的位置，把所有的元素向右移动一位。我们可以循环数组中的元素，从最后一位(长度值就是数组的末尾位置)开始，将对应的前一个元素(i-1)的值赋给它(i)，依次处理，最后把我们想要的值赋给第一个位置(索引0)上。</h3><h3 id="2-对于JavaScript数组和对象，我们还可以用delete运算符删除数组中的元素，例如delete-numbers-0-。然而，数组位置0的值会变成undefined，也就是说，以上操作等同于numbers-0-undefined。"><a href="#2-对于JavaScript数组和对象，我们还可以用delete运算符删除数组中的元素，例如delete-numbers-0-。然而，数组位置0的值会变成undefined，也就是说，以上操作等同于numbers-0-undefined。" class="headerlink" title="2.对于JavaScript数组和对象，我们还可以用delete运算符删除数组中的元素，例如delete numbers[0]。然而，数组位置0的值会变成undefined，也就是说，以上操作等同于numbers[0] = undefined。"></a>2.对于JavaScript数组和对象，我们还可以用delete运算符删除数组中的元素，例如delete numbers[0]。然而，数组位置0的值会变成undefined，也就是说，以上操作等同于numbers[0] = undefined。</h3><h3 id="3-every方法会迭代数组中的每个元素，知道返回false。some方法和every的行为相反，会迭代数组中的每个元素，直到函数返回true。"><a href="#3-every方法会迭代数组中的每个元素，知道返回false。some方法和every的行为相反，会迭代数组中的每个元素，直到函数返回true。" class="headerlink" title="3.every方法会迭代数组中的每个元素，知道返回false。some方法和every的行为相反，会迭代数组中的每个元素，直到函数返回true。"></a>3.every方法会迭代数组中的每个元素，知道返回false。some方法和every的行为相反，会迭代数组中的每个元素，直到函数返回true。</h3><h3 id="4-ES6还为Array类增加了一个-iterator属性，需要通过Symbol-iterator来访问。然后，不断调用迭代器的next方法，就能依次得到数组中的值。可以用for循环来迭代所有的值。一旦没有可迭代的值，next-方法就会返回一个value属性为undefined、done属性为true的对象。如果done属性的值为false，就意味着还有可迭代的值。"><a href="#4-ES6还为Array类增加了一个-iterator属性，需要通过Symbol-iterator来访问。然后，不断调用迭代器的next方法，就能依次得到数组中的值。可以用for循环来迭代所有的值。一旦没有可迭代的值，next-方法就会返回一个value属性为undefined、done属性为true的对象。如果done属性的值为false，就意味着还有可迭代的值。" class="headerlink" title="4.ES6还为Array类增加了一个@@iterator属性，需要通过Symbol.iterator来访问。然后，不断调用迭代器的next方法，就能依次得到数组中的值。可以用for循环来迭代所有的值。一旦没有可迭代的值，next()方法就会返回一个value属性为undefined、done属性为true的对象。如果done属性的值为false，就意味着还有可迭代的值。"></a>4.ES6还为Array类增加了一个@@iterator属性，需要通过Symbol.iterator来访问。然后，不断调用迭代器的next方法，就能依次得到数组中的值。可以用for循环来迭代所有的值。一旦没有可迭代的值，next()方法就会返回一个value属性为undefined、done属性为true的对象。如果done属性的值为false，就意味着还有可迭代的值。</h3><h3 id="5-Array-from方法根据已有的数组创建一个新数组，还可以传入一个用来过滤器的函数。"><a href="#5-Array-from方法根据已有的数组创建一个新数组，还可以传入一个用来过滤器的函数。" class="headerlink" title="5.Array.from方法根据已有的数组创建一个新数组，还可以传入一个用来过滤器的函数。"></a>5.Array.from方法根据已有的数组创建一个新数组，还可以传入一个用来过滤器的函数。</h3><h3 id="6-Array-of方法根据传入的参数创建一个新数组，也可以结合展开运算符来用该方法复制已有的数组。"><a href="#6-Array-of方法根据传入的参数创建一个新数组，也可以结合展开运算符来用该方法复制已有的数组。" class="headerlink" title="6.Array.of方法根据传入的参数创建一个新数组，也可以结合展开运算符来用该方法复制已有的数组。"></a>6.Array.of方法根据传入的参数创建一个新数组，也可以结合展开运算符来用该方法复制已有的数组。</h3><h3 id="7-fill方法用静态值填充数组，还可以指定开始填充的索引，也可以指定结束填充的索引。"><a href="#7-fill方法用静态值填充数组，还可以指定开始填充的索引，也可以指定结束填充的索引。" class="headerlink" title="7.fill方法用静态值填充数组，还可以指定开始填充的索引，也可以指定结束填充的索引。"></a>7.fill方法用静态值填充数组，还可以指定开始填充的索引，也可以指定结束填充的索引。</h3><h3 id="8-copyWithin方法复制数组中的一系列元素到同一数组指定的起始位置。"><a href="#8-copyWithin方法复制数组中的一系列元素到同一数组指定的起始位置。" class="headerlink" title="8.copyWithin方法复制数组中的一系列元素到同一数组指定的起始位置。"></a>8.copyWithin方法复制数组中的一系列元素到同一数组指定的起始位置。</h3><h3 id="9-数组的sort方法在对数组做排序时，把元素默认成字符串进行相互比较。在JavaScript中做字符串比较的时候，是根据字符对应的ASCII值来比较的。小写字母的ASCII值比大写字母的ASCII大，可以在比较时通过toLowerCase进行转换，排完序大写字母会在前面，如果希望小写字母排在前面，那么需要使用localeCompare方法。"><a href="#9-数组的sort方法在对数组做排序时，把元素默认成字符串进行相互比较。在JavaScript中做字符串比较的时候，是根据字符对应的ASCII值来比较的。小写字母的ASCII值比大写字母的ASCII大，可以在比较时通过toLowerCase进行转换，排完序大写字母会在前面，如果希望小写字母排在前面，那么需要使用localeCompare方法。" class="headerlink" title="9.数组的sort方法在对数组做排序时，把元素默认成字符串进行相互比较。在JavaScript中做字符串比较的时候，是根据字符对应的ASCII值来比较的。小写字母的ASCII值比大写字母的ASCII大，可以在比较时通过toLowerCase进行转换，排完序大写字母会在前面，如果希望小写字母排在前面，那么需要使用localeCompare方法。"></a>9.数组的sort方法在对数组做排序时，把元素默认成字符串进行相互比较。在JavaScript中做字符串比较的时候，是根据字符对应的ASCII值来比较的。小写字母的ASCII值比大写字母的ASCII大，可以在比较时通过toLowerCase进行转换，排完序大写字母会在前面，如果希望小写字母排在前面，那么需要使用localeCompare方法。</h3><h3 id="10-Array的find和findIndex方法接收一个回调函数，搜索一个满足回调函数条件的值，这两者的不同之处在于，find方法返回第一个满足条件的值，findIndex方法则返回这个值在数组里的索引。如果没有满足条件的值，find会返回undefined，而findIndex返回-1。"><a href="#10-Array的find和findIndex方法接收一个回调函数，搜索一个满足回调函数条件的值，这两者的不同之处在于，find方法返回第一个满足条件的值，findIndex方法则返回这个值在数组里的索引。如果没有满足条件的值，find会返回undefined，而findIndex返回-1。" class="headerlink" title="10.Array的find和findIndex方法接收一个回调函数，搜索一个满足回调函数条件的值，这两者的不同之处在于，find方法返回第一个满足条件的值，findIndex方法则返回这个值在数组里的索引。如果没有满足条件的值，find会返回undefined，而findIndex返回-1。"></a>10.Array的find和findIndex方法接收一个回调函数，搜索一个满足回调函数条件的值，这两者的不同之处在于，find方法返回第一个满足条件的值，findIndex方法则返回这个值在数组里的索引。如果没有满足条件的值，find会返回undefined，而findIndex返回-1。</h3><h3 id="11-数组的includes方法，会在数组里存在某个元素时返回true，否则返回false。如果给includes方法传入一个起始索引，搜索会从索引指定的位置开始。"><a href="#11-数组的includes方法，会在数组里存在某个元素时返回true，否则返回false。如果给includes方法传入一个起始索引，搜索会从索引指定的位置开始。" class="headerlink" title="11.数组的includes方法，会在数组里存在某个元素时返回true，否则返回false。如果给includes方法传入一个起始索引，搜索会从索引指定的位置开始。"></a>11.数组的includes方法，会在数组里存在某个元素时返回true，否则返回false。如果给includes方法传入一个起始索引，搜索会从索引指定的位置开始。</h3>
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div>您的支持是我最大的动力</div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/weixin.png" alt="丁可 微信支付">
+        <p>微信支付</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/images/zhifubao.png" alt="丁可 支付宝">
+        <p>支付宝</p>
+      </div>
+
+  </div>
+</div>
+
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>丁可
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://yoursite.com/2021/02/08/dataStructuresone/" title="学习JavaScript数据结构与算法第一天">http://yoursite.com/2021/02/08/dataStructuresone/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" rel="tag"><i class="fa fa-tag"></i> 数据结构</a>
+              <a href="/tags/%E7%AE%97%E6%B3%95/" rel="tag"><i class="fa fa-tag"></i> 算法</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/02/07/vuefive/" rel="prev" title="深入浅出vue.js学习笔记第六天">
+      <i class="fa fa-chevron-left"></i> 深入浅出vue.js学习笔记第六天
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+      <div>
+  
+    <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>感谢您的阅读-------------</div>
+    
+</div>
+
+  
+</div>
+
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    
+  <div class="comments">
+    <div id="lv-container" data-id="city" data-uid="MTAyMC81MTEwOC8yNzU4OQ=="></div>
+  </div>
+  
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#学习JavaScript数据结构与算法第一天"><span class="nav-text">学习JavaScript数据结构与算法第一天</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#第一章-JavaScript简介"><span class="nav-text">第一章 JavaScript简介</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-null表示变量没有值，undefined表示变量已被声明，但尚未赋值。"><span class="nav-text">1.null表示变量没有值，undefined表示变量已被声明，但尚未赋值。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-作用域是指，在编写的算法函数中，我们能访问变量-在使用函数作用域时，也可以是一个函数-的地方。有局部变量和全局变量两种。"><span class="nav-text">2.作用域是指，在编写的算法函数中，我们能访问变量(在使用函数作用域时，也可以是一个函数)的地方。有局部变量和全局变量两种。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-在JavaScript中有两种数据类型"><span class="nav-text">3.在JavaScript中有两种数据类型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-new-Boolean-false-会被转化为true，因为对象始终转换为布尔值true"><span class="nav-text">4.new Boolean(false)会被转化为true，因为对象始终转换为布尔值true</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-toNumber方法对于undefined类型返回的结果为NaN。toPrimitive对于对象类型，如果对象的valueOf方法的结果是原始值，返回原始值；如果对象的toString方法返回原始值，就返回这个值；其他情况都返回一个错误。"><span class="nav-text">5.toNumber方法对于undefined类型返回的结果为NaN。toPrimitive对于对象类型，如果对象的valueOf方法的结果是原始值，返回原始值；如果对象的toString方法返回原始值，就返回这个值；其他情况都返回一个错误。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-console-log-‘packt’-true-和console-log-‘packt’-false-都会输出false。"><span class="nav-text">6.console.log(‘packt’ &#x3D;&#x3D; true)和console.log(‘packt’ &#x3D;&#x3D; false)都会输出false。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7-运算符对于对象类型的比较，只有两者引用同一个对象，才会返回true。两者只是有相同的键值对不算引用同一个对象。"><span class="nav-text">7.&#x3D;&#x3D;&#x3D;运算符对于对象类型的比较，只有两者引用同一个对象，才会返回true。两者只是有相同的键值对不算引用同一个对象。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#8-构建构造函数时，在prototype上定义函数时，该函数只会创建一次，在所有实例中共享。如果在构造函数的定义里声明，则在每个实例都会创建自己的函数副本。使用prototype方法可以节约内存和降低实例化的开销。不过prototype方法只能声明public函数和属性，而构造函数定义可以声明只在该构造函数内部访问的private函数和属性。"><span class="nav-text">8.构建构造函数时，在prototype上定义函数时，该函数只会创建一次，在所有实例中共享。如果在构造函数的定义里声明，则在每个实例都会创建自己的函数副本。使用prototype方法可以节约内存和降低实例化的开销。不过prototype方法只能声明public函数和属性，而构造函数定义可以声明只在该构造函数内部访问的private函数和属性。</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第二章-ECMAScript和TypeScript概述"><span class="nav-text">第二章 ECMAScript和TypeScript概述</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-ECMA是一个将信息标准化的组织，JavaScript被提交到ECMA进行标准化，由此诞生了一个新的语言标准，也就是我们所知道的ECMAScript。JavaScript是该标准-最流行-的一个实现。"><span class="nav-text">1.ECMA是一个将信息标准化的组织，JavaScript被提交到ECMA进行标准化，由此诞生了一个新的语言标准，也就是我们所知道的ECMAScript。JavaScript是该标准(最流行)的一个实现。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-我们可以开启浏览器的实验性JavaScript功能来使用ES6的新特性。可以通过开启Experimental-JavaScript标志来使用这一功能。"><span class="nav-text">2.我们可以开启浏览器的实验性JavaScript功能来使用ES6的新特性。可以通过开启Experimental JavaScript标志来使用这一功能。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-模板字面量用一对-包裹。要插入变量的值，只要把变量放在-里就可以了，就像例子中的book-name。模板字面量也可以用于多行的字符串，再也不需要用-n了。"><span class="nav-text">3.模板字面量用一对&#96;包裹。要插入变量的值，只要把变量放在${}里就可以了，就像例子中的book.name。模板字面量也可以用于多行的字符串，再也不需要用\n了。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-在箭头函数中，如果函数不接受任何参数，我们就使用一对空的圆括号。"><span class="nav-text">4.在箭头函数中，如果函数不接受任何参数，我们就使用一对空的圆括号。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-在ES6中，函数的参数还可以定义默认值，展开运算符-…-也可以代替arguments，当作剩余参数使用。"><span class="nav-text">5.在ES6中，函数的参数还可以定义默认值，展开运算符(…)也可以代替arguments，当作剩余参数使用。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-假设模块中只有一个成员，而且需要将其导出。可以使用export-default关键字将其导出。在这种情况下，我们不需要将类名包含在花括号-中。只在模块有多个成员被导出时使用花括号。"><span class="nav-text">6.假设模块中只有一个成员，而且需要将其导出。可以使用export default关键字将其导出。在这种情况下，我们不需要将类名包含在花括号({})中。只在模块有多个成员被导出时使用花括号。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7-TypeScript是一个开源的、渐进式包含类型的JavaScript超集。它的主要功能之一是为JavaScript变量提供类型支持。使用tsc命令将ts文件编译成js文件时，即使在终端输出了错误信息-实际上是警告，而不是错误-，TypeScript编译器还是会生成ES5代码。这表明尽管TypeScript在编译时进行了类型和错误检测，但并不会阻止编译器生成JavaScript代码。"><span class="nav-text">7.TypeScript是一个开源的、渐进式包含类型的JavaScript超集。它的主要功能之一是为JavaScript变量提供类型支持。使用tsc命令将ts文件编译成js文件时，即使在终端输出了错误信息(实际上是警告，而不是错误)，TypeScript编译器还是会生成ES5代码。这表明尽管TypeScript在编译时进行了类型和错误检测，但并不会阻止编译器生成JavaScript代码。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#8-TypeScript允许我们给变量设置一个类型。同时TypeScript也支持类型推断机制，也就是说TypeScript会根据为变量赋的值自动给该变量设置一个类型。如果声明了一个变量但没有设置其初始值，推荐为其设置一个类型。如果没有为变量设置类型，它的类型会被自动设置为any，意思是可以接受任何值，就像在普通JavaScript中一样。"><span class="nav-text">8.TypeScript允许我们给变量设置一个类型。同时TypeScript也支持类型推断机制，也就是说TypeScript会根据为变量赋的值自动给该变量设置一个类型。如果声明了一个变量但没有设置其初始值，推荐为其设置一个类型。如果没有为变量设置类型，它的类型会被自动设置为any，意思是可以接受任何值，就像在普通JavaScript中一样。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#9-在TypeScript中，有两种接口的概念。第一种就像给变量设置一个类型，第一种TypeScript接口的概念是把接口看作一个实际的东西。它是对一个对象必须包含的属性和方法的描述。TypeScript有一个名为鸭子类型的概念：如果它看起来像鸭子，像鸭子一样游泳，像鸭子一样叫，那么他一定是一只鸭子。第二章TypeScript接口的概念和面向对象编程相关，与其他面向对象语言中的概念是一样的。接口就是一份合约。在这份合约里，我们可以定义实现这份合约的类或接口的行为。另一个对数据结构和算法有用的强大TypeScript特性是泛型这一概念，来为接口中定义的行为规定接受的对象的什么类型。"><span class="nav-text">9.在TypeScript中，有两种接口的概念。第一种就像给变量设置一个类型，第一种TypeScript接口的概念是把接口看作一个实际的东西。它是对一个对象必须包含的属性和方法的描述。TypeScript有一个名为鸭子类型的概念：如果它看起来像鸭子，像鸭子一样游泳，像鸭子一样叫，那么他一定是一只鸭子。第二章TypeScript接口的概念和面向对象编程相关，与其他面向对象语言中的概念是一样的。接口就是一份合约。在这份合约里，我们可以定义实现这份合约的类或接口的行为。另一个对数据结构和算法有用的强大TypeScript特性是泛型这一概念，来为接口中定义的行为规定接受的对象的什么类型。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#10-TypeScript提供了一个特殊的功能，允许我们在编译时对代码进行错误检测和类型检测！要开启这个功能只用在全局安装TypeScript，然后再JavaScript文件的第一行添加一句-ts-check。"><span class="nav-text">10.TypeScript提供了一个特殊的功能，允许我们在编译时对代码进行错误检测和类型检测！要开启这个功能只用在全局安装TypeScript，然后再JavaScript文件的第一行添加一句&#x2F;&#x2F;@ts-check。</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第三章-数组"><span class="nav-text">第三章 数组</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-为了实现在数组开头插入元素的需求，首先要腾出数组里第一个元素的位置，把所有的元素向右移动一位。我们可以循环数组中的元素，从最后一位-长度值就是数组的末尾位置-开始，将对应的前一个元素-i-1-的值赋给它-i-，依次处理，最后把我们想要的值赋给第一个位置-索引0-上。"><span class="nav-text">1.为了实现在数组开头插入元素的需求，首先要腾出数组里第一个元素的位置，把所有的元素向右移动一位。我们可以循环数组中的元素，从最后一位(长度值就是数组的末尾位置)开始，将对应的前一个元素(i-1)的值赋给它(i)，依次处理，最后把我们想要的值赋给第一个位置(索引0)上。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-对于JavaScript数组和对象，我们还可以用delete运算符删除数组中的元素，例如delete-numbers-0-。然而，数组位置0的值会变成undefined，也就是说，以上操作等同于numbers-0-undefined。"><span class="nav-text">2.对于JavaScript数组和对象，我们还可以用delete运算符删除数组中的元素，例如delete numbers[0]。然而，数组位置0的值会变成undefined，也就是说，以上操作等同于numbers[0] &#x3D; undefined。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-every方法会迭代数组中的每个元素，知道返回false。some方法和every的行为相反，会迭代数组中的每个元素，直到函数返回true。"><span class="nav-text">3.every方法会迭代数组中的每个元素，知道返回false。some方法和every的行为相反，会迭代数组中的每个元素，直到函数返回true。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-ES6还为Array类增加了一个-iterator属性，需要通过Symbol-iterator来访问。然后，不断调用迭代器的next方法，就能依次得到数组中的值。可以用for循环来迭代所有的值。一旦没有可迭代的值，next-方法就会返回一个value属性为undefined、done属性为true的对象。如果done属性的值为false，就意味着还有可迭代的值。"><span class="nav-text">4.ES6还为Array类增加了一个@@iterator属性，需要通过Symbol.iterator来访问。然后，不断调用迭代器的next方法，就能依次得到数组中的值。可以用for循环来迭代所有的值。一旦没有可迭代的值，next()方法就会返回一个value属性为undefined、done属性为true的对象。如果done属性的值为false，就意味着还有可迭代的值。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-Array-from方法根据已有的数组创建一个新数组，还可以传入一个用来过滤器的函数。"><span class="nav-text">5.Array.from方法根据已有的数组创建一个新数组，还可以传入一个用来过滤器的函数。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-Array-of方法根据传入的参数创建一个新数组，也可以结合展开运算符来用该方法复制已有的数组。"><span class="nav-text">6.Array.of方法根据传入的参数创建一个新数组，也可以结合展开运算符来用该方法复制已有的数组。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7-fill方法用静态值填充数组，还可以指定开始填充的索引，也可以指定结束填充的索引。"><span class="nav-text">7.fill方法用静态值填充数组，还可以指定开始填充的索引，也可以指定结束填充的索引。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#8-copyWithin方法复制数组中的一系列元素到同一数组指定的起始位置。"><span class="nav-text">8.copyWithin方法复制数组中的一系列元素到同一数组指定的起始位置。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#9-数组的sort方法在对数组做排序时，把元素默认成字符串进行相互比较。在JavaScript中做字符串比较的时候，是根据字符对应的ASCII值来比较的。小写字母的ASCII值比大写字母的ASCII大，可以在比较时通过toLowerCase进行转换，排完序大写字母会在前面，如果希望小写字母排在前面，那么需要使用localeCompare方法。"><span class="nav-text">9.数组的sort方法在对数组做排序时，把元素默认成字符串进行相互比较。在JavaScript中做字符串比较的时候，是根据字符对应的ASCII值来比较的。小写字母的ASCII值比大写字母的ASCII大，可以在比较时通过toLowerCase进行转换，排完序大写字母会在前面，如果希望小写字母排在前面，那么需要使用localeCompare方法。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#10-Array的find和findIndex方法接收一个回调函数，搜索一个满足回调函数条件的值，这两者的不同之处在于，find方法返回第一个满足条件的值，findIndex方法则返回这个值在数组里的索引。如果没有满足条件的值，find会返回undefined，而findIndex返回-1。"><span class="nav-text">10.Array的find和findIndex方法接收一个回调函数，搜索一个满足回调函数条件的值，这两者的不同之处在于，find方法返回第一个满足条件的值，findIndex方法则返回这个值在数组里的索引。如果没有满足条件的值，find会返回undefined，而findIndex返回-1。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#11-数组的includes方法，会在数组里存在某个元素时返回true，否则返回false。如果给includes方法传入一个起始索引，搜索会从索引指定的位置开始。"><span class="nav-text">11.数组的includes方法，会在数组里存在某个元素时返回true，否则返回false。如果给includes方法传入一个起始索引，搜索会从索引指定的位置开始。</span></a></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="丁可"
+      src="/images/touxiang.jpg">
+  <p class="site-author-name" itemprop="name">丁可</p>
+  <div class="site-description" itemprop="description">哪来的勇气我就是不灰心</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">21</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">9</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/DK-frontend" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;DK-frontend" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/504015629@qq.com" title="E-Mail → 504015629@qq.com"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://blog.csdn.net/DK159753" title="CSDN → https:&#x2F;&#x2F;blog.csdn.net&#x2F;DK159753" rel="noopener" target="_blank"><i class="fab fa-crosshairs fa-fw"></i>CSDN</a>
+      </span>
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+      <iframe allow="autoplay" frameborder="no" border="0" marginwidth="0" marginheight="0" width=330 height=86 src="//music.163.com/outchain/player?type=2&id=1363973661&auto=1&height=66"></iframe>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2020 – 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">丁可</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">156k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">2:22</span>
+</div>
+<div class="theme-info">
+  <div class="powered-by"></div>
+  <span class="post-count">博客全站共67.5k字</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/pjax/pjax.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '#page-configurations',
+    '.content-wrap',
+    '.post-toc-wrap',
+    '.languages',
+    '#pjax'
+  ],
+  switches: {
+    '.post-toc-wrap': Pjax.switches.innerHTML
+  },
+  analytics: false,
+  cacheBust: false,
+  scrollTo : !CONFIG.bookmark.enable
+});
+
+window.addEventListener('pjax:success', () => {
+  document.querySelectorAll('script[data-pjax], script#page-configurations, #pjax script').forEach(element => {
+    var code = element.text || element.textContent || element.innerHTML || '';
+    var parent = element.parentNode;
+    parent.removeChild(element);
+    var script = document.createElement('script');
+    if (element.id) {
+      script.id = element.id;
+    }
+    if (element.className) {
+      script.className = element.className;
+    }
+    if (element.type) {
+      script.type = element.type;
+    }
+    if (element.src) {
+      script.src = element.src;
+      // Force synchronous loading of peripheral JS.
+      script.async = false;
+    }
+    if (element.dataset.pjax !== undefined) {
+      script.dataset.pjax = '';
+    }
+    if (code !== '') {
+      script.appendChild(document.createTextNode(code));
+    }
+    parent.appendChild(script);
+  });
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <div id="pjax">
+  
+
+  
+
+<script>
+NexT.utils.loadComments(document.querySelector('#lv-container'), () => {
+  window.livereOptions = {
+    refer: location.pathname.replace(CONFIG.root, '').replace('index.html', '')
+  };
+  (function(d, s) {
+    var j, e = d.getElementsByTagName(s)[0];
+    if (typeof LivereTower === 'function') { return; }
+    j = d.createElement(s);
+    j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+    j.async = true;
+    e.parentNode.insertBefore(j, e);
+  })(document, 'script');
+});
+</script>
+
+    </div>
+  
+   <canvas class="fireworks" style="position: fixed;left: 0;top: 0;z-index: 1; pointer-events: none;" ></canvas> 
+   <script type="text/javascript" src="//cdn.bootcss.com/animejs/2.2.0/anime.min.js"></script> 
+   <script type="text/javascript" src="/js/src/fireworks.js"></script>
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"model":{"jsonPath":"/live2dw/assets/wanko.model.json"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":false},"log":false});</script></body>
+</html>
+
+
