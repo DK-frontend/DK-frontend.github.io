@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+ <!--pjax：防止跳转页面音乐暂停-->
+  <script src="https://cdn.jsdelivr.net/npm/pjax@0.2.8/pjax.js"></script> 
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<script src="//cdn.bootcss.com/pace/1.0.2/pace.min.js"></script>
+<link href="//cdn.bootcss.com/pace/1.0.2/themes/pink/pace-theme-flash.css" rel="stylesheet">
+<style>
+    .pace .pace-progress {
+        background: #1E92FB; /*进度条颜色*/
+        height: 3px;
+    }
+    .pace .pace-progress-inner {
+         box-shadow: 0 0 10px #1E92FB, 0 0 5px     #1E92FB; /*阴影颜色*/
+    }
+    .pace .pace-activity {
+        border-top-color: #1E92FB;    /*上边框颜色*/
+        border-left-color: #1E92FB;    /*左边框颜色*/
+    }
+</style>
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-big-counter.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yoursite.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="学习JavaScript数据结构与算法第一天第四章 栈1.栈是一种遵从后进先出(LIFO)原则的有序集合。新添加或待删除的元素都保存在栈的同一端，称作栈顶，另一端就叫栈底。在栈里，新元素都靠近栈顶，旧元素都接近栈底。2.创建一个栈需要声明一些方法： push(element(s)):添加一个(或几个)新元素到栈顶 pop():移除栈顶的元素，同时返回被移除的元素 peek():返回栈顶的元素，不对">
+<meta property="og:type" content="article">
+<meta property="og:title" content="学习JavaScript数据结构与算法第一天">
+<meta property="og:url" content="http://yoursite.com/2021/02/09/dataStructurestwo/index.html">
+<meta property="og:site_name" content="DKの博客">
+<meta property="og:description" content="学习JavaScript数据结构与算法第一天第四章 栈1.栈是一种遵从后进先出(LIFO)原则的有序集合。新添加或待删除的元素都保存在栈的同一端，称作栈顶，另一端就叫栈底。在栈里，新元素都靠近栈顶，旧元素都接近栈底。2.创建一个栈需要声明一些方法： push(element(s)):添加一个(或几个)新元素到栈顶 pop():移除栈顶的元素，同时返回被移除的元素 peek():返回栈顶的元素，不对">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-02-09T11:30:59.000Z">
+<meta property="article:modified_time" content="2021-02-09T12:34:46.231Z">
+<meta property="article:author" content="丁可">
+<meta property="article:tag" content="数据结构">
+<meta property="article:tag" content="算法">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://yoursite.com/2021/02/09/dataStructurestwo/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>学习JavaScript数据结构与算法第一天 | DKの博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+    <a href="https://github.com/DK-frontend" target="_blank" rel="noopener" class="github-corner" aria-label="View source on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" style="fill:#151513; color:#fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a><style>.github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}</style>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">DKの博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">记录前端学习的历程</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">9</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">3</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">22</span></a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/02/09/dataStructurestwo/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/touxiang.jpg">
+      <meta itemprop="name" content="丁可">
+      <meta itemprop="description" content="哪来的勇气我就是不灰心">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="DKの博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          学习JavaScript数据结构与算法第一天
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2021-02-09 19:30:59 / 修改时间：20:34:46" itemprop="dateCreated datePublished" datetime="2021-02-09T19:30:59+08:00">2021-02-09</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">学习笔记</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>2.3k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>2 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="学习JavaScript数据结构与算法第一天"><a href="#学习JavaScript数据结构与算法第一天" class="headerlink" title="学习JavaScript数据结构与算法第一天"></a>学习JavaScript数据结构与算法第一天</h1><h2 id="第四章-栈"><a href="#第四章-栈" class="headerlink" title="第四章 栈"></a>第四章 栈</h2><h3 id="1-栈是一种遵从后进先出-LIFO-原则的有序集合。新添加或待删除的元素都保存在栈的同一端，称作栈顶，另一端就叫栈底。在栈里，新元素都靠近栈顶，旧元素都接近栈底。"><a href="#1-栈是一种遵从后进先出-LIFO-原则的有序集合。新添加或待删除的元素都保存在栈的同一端，称作栈顶，另一端就叫栈底。在栈里，新元素都靠近栈顶，旧元素都接近栈底。" class="headerlink" title="1.栈是一种遵从后进先出(LIFO)原则的有序集合。新添加或待删除的元素都保存在栈的同一端，称作栈顶，另一端就叫栈底。在栈里，新元素都靠近栈顶，旧元素都接近栈底。"></a>1.栈是一种遵从后进先出(LIFO)原则的有序集合。新添加或待删除的元素都保存在栈的同一端，称作栈顶，另一端就叫栈底。在栈里，新元素都靠近栈顶，旧元素都接近栈底。</h3><h3 id="2-创建一个栈需要声明一些方法："><a href="#2-创建一个栈需要声明一些方法：" class="headerlink" title="2.创建一个栈需要声明一些方法："></a>2.创建一个栈需要声明一些方法：</h3><ul>
+<li>push(element(s)):添加一个(或几个)新元素到栈顶</li>
+<li>pop():移除栈顶的元素，同时返回被移除的元素</li>
+<li>peek():返回栈顶的元素，不对栈做任何修改(该方法不会移除栈顶的元素，仅仅返回它)。</li>
+<li>isEmpty():如果栈里没有任何元素就返回true，否则返回false</li>
+<li>clear():移除栈里的所有元素</li>
+<li>size():返回栈里元素的个数。该方法和数组的length属性很类似</li>
+</ul>
+<h3 id="3-数组是元素的一个有序集合，为了保证元素排列有序，它会占用更多的内存空间。"><a href="#3-数组是元素的一个有序集合，为了保证元素排列有序，它会占用更多的内存空间。" class="headerlink" title="3.数组是元素的一个有序集合，为了保证元素排列有序，它会占用更多的内存空间。"></a>3.数组是元素的一个有序集合，为了保证元素排列有序，它会占用更多的内存空间。</h3><h3 id="4-使用JavaScript来实现私有属性的方法有以下几种"><a href="#4-使用JavaScript来实现私有属性的方法有以下几种" class="headerlink" title="4.使用JavaScript来实现私有属性的方法有以下几种:"></a>4.使用JavaScript来实现私有属性的方法有以下几种:</h3><ul>
+<li>下划线命名约定就是在属性名称之前加一个下划线(_)。不过这种方式只是一种约定，并不能保护数据，而且只能依赖于使用我们代码的开发者所具备的常识。</li>
+<li>ES2015新增了一种叫作Symbol的基本类型，它是不可变的，可以用作对象的属性。这种方法创建了一个假的私有属性，因为ES2015新增的Object.getOwnPropertySymbol方法能够取到类里面声明的所有Symbol属性。</li>
+<li>有一种数据类型可以确保属性是私有的，这就是WeakMap。采用这种方法，代码的可读性不强，而且在扩展该类时无法继承私有属性。</li>
+<li>还可以通过在属性前添加井号(#)作为前缀来声明私有属性。这种行为和WeakMap中的私有属性很相似。<a id="more"></a>
+<h2 id="第五章-队列和双端队列"><a href="#第五章-队列和双端队列" class="headerlink" title="第五章 队列和双端队列"></a>第五章 队列和双端队列</h2><h3 id="1-队列是遵循先进先出-FIFO-也成为先来先服务-原则的一组有序的项。队列在尾部添加新元素，并从顶部移除元素。最新添加的元素必须排在队列的末尾。"><a href="#1-队列是遵循先进先出-FIFO-也成为先来先服务-原则的一组有序的项。队列在尾部添加新元素，并从顶部移除元素。最新添加的元素必须排在队列的末尾。" class="headerlink" title="1.队列是遵循先进先出(FIFO,也成为先来先服务)原则的一组有序的项。队列在尾部添加新元素，并从顶部移除元素。最新添加的元素必须排在队列的末尾。"></a>1.队列是遵循先进先出(FIFO,也成为先来先服务)原则的一组有序的项。队列在尾部添加新元素，并从顶部移除元素。最新添加的元素必须排在队列的末尾。</h3><h3 id="2-创建一个队列需要声明一些队列可用的方法"><a href="#2-创建一个队列需要声明一些队列可用的方法" class="headerlink" title="2.创建一个队列需要声明一些队列可用的方法:"></a>2.创建一个队列需要声明一些队列可用的方法:</h3></li>
+<li>enqueue(element(s)):向队列尾部添加一个(或多个)新的项</li>
+<li>dequeue():移除队列的第一项(即排在队列最前面的项)并返回被移除的元素</li>
+<li>peek():返回队列中第一个元素——最先被添加，也将是最先被移除的元素。队列不做任何变动(不移除元素，只返回元素信息——与Stack类的peek方法非常相似)。</li>
+<li>isEmpty():如果队列中不包含任何元素，返回true，否则返回false。</li>
+<li>size():返回队列包含的元素个数，与数组的length属性类似</li>
+</ul>
+<h3 id="3-双端队列-deque-或称double-ended-queue-是一种允许我们同时从前端和后端添加和移除元素的特殊队列。"><a href="#3-双端队列-deque-或称double-ended-queue-是一种允许我们同时从前端和后端添加和移除元素的特殊队列。" class="headerlink" title="3.双端队列(deque,或称double-ended queue)是一种允许我们同时从前端和后端添加和移除元素的特殊队列。"></a>3.双端队列(deque,或称double-ended queue)是一种允许我们同时从前端和后端添加和移除元素的特殊队列。</h3><h3 id="4-创建一个双端队列需要声明以下方法"><a href="#4-创建一个双端队列需要声明以下方法" class="headerlink" title="4.创建一个双端队列需要声明以下方法:"></a>4.创建一个双端队列需要声明以下方法:</h3><ul>
+<li>addFront(element):该方法在双端队列前端添加新的元素</li>
+<li>addBack(element):该方法在双端队列后端添加新的元素(实现方法和Queue类中的enqueue方法相同)</li>
+<li>removeFront():该方法会从双端队列前端移除第一个元素(实现方法和Queue类中的dequeue方法相同)</li>
+<li>removeBack():该方法会从双端队列后端移除第一个元素(实现方法和Stack类中的pop方法一样)</li>
+<li>peekFront():该方法返回双端队列前端的第一个元素(实现方法和Queue类中的peek方法一样)</li>
+<li>peekBack():该方法返回双端队列后端的第一个元素(实现方法和Stack类中的peek方法一样)</li>
+</ul>
+<h2 id="第六章-链表"><a href="#第六章-链表" class="headerlink" title="第六章 链表"></a>第六章 链表</h2><h3 id="1-链表存储有序的元素集合，但不同于数组，链表中的元素在内存中并不是连续放置的。每个元素由一个存储元素本身的节点和一个指向下一个元素的引用-也称指针或链接-组成。"><a href="#1-链表存储有序的元素集合，但不同于数组，链表中的元素在内存中并不是连续放置的。每个元素由一个存储元素本身的节点和一个指向下一个元素的引用-也称指针或链接-组成。" class="headerlink" title="1.链表存储有序的元素集合，但不同于数组，链表中的元素在内存中并不是连续放置的。每个元素由一个存储元素本身的节点和一个指向下一个元素的引用(也称指针或链接)组成。"></a>1.链表存储有序的元素集合，但不同于数组，链表中的元素在内存中并不是连续放置的。每个元素由一个存储元素本身的节点和一个指向下一个元素的引用(也称指针或链接)组成。</h3><h3 id="2-相对于传统的数组，链表的一个好处在于，添加或移除元素的时候不需要移动其他元素。然而，链表需要使用指针，因此实现链表时需要额外注意。在数组中，我们可以直接访问任何位置的任何元素，而要想访问链表中间的一个元素，则需要从起点-表头-开始迭代链表直接找到所需的元素"><a href="#2-相对于传统的数组，链表的一个好处在于，添加或移除元素的时候不需要移动其他元素。然而，链表需要使用指针，因此实现链表时需要额外注意。在数组中，我们可以直接访问任何位置的任何元素，而要想访问链表中间的一个元素，则需要从起点-表头-开始迭代链表直接找到所需的元素" class="headerlink" title="2.相对于传统的数组，链表的一个好处在于，添加或移除元素的时候不需要移动其他元素。然而，链表需要使用指针，因此实现链表时需要额外注意。在数组中，我们可以直接访问任何位置的任何元素，而要想访问链表中间的一个元素，则需要从起点(表头)开始迭代链表直接找到所需的元素"></a>2.相对于传统的数组，链表的一个好处在于，添加或移除元素的时候不需要移动其他元素。然而，链表需要使用指针，因此实现链表时需要额外注意。在数组中，我们可以直接访问任何位置的任何元素，而要想访问链表中间的一个元素，则需要从起点(表头)开始迭代链表直接找到所需的元素</h3><h3 id="3-创建一个链表需要实现这些方法"><a href="#3-创建一个链表需要实现这些方法" class="headerlink" title="3.创建一个链表需要实现这些方法:"></a>3.创建一个链表需要实现这些方法:</h3><ul>
+<li>push(element):向链表尾部添加一个新元素</li>
+<li>insert(element,position):向链表的特定位置插入一个新元素</li>
+<li>getElementAt(index):返回链表中特定位置的元素。如果链表中不存在这样的元素，则返回undefined</li>
+<li>remove(element):从链表中移除一个元素</li>
+<li>indexOf(element):返回元素在链表中的索引。如果链表中没有该元素则返回-1</li>
+<li>removeAt(position):从链表的特定位置移除一个元素</li>
+<li>isEmpty():如果链表中不包含任何元素，返回true，如果链表长度大于0则返回false。</li>
+<li>size():返回链表包含的元素的个数，与数组的length属性类似</li>
+<li>toString():返回表示整个链表的字符串。由于列表项使用了Node类，就需要重写继承自JavaScript对象默认的toString方法，让其只输出元素的值</li>
+</ul>
+<h3 id="4-双向链表和普通链表的区别在于，在链表中，一个节点只有链向下一个节点的链接；而在双向链表中，链接是双向的-一个链向下一个元素，另一个链向前一个元素"><a href="#4-双向链表和普通链表的区别在于，在链表中，一个节点只有链向下一个节点的链接；而在双向链表中，链接是双向的-一个链向下一个元素，另一个链向前一个元素" class="headerlink" title="4.双向链表和普通链表的区别在于，在链表中，一个节点只有链向下一个节点的链接；而在双向链表中，链接是双向的:一个链向下一个元素，另一个链向前一个元素"></a>4.双向链表和普通链表的区别在于，在链表中，一个节点只有链向下一个节点的链接；而在双向链表中，链接是双向的:一个链向下一个元素，另一个链向前一个元素</h3><h3 id="5-双向链表在搜索时，可以通过判断position的值来进行优化，如果position大于length-2，就最好从尾部开始迭代，而不是从头开始-这样就能迭代双向链表中更少的元素"><a href="#5-双向链表在搜索时，可以通过判断position的值来进行优化，如果position大于length-2，就最好从尾部开始迭代，而不是从头开始-这样就能迭代双向链表中更少的元素" class="headerlink" title="5.双向链表在搜索时，可以通过判断position的值来进行优化，如果position大于length/2，就最好从尾部开始迭代，而不是从头开始(这样就能迭代双向链表中更少的元素)"></a>5.双向链表在搜索时，可以通过判断position的值来进行优化，如果position大于length/2，就最好从尾部开始迭代，而不是从头开始(这样就能迭代双向链表中更少的元素)</h3><h3 id="6-循环链表可以像链表一样只有单向引用，也可以像双向链表一样有双向引用。循环链表和链表之间唯一的区别在于，最后一个元素指向下一个元素的指针-tail-next-不是引用undefined，而是指向第一个元素-head"><a href="#6-循环链表可以像链表一样只有单向引用，也可以像双向链表一样有双向引用。循环链表和链表之间唯一的区别在于，最后一个元素指向下一个元素的指针-tail-next-不是引用undefined，而是指向第一个元素-head" class="headerlink" title="6.循环链表可以像链表一样只有单向引用，也可以像双向链表一样有双向引用。循环链表和链表之间唯一的区别在于，最后一个元素指向下一个元素的指针(tail.next)不是引用undefined，而是指向第一个元素(head)"></a>6.循环链表可以像链表一样只有单向引用，也可以像双向链表一样有双向引用。循环链表和链表之间唯一的区别在于，最后一个元素指向下一个元素的指针(tail.next)不是引用undefined，而是指向第一个元素(head)</h3><h3 id="7-双向循环链表有指向head元素的tail-next和指向tail元素的head-prev"><a href="#7-双向循环链表有指向head元素的tail-next和指向tail元素的head-prev" class="headerlink" title="7.双向循环链表有指向head元素的tail.next和指向tail元素的head.prev"></a>7.双向循环链表有指向head元素的tail.next和指向tail元素的head.prev</h3>
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div>您的支持是我最大的动力</div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/weixin.png" alt="丁可 微信支付">
+        <p>微信支付</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/images/zhifubao.png" alt="丁可 支付宝">
+        <p>支付宝</p>
+      </div>
+
+  </div>
+</div>
+
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>丁可
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://yoursite.com/2021/02/09/dataStructurestwo/" title="学习JavaScript数据结构与算法第一天">http://yoursite.com/2021/02/09/dataStructurestwo/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" rel="tag"><i class="fa fa-tag"></i> 数据结构</a>
+              <a href="/tags/%E7%AE%97%E6%B3%95/" rel="tag"><i class="fa fa-tag"></i> 算法</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/02/08/dataStructuresone/" rel="prev" title="学习JavaScript数据结构与算法第一天">
+      <i class="fa fa-chevron-left"></i> 学习JavaScript数据结构与算法第一天
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+      <div>
+  
+    <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>感谢您的阅读-------------</div>
+    
+</div>
+
+  
+</div>
+
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    
+  <div class="comments">
+    <div id="lv-container" data-id="city" data-uid="MTAyMC81MTEwOC8yNzU4OQ=="></div>
+  </div>
+  
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#学习JavaScript数据结构与算法第一天"><span class="nav-text">学习JavaScript数据结构与算法第一天</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#第四章-栈"><span class="nav-text">第四章 栈</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-栈是一种遵从后进先出-LIFO-原则的有序集合。新添加或待删除的元素都保存在栈的同一端，称作栈顶，另一端就叫栈底。在栈里，新元素都靠近栈顶，旧元素都接近栈底。"><span class="nav-text">1.栈是一种遵从后进先出(LIFO)原则的有序集合。新添加或待删除的元素都保存在栈的同一端，称作栈顶，另一端就叫栈底。在栈里，新元素都靠近栈顶，旧元素都接近栈底。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-创建一个栈需要声明一些方法："><span class="nav-text">2.创建一个栈需要声明一些方法：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-数组是元素的一个有序集合，为了保证元素排列有序，它会占用更多的内存空间。"><span class="nav-text">3.数组是元素的一个有序集合，为了保证元素排列有序，它会占用更多的内存空间。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-使用JavaScript来实现私有属性的方法有以下几种"><span class="nav-text">4.使用JavaScript来实现私有属性的方法有以下几种:</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第五章-队列和双端队列"><span class="nav-text">第五章 队列和双端队列</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-队列是遵循先进先出-FIFO-也成为先来先服务-原则的一组有序的项。队列在尾部添加新元素，并从顶部移除元素。最新添加的元素必须排在队列的末尾。"><span class="nav-text">1.队列是遵循先进先出(FIFO,也成为先来先服务)原则的一组有序的项。队列在尾部添加新元素，并从顶部移除元素。最新添加的元素必须排在队列的末尾。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-创建一个队列需要声明一些队列可用的方法"><span class="nav-text">2.创建一个队列需要声明一些队列可用的方法:</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-双端队列-deque-或称double-ended-queue-是一种允许我们同时从前端和后端添加和移除元素的特殊队列。"><span class="nav-text">3.双端队列(deque,或称double-ended queue)是一种允许我们同时从前端和后端添加和移除元素的特殊队列。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-创建一个双端队列需要声明以下方法"><span class="nav-text">4.创建一个双端队列需要声明以下方法:</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第六章-链表"><span class="nav-text">第六章 链表</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-链表存储有序的元素集合，但不同于数组，链表中的元素在内存中并不是连续放置的。每个元素由一个存储元素本身的节点和一个指向下一个元素的引用-也称指针或链接-组成。"><span class="nav-text">1.链表存储有序的元素集合，但不同于数组，链表中的元素在内存中并不是连续放置的。每个元素由一个存储元素本身的节点和一个指向下一个元素的引用(也称指针或链接)组成。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-相对于传统的数组，链表的一个好处在于，添加或移除元素的时候不需要移动其他元素。然而，链表需要使用指针，因此实现链表时需要额外注意。在数组中，我们可以直接访问任何位置的任何元素，而要想访问链表中间的一个元素，则需要从起点-表头-开始迭代链表直接找到所需的元素"><span class="nav-text">2.相对于传统的数组，链表的一个好处在于，添加或移除元素的时候不需要移动其他元素。然而，链表需要使用指针，因此实现链表时需要额外注意。在数组中，我们可以直接访问任何位置的任何元素，而要想访问链表中间的一个元素，则需要从起点(表头)开始迭代链表直接找到所需的元素</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-创建一个链表需要实现这些方法"><span class="nav-text">3.创建一个链表需要实现这些方法:</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-双向链表和普通链表的区别在于，在链表中，一个节点只有链向下一个节点的链接；而在双向链表中，链接是双向的-一个链向下一个元素，另一个链向前一个元素"><span class="nav-text">4.双向链表和普通链表的区别在于，在链表中，一个节点只有链向下一个节点的链接；而在双向链表中，链接是双向的:一个链向下一个元素，另一个链向前一个元素</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-双向链表在搜索时，可以通过判断position的值来进行优化，如果position大于length-2，就最好从尾部开始迭代，而不是从头开始-这样就能迭代双向链表中更少的元素"><span class="nav-text">5.双向链表在搜索时，可以通过判断position的值来进行优化，如果position大于length&#x2F;2，就最好从尾部开始迭代，而不是从头开始(这样就能迭代双向链表中更少的元素)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-循环链表可以像链表一样只有单向引用，也可以像双向链表一样有双向引用。循环链表和链表之间唯一的区别在于，最后一个元素指向下一个元素的指针-tail-next-不是引用undefined，而是指向第一个元素-head"><span class="nav-text">6.循环链表可以像链表一样只有单向引用，也可以像双向链表一样有双向引用。循环链表和链表之间唯一的区别在于，最后一个元素指向下一个元素的指针(tail.next)不是引用undefined，而是指向第一个元素(head)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7-双向循环链表有指向head元素的tail-next和指向tail元素的head-prev"><span class="nav-text">7.双向循环链表有指向head元素的tail.next和指向tail元素的head.prev</span></a></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="丁可"
+      src="/images/touxiang.jpg">
+  <p class="site-author-name" itemprop="name">丁可</p>
+  <div class="site-description" itemprop="description">哪来的勇气我就是不灰心</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">22</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">9</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/DK-frontend" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;DK-frontend" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/504015629@qq.com" title="E-Mail → 504015629@qq.com"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://blog.csdn.net/DK159753" title="CSDN → https:&#x2F;&#x2F;blog.csdn.net&#x2F;DK159753" rel="noopener" target="_blank"><i class="fab fa-crosshairs fa-fw"></i>CSDN</a>
+      </span>
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+      <iframe allow="autoplay" frameborder="no" border="0" marginwidth="0" marginheight="0" width=330 height=86 src="//music.163.com/outchain/player?type=2&id=1363973661&auto=1&height=66"></iframe>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2020 – 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">丁可</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">158k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">2:24</span>
+</div>
+<div class="theme-info">
+  <div class="powered-by"></div>
+  <span class="post-count">博客全站共69.1k字</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/pjax/pjax.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '#page-configurations',
+    '.content-wrap',
+    '.post-toc-wrap',
+    '.languages',
+    '#pjax'
+  ],
+  switches: {
+    '.post-toc-wrap': Pjax.switches.innerHTML
+  },
+  analytics: false,
+  cacheBust: false,
+  scrollTo : !CONFIG.bookmark.enable
+});
+
+window.addEventListener('pjax:success', () => {
+  document.querySelectorAll('script[data-pjax], script#page-configurations, #pjax script').forEach(element => {
+    var code = element.text || element.textContent || element.innerHTML || '';
+    var parent = element.parentNode;
+    parent.removeChild(element);
+    var script = document.createElement('script');
+    if (element.id) {
+      script.id = element.id;
+    }
+    if (element.className) {
+      script.className = element.className;
+    }
+    if (element.type) {
+      script.type = element.type;
+    }
+    if (element.src) {
+      script.src = element.src;
+      // Force synchronous loading of peripheral JS.
+      script.async = false;
+    }
+    if (element.dataset.pjax !== undefined) {
+      script.dataset.pjax = '';
+    }
+    if (code !== '') {
+      script.appendChild(document.createTextNode(code));
+    }
+    parent.appendChild(script);
+  });
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <div id="pjax">
+  
+
+  
+
+<script>
+NexT.utils.loadComments(document.querySelector('#lv-container'), () => {
+  window.livereOptions = {
+    refer: location.pathname.replace(CONFIG.root, '').replace('index.html', '')
+  };
+  (function(d, s) {
+    var j, e = d.getElementsByTagName(s)[0];
+    if (typeof LivereTower === 'function') { return; }
+    j = d.createElement(s);
+    j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+    j.async = true;
+    e.parentNode.insertBefore(j, e);
+  })(document, 'script');
+});
+</script>
+
+    </div>
+  
+   <canvas class="fireworks" style="position: fixed;left: 0;top: 0;z-index: 1; pointer-events: none;" ></canvas> 
+   <script type="text/javascript" src="//cdn.bootcss.com/animejs/2.2.0/anime.min.js"></script> 
+   <script type="text/javascript" src="/js/src/fireworks.js"></script>
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"model":{"jsonPath":"/live2dw/assets/wanko.model.json"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":false},"log":false});</script></body>
+</html>
+
+

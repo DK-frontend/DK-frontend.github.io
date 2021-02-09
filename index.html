@@ -154,7 +154,7 @@
   </li>
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">21</span></a>
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">22</span></a>
 
   </li>
   </ul>
@@ -180,6 +180,107 @@
 
           <div class="content index posts-expand">
             
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/02/09/dataStructurestwo/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/touxiang.jpg">
+      <meta itemprop="name" content="丁可">
+      <meta itemprop="description" content="哪来的勇气我就是不灰心">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="DKの博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/02/09/dataStructurestwo/" class="post-title-link" itemprop="url">学习JavaScript数据结构与算法第一天</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2021-02-09 19:30:59 / 修改时间：20:34:46" itemprop="dateCreated datePublished" datetime="2021-02-09T19:30:59+08:00">2021-02-09</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">学习笔记</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>2.3k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>2 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="学习JavaScript数据结构与算法第一天"><a href="#学习JavaScript数据结构与算法第一天" class="headerlink" title="学习JavaScript数据结构与算法第一天"></a>学习JavaScript数据结构与算法第一天</h1><h2 id="第四章-栈"><a href="#第四章-栈" class="headerlink" title="第四章 栈"></a>第四章 栈</h2><h3 id="1-栈是一种遵从后进先出-LIFO-原则的有序集合。新添加或待删除的元素都保存在栈的同一端，称作栈顶，另一端就叫栈底。在栈里，新元素都靠近栈顶，旧元素都接近栈底。"><a href="#1-栈是一种遵从后进先出-LIFO-原则的有序集合。新添加或待删除的元素都保存在栈的同一端，称作栈顶，另一端就叫栈底。在栈里，新元素都靠近栈顶，旧元素都接近栈底。" class="headerlink" title="1.栈是一种遵从后进先出(LIFO)原则的有序集合。新添加或待删除的元素都保存在栈的同一端，称作栈顶，另一端就叫栈底。在栈里，新元素都靠近栈顶，旧元素都接近栈底。"></a>1.栈是一种遵从后进先出(LIFO)原则的有序集合。新添加或待删除的元素都保存在栈的同一端，称作栈顶，另一端就叫栈底。在栈里，新元素都靠近栈顶，旧元素都接近栈底。</h3><h3 id="2-创建一个栈需要声明一些方法："><a href="#2-创建一个栈需要声明一些方法：" class="headerlink" title="2.创建一个栈需要声明一些方法："></a>2.创建一个栈需要声明一些方法：</h3><ul>
+<li>push(element(s)):添加一个(或几个)新元素到栈顶</li>
+<li>pop():移除栈顶的元素，同时返回被移除的元素</li>
+<li>peek():返回栈顶的元素，不对栈做任何修改(该方法不会移除栈顶的元素，仅仅返回它)。</li>
+<li>isEmpty():如果栈里没有任何元素就返回true，否则返回false</li>
+<li>clear():移除栈里的所有元素</li>
+<li>size():返回栈里元素的个数。该方法和数组的length属性很类似</li>
+</ul>
+<h3 id="3-数组是元素的一个有序集合，为了保证元素排列有序，它会占用更多的内存空间。"><a href="#3-数组是元素的一个有序集合，为了保证元素排列有序，它会占用更多的内存空间。" class="headerlink" title="3.数组是元素的一个有序集合，为了保证元素排列有序，它会占用更多的内存空间。"></a>3.数组是元素的一个有序集合，为了保证元素排列有序，它会占用更多的内存空间。</h3><h3 id="4-使用JavaScript来实现私有属性的方法有以下几种"><a href="#4-使用JavaScript来实现私有属性的方法有以下几种" class="headerlink" title="4.使用JavaScript来实现私有属性的方法有以下几种:"></a>4.使用JavaScript来实现私有属性的方法有以下几种:</h3><ul>
+<li>下划线命名约定就是在属性名称之前加一个下划线(_)。不过这种方式只是一种约定，并不能保护数据，而且只能依赖于使用我们代码的开发者所具备的常识。</li>
+<li>ES2015新增了一种叫作Symbol的基本类型，它是不可变的，可以用作对象的属性。这种方法创建了一个假的私有属性，因为ES2015新增的Object.getOwnPropertySymbol方法能够取到类里面声明的所有Symbol属性。</li>
+<li>有一种数据类型可以确保属性是私有的，这就是WeakMap。采用这种方法，代码的可读性不强，而且在扩展该类时无法继承私有属性。</li>
+<li>还可以通过在属性前添加井号(#)作为前缀来声明私有属性。这种行为和WeakMap中的私有属性很相似。
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2021/02/09/dataStructurestwo/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
       
   
   
@@ -1029,101 +1130,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/08/02/redblacktree/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/touxiang.jpg">
-      <meta itemprop="name" content="丁可">
-      <meta itemprop="description" content="哪来的勇气我就是不灰心">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="DKの博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/08/02/redblacktree/" class="post-title-link" itemprop="url">图解红黑树(redblacktree)</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2020-08-02 23:02:18 / 修改时间：23:26:58" itemprop="dateCreated datePublished" datetime="2020-08-02T23:02:18+08:00">2020-08-02</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Javascript/" itemprop="url" rel="index"><span itemprop="name">Javascript</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>3.1k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>3 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="图解红黑树"><a href="#图解红黑树" class="headerlink" title="图解红黑树"></a>图解红黑树</h1><h2 id="一、红黑树的五条规则"><a href="#一、红黑树的五条规则" class="headerlink" title="一、红黑树的五条规则"></a>一、红黑树的五条规则</h2><p>红黑树除了符合二叉搜索树的基本规则外，还添加了以下特性：</p>
-<ul>
-<li><strong>规则1：节点是红色或黑色的；</strong></li>
-<li><strong>规则2：根节点是黑色的；</strong></li>
-<li><strong>规则3：每个叶子节点都是黑色的空节点（NIL节点）；</strong></li>
-<li><strong>规则4：每个红色节点的两个子节点都是黑色的（从每个叶子到根的所有路径上不可能有两个连续的红色节点）；</strong></li>
-<li><strong>规则5：从任一节点到其每个叶子节点的所有路径都包含相同数目的黑色节点；</strong>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2020/08/02/redblacktree/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1194,7 +1200,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">21</span>
+          <span class="site-state-item-count">22</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -1259,17 +1265,17 @@
       <i class="fa fa-chart-area"></i>
     </span>
       <span class="post-meta-item-text">站点总字数：</span>
-    <span title="站点总字数">156k</span>
+    <span title="站点总字数">158k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">2:22</span>
+    <span title="站点阅读时长">2:24</span>
 </div>
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共67.5k字</span>
+  <span class="post-count">博客全站共69.1k字</span>
 </div>
 
         
