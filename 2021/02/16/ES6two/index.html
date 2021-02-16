@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+ <!--pjax：防止跳转页面音乐暂停-->
+  <script src="https://cdn.jsdelivr.net/npm/pjax@0.2.8/pjax.js"></script> 
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<script src="//cdn.bootcss.com/pace/1.0.2/pace.min.js"></script>
+<link href="//cdn.bootcss.com/pace/1.0.2/themes/pink/pace-theme-flash.css" rel="stylesheet">
+<style>
+    .pace .pace-progress {
+        background: #1E92FB; /*进度条颜色*/
+        height: 3px;
+    }
+    .pace .pace-progress-inner {
+         box-shadow: 0 0 10px #1E92FB, 0 0 5px     #1E92FB; /*阴影颜色*/
+    }
+    .pace .pace-activity {
+        border-top-color: #1E92FB;    /*上边框颜色*/
+        border-left-color: #1E92FB;    /*左边框颜色*/
+    }
+</style>
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-big-counter.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yoursite.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="学习ES6标准入门第二天第五章 正则的扩展1.在ES5中，RegExp构造函数的参数有两种情况。第一种情况是，参数是字符串，这时第二个参数表示正则表达式的修饰符。第二种情况是，参数是一个正则表达式，这时会返回一个原有正则表达式的拷贝。而在ES6中，如果RegExp构造函数第一个参数是一个正则对象，那么可以使用第二个参数指定修饰符。而且，返回的正则表达式会忽略原有正则表达式的修饰符，只使用新指定的修">
+<meta property="og:type" content="article">
+<meta property="og:title" content="学习ES6标准入门第二天">
+<meta property="og:url" content="http://yoursite.com/2021/02/16/ES6two/index.html">
+<meta property="og:site_name" content="DKの博客">
+<meta property="og:description" content="学习ES6标准入门第二天第五章 正则的扩展1.在ES5中，RegExp构造函数的参数有两种情况。第一种情况是，参数是字符串，这时第二个参数表示正则表达式的修饰符。第二种情况是，参数是一个正则表达式，这时会返回一个原有正则表达式的拷贝。而在ES6中，如果RegExp构造函数第一个参数是一个正则对象，那么可以使用第二个参数指定修饰符。而且，返回的正则表达式会忽略原有正则表达式的修饰符，只使用新指定的修">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-02-16T11:00:42.000Z">
+<meta property="article:modified_time" content="2021-02-16T13:00:43.699Z">
+<meta property="article:author" content="丁可">
+<meta property="article:tag" content="ES6">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://yoursite.com/2021/02/16/ES6two/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>学习ES6标准入门第二天 | DKの博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+    <a href="https://github.com/DK-frontend" target="_blank" rel="noopener" class="github-corner" aria-label="View source on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" style="fill:#151513; color:#fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a><style>.github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}</style>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">DKの博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">记录前端学习的历程</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">10</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">3</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">27</span></a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/02/16/ES6two/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/touxiang.jpg">
+      <meta itemprop="name" content="丁可">
+      <meta itemprop="description" content="哪来的勇气我就是不灰心">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="DKの博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          学习ES6标准入门第二天
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2021-02-16 19:00:42 / 修改时间：21:00:43" itemprop="dateCreated datePublished" datetime="2021-02-16T19:00:42+08:00">2021-02-16</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">学习笔记</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>5.6k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>5 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="学习ES6标准入门第二天"><a href="#学习ES6标准入门第二天" class="headerlink" title="学习ES6标准入门第二天"></a>学习ES6标准入门第二天</h1><h2 id="第五章-正则的扩展"><a href="#第五章-正则的扩展" class="headerlink" title="第五章 正则的扩展"></a>第五章 正则的扩展</h2><h3 id="1-在ES5中，RegExp构造函数的参数有两种情况。第一种情况是，参数是字符串，这时第二个参数表示正则表达式的修饰符。第二种情况是，参数是一个正则表达式，这时会返回一个原有正则表达式的拷贝。而在ES6中，如果RegExp构造函数第一个参数是一个正则对象，那么可以使用第二个参数指定修饰符。而且，返回的正则表达式会忽略原有正则表达式的修饰符，只使用新指定的修饰符。"><a href="#1-在ES5中，RegExp构造函数的参数有两种情况。第一种情况是，参数是字符串，这时第二个参数表示正则表达式的修饰符。第二种情况是，参数是一个正则表达式，这时会返回一个原有正则表达式的拷贝。而在ES6中，如果RegExp构造函数第一个参数是一个正则对象，那么可以使用第二个参数指定修饰符。而且，返回的正则表达式会忽略原有正则表达式的修饰符，只使用新指定的修饰符。" class="headerlink" title="1.在ES5中，RegExp构造函数的参数有两种情况。第一种情况是，参数是字符串，这时第二个参数表示正则表达式的修饰符。第二种情况是，参数是一个正则表达式，这时会返回一个原有正则表达式的拷贝。而在ES6中，如果RegExp构造函数第一个参数是一个正则对象，那么可以使用第二个参数指定修饰符。而且，返回的正则表达式会忽略原有正则表达式的修饰符，只使用新指定的修饰符。"></a>1.在ES5中，RegExp构造函数的参数有两种情况。第一种情况是，参数是字符串，这时第二个参数表示正则表达式的修饰符。第二种情况是，参数是一个正则表达式，这时会返回一个原有正则表达式的拷贝。而在ES6中，如果RegExp构造函数第一个参数是一个正则对象，那么可以使用第二个参数指定修饰符。而且，返回的正则表达式会忽略原有正则表达式的修饰符，只使用新指定的修饰符。</h3><h3 id="2-ES6对正则表达式添加了u修饰符，含义为”Unicode模式”，用来正确处理大于-uFFFF的Unicode字符。也就是说，可以正确处理4个字节的UTF-16编码。"><a href="#2-ES6对正则表达式添加了u修饰符，含义为”Unicode模式”，用来正确处理大于-uFFFF的Unicode字符。也就是说，可以正确处理4个字节的UTF-16编码。" class="headerlink" title="2.ES6对正则表达式添加了u修饰符，含义为”Unicode模式”，用来正确处理大于\uFFFF的Unicode字符。也就是说，可以正确处理4个字节的UTF-16编码。"></a>2.ES6对正则表达式添加了u修饰符，含义为”Unicode模式”，用来正确处理大于\uFFFF的Unicode字符。也就是说，可以正确处理4个字节的UTF-16编码。</h3><h3 id="3-点-字符在正则表达式中的含义是除换行符以外的任意单个字符。对于码点大于0xFFFF的Unicode字符，点字符不能识别，必须加上u修饰符"><a href="#3-点-字符在正则表达式中的含义是除换行符以外的任意单个字符。对于码点大于0xFFFF的Unicode字符，点字符不能识别，必须加上u修饰符" class="headerlink" title="3.点(.)字符在正则表达式中的含义是除换行符以外的任意单个字符。对于码点大于0xFFFF的Unicode字符，点字符不能识别，必须加上u修饰符"></a>3.点(.)字符在正则表达式中的含义是除换行符以外的任意单个字符。对于码点大于0xFFFF的Unicode字符，点字符不能识别，必须加上u修饰符</h3><h3 id="4-ES6新增了使用大括号表示Unicode字符的表示法，这种表示法在正则表达式中必须加上u修饰符才能识别当中的大括号，否则会被解读为量词。"><a href="#4-ES6新增了使用大括号表示Unicode字符的表示法，这种表示法在正则表达式中必须加上u修饰符才能识别当中的大括号，否则会被解读为量词。" class="headerlink" title="4.ES6新增了使用大括号表示Unicode字符的表示法，这种表示法在正则表达式中必须加上u修饰符才能识别当中的大括号，否则会被解读为量词。"></a>4.ES6新增了使用大括号表示Unicode字符的表示法，这种表示法在正则表达式中必须加上u修饰符才能识别当中的大括号，否则会被解读为量词。</h3><h3 id="5-使用u修饰符后，所有的量词都会正确识别码点大于0xFFFF的Unicode字符。u修饰符也影响到预定义模式能否正确识别码点大于0xFFFF的Unicode字符。"><a href="#5-使用u修饰符后，所有的量词都会正确识别码点大于0xFFFF的Unicode字符。u修饰符也影响到预定义模式能否正确识别码点大于0xFFFF的Unicode字符。" class="headerlink" title="5.使用u修饰符后，所有的量词都会正确识别码点大于0xFFFF的Unicode字符。u修饰符也影响到预定义模式能否正确识别码点大于0xFFFF的Unicode字符。"></a>5.使用u修饰符后，所有的量词都会正确识别码点大于0xFFFF的Unicode字符。u修饰符也影响到预定义模式能否正确识别码点大于0xFFFF的Unicode字符。</h3><h3 id="6-ES6为正则表达式添加了y修饰符，叫作”粘连”修饰符。y修饰符的作用与g修饰符类似，也是全局匹配，后一次匹配都成上一次匹配成功的下一个位置开始。不同之处在于，g修饰符只要剩余位置中存在匹配就行，而y修饰符会确保匹配必须从剩余的第一个位置开始，这也就是”粘连”的含义。y修饰符的设计本意就是让头部匹配的标志-在全局匹配中都有效。"><a href="#6-ES6为正则表达式添加了y修饰符，叫作”粘连”修饰符。y修饰符的作用与g修饰符类似，也是全局匹配，后一次匹配都成上一次匹配成功的下一个位置开始。不同之处在于，g修饰符只要剩余位置中存在匹配就行，而y修饰符会确保匹配必须从剩余的第一个位置开始，这也就是”粘连”的含义。y修饰符的设计本意就是让头部匹配的标志-在全局匹配中都有效。" class="headerlink" title="6.ES6为正则表达式添加了y修饰符，叫作”粘连”修饰符。y修饰符的作用与g修饰符类似，也是全局匹配，后一次匹配都成上一次匹配成功的下一个位置开始。不同之处在于，g修饰符只要剩余位置中存在匹配就行，而y修饰符会确保匹配必须从剩余的第一个位置开始，这也就是”粘连”的含义。y修饰符的设计本意就是让头部匹配的标志(^)在全局匹配中都有效。"></a>6.ES6为正则表达式添加了y修饰符，叫作”粘连”修饰符。y修饰符的作用与g修饰符类似，也是全局匹配，后一次匹配都成上一次匹配成功的下一个位置开始。不同之处在于，g修饰符只要剩余位置中存在匹配就行，而y修饰符会确保匹配必须从剩余的第一个位置开始，这也就是”粘连”的含义。y修饰符的设计本意就是让头部匹配的标志(^)在全局匹配中都有效。</h3><h3 id="7-与y修饰符相匹配，ES6的正则对象多了sticky属性，表示是否设置了y修饰符。ES6为正则表达式新增了flags属性，会返回正则表达式的修饰符。"><a href="#7-与y修饰符相匹配，ES6的正则对象多了sticky属性，表示是否设置了y修饰符。ES6为正则表达式新增了flags属性，会返回正则表达式的修饰符。" class="headerlink" title="7.与y修饰符相匹配，ES6的正则对象多了sticky属性，表示是否设置了y修饰符。ES6为正则表达式新增了flags属性，会返回正则表达式的修饰符。"></a>7.与y修饰符相匹配，ES6的正则对象多了sticky属性，表示是否设置了y修饰符。ES6为正则表达式新增了flags属性，会返回正则表达式的修饰符。</h3><h3 id="8-正则表达式中，点-是一个特殊字符，代表任意的单个字符，但是行终止符除外。行终止符包括"><a href="#8-正则表达式中，点-是一个特殊字符，代表任意的单个字符，但是行终止符除外。行终止符包括" class="headerlink" title="8.正则表达式中，点(.)是一个特殊字符，代表任意的单个字符，但是行终止符除外。行终止符包括:"></a>8.正则表达式中，点(.)是一个特殊字符，代表任意的单个字符，但是行终止符除外。行终止符包括:</h3><ul>
+<li>换行符</li>
+<li>回车符</li>
+<li>行分隔符</li>
+<li>段分隔符<a id="more"></a>
+引入/s修饰符，使得.可以匹配任意单个字符。这被称为dotAll模式，即点(dot)代表一切字符。所以，正则表达式还引入了一个dotAll属性，返回一个布尔值，表示该正则表达式是否处在dotAll模式下。<h3 id="9-”先行断言”指的是，x只有在y前面才匹配，必须写成-x-y-的形式。”先行否定断言”指的是，x只有不在y前面才匹配，必须写成-x-y-的形式。”先行断言”括号之中的部分-是不计入返回结果的。”后行断言”正好与”先行断言”相反，x只有在y后面才匹配，必须写成-lt-y-x-的形式。”后行否定断言”则与”先行否定断言”相反，x只有不在y后面才匹配，必须写成-lt-y-x-的形式。”后行断言”括号之中的部分-lt-是不计入返回结果的。”后行断言”的实现需要先匹配-lt-y-x-的x，然后再回到左边匹配y的部分。这种”先右后左”的执行顺序与所有其他正则操作相反，导致了一些不符合预期的结果。其次”后行断言”的反斜杠引用也与通常的顺序相反，必须放在对应的括号之前。"><a href="#9-”先行断言”指的是，x只有在y前面才匹配，必须写成-x-y-的形式。”先行否定断言”指的是，x只有不在y前面才匹配，必须写成-x-y-的形式。”先行断言”括号之中的部分-是不计入返回结果的。”后行断言”正好与”先行断言”相反，x只有在y后面才匹配，必须写成-lt-y-x-的形式。”后行否定断言”则与”先行否定断言”相反，x只有不在y后面才匹配，必须写成-lt-y-x-的形式。”后行断言”括号之中的部分-lt-是不计入返回结果的。”后行断言”的实现需要先匹配-lt-y-x-的x，然后再回到左边匹配y的部分。这种”先右后左”的执行顺序与所有其他正则操作相反，导致了一些不符合预期的结果。其次”后行断言”的反斜杠引用也与通常的顺序相反，必须放在对应的括号之前。" class="headerlink" title="9.”先行断言”指的是，x只有在y前面才匹配，必须写成/x(?=y)/的形式。”先行否定断言”指的是，x只有不在y前面才匹配，必须写成/x(?!y)/的形式。”先行断言”括号之中的部分(?=%)是不计入返回结果的。”后行断言”正好与”先行断言”相反，x只有在y后面才匹配，必须写成/(?&lt;=y)x/的形式。”后行否定断言”则与”先行否定断言”相反，x只有不在y后面才匹配，必须写成/(?&lt;!y)x/的形式。”后行断言”括号之中的部分(?&lt;=$)是不计入返回结果的。”后行断言”的实现需要先匹配/(?&lt;=y)x/的x，然后再回到左边匹配y的部分。这种”先右后左”的执行顺序与所有其他正则操作相反，导致了一些不符合预期的结果。其次”后行断言”的反斜杠引用也与通常的顺序相反，必须放在对应的括号之前。"></a>9.”先行断言”指的是，x只有在y前面才匹配，必须写成/x(?=y)/的形式。”先行否定断言”指的是，x只有不在y前面才匹配，必须写成/x(?!y)/的形式。”先行断言”括号之中的部分(?=%)是不计入返回结果的。”后行断言”正好与”先行断言”相反，x只有在y后面才匹配，必须写成/(?&lt;=y)x/的形式。”后行否定断言”则与”先行否定断言”相反，x只有不在y后面才匹配，必须写成/(?&lt;!y)x/的形式。”后行断言”括号之中的部分(?&lt;=$)是不计入返回结果的。”后行断言”的实现需要先匹配/(?&lt;=y)x/的x，然后再回到左边匹配y的部分。这种”先右后左”的执行顺序与所有其他正则操作相反，导致了一些不符合预期的结果。其次”后行断言”的反斜杠引用也与通常的顺序相反，必须放在对应的括号之前。</h3><h3 id="10-具名组匹配等于为每一组匹配加上了ID，这样便于描述匹配的目的。如果组的顺序变了，也不用改变匹配后的处理代码。如果要在正则表达式内部引用某个”具名组匹配”，可以使用-k-lt-组名-gt-的写法。"><a href="#10-具名组匹配等于为每一组匹配加上了ID，这样便于描述匹配的目的。如果组的顺序变了，也不用改变匹配后的处理代码。如果要在正则表达式内部引用某个”具名组匹配”，可以使用-k-lt-组名-gt-的写法。" class="headerlink" title="10.具名组匹配等于为每一组匹配加上了ID，这样便于描述匹配的目的。如果组的顺序变了，也不用改变匹配后的处理代码。如果要在正则表达式内部引用某个”具名组匹配”，可以使用\k&lt;组名&gt;的写法。"></a>10.具名组匹配等于为每一组匹配加上了ID，这样便于描述匹配的目的。如果组的顺序变了，也不用改变匹配后的处理代码。如果要在正则表达式内部引用某个”具名组匹配”，可以使用\k&lt;组名&gt;的写法。</h3></li>
+</ul>
+<h2 id="第六章-数值的扩展"><a href="#第六章-数值的扩展" class="headerlink" title="第六章 数值的扩展"></a>第六章 数值的扩展</h2><h3 id="1-如果要将使用0b和0x前缀的字符串数值转为十进制数值，要使用Number方法"><a href="#1-如果要将使用0b和0x前缀的字符串数值转为十进制数值，要使用Number方法" class="headerlink" title="1.如果要将使用0b和0x前缀的字符串数值转为十进制数值，要使用Number方法"></a>1.如果要将使用0b和0x前缀的字符串数值转为十进制数值，要使用Number方法</h3><h3 id="2-ES6在Number对象上新提供了Number-isFinite-和Number-isNaN-两个方法。Number-isFinite-用来检查一个数值是否为有限的。Number-isNaN-用来检查一个值是否为NaN。这两个新方法与传统的全局方法isFinite-和isNaN-的区别在于，传统方法先调用Number-将非数值转为数值，再进行判断，而新方法只对数值有效，对于非数值一律返回false"><a href="#2-ES6在Number对象上新提供了Number-isFinite-和Number-isNaN-两个方法。Number-isFinite-用来检查一个数值是否为有限的。Number-isNaN-用来检查一个值是否为NaN。这两个新方法与传统的全局方法isFinite-和isNaN-的区别在于，传统方法先调用Number-将非数值转为数值，再进行判断，而新方法只对数值有效，对于非数值一律返回false" class="headerlink" title="2.ES6在Number对象上新提供了Number.isFinite()和Number.isNaN()两个方法。Number.isFinite()用来检查一个数值是否为有限的。Number.isNaN()用来检查一个值是否为NaN。这两个新方法与传统的全局方法isFinite()和isNaN()的区别在于，传统方法先调用Number()将非数值转为数值，再进行判断，而新方法只对数值有效，对于非数值一律返回false"></a>2.ES6在Number对象上新提供了Number.isFinite()和Number.isNaN()两个方法。Number.isFinite()用来检查一个数值是否为有限的。Number.isNaN()用来检查一个值是否为NaN。这两个新方法与传统的全局方法isFinite()和isNaN()的区别在于，传统方法先调用Number()将非数值转为数值，再进行判断，而新方法只对数值有效，对于非数值一律返回false</h3><h3 id="3-ES6将全局方法parseInt-和parseFloat-移植到了Number对象上面。行为完全保持不变。"><a href="#3-ES6将全局方法parseInt-和parseFloat-移植到了Number对象上面。行为完全保持不变。" class="headerlink" title="3.ES6将全局方法parseInt()和parseFloat()移植到了Number对象上面。行为完全保持不变。"></a>3.ES6将全局方法parseInt()和parseFloat()移植到了Number对象上面。行为完全保持不变。</h3><h3 id="4-Number-isInteger-用来判断一个值是否为整数。需要注意的是，在JavaScript内部，整数和浮点数是同样的储存方法，所以3和3-0被视为同一个值。"><a href="#4-Number-isInteger-用来判断一个值是否为整数。需要注意的是，在JavaScript内部，整数和浮点数是同样的储存方法，所以3和3-0被视为同一个值。" class="headerlink" title="4.Number.isInteger()用来判断一个值是否为整数。需要注意的是，在JavaScript内部，整数和浮点数是同样的储存方法，所以3和3.0被视为同一个值。"></a>4.Number.isInteger()用来判断一个值是否为整数。需要注意的是，在JavaScript内部，整数和浮点数是同样的储存方法，所以3和3.0被视为同一个值。</h3><h3 id="5-ES6在Number对象上面新增了一个极小的常量——Number-EPSILON。引入一个这么小的量，目的在于为浮点数计算设置一个误差范围。"><a href="#5-ES6在Number对象上面新增了一个极小的常量——Number-EPSILON。引入一个这么小的量，目的在于为浮点数计算设置一个误差范围。" class="headerlink" title="5.ES6在Number对象上面新增了一个极小的常量——Number.EPSILON。引入一个这么小的量，目的在于为浮点数计算设置一个误差范围。"></a>5.ES6在Number对象上面新增了一个极小的常量——Number.EPSILON。引入一个这么小的量，目的在于为浮点数计算设置一个误差范围。</h3><h3 id="6-JavaScript能够准确表示的整数范围在-2的53次方到2的53次方之间-不含两个端点-，超过这个范围就无法精确表示。ES6引入了Number-MAX-SAFE-INTEGER和Number-MIN-SAFE-INTEGER两个常量，用来表示这个范围的上下限。"><a href="#6-JavaScript能够准确表示的整数范围在-2的53次方到2的53次方之间-不含两个端点-，超过这个范围就无法精确表示。ES6引入了Number-MAX-SAFE-INTEGER和Number-MIN-SAFE-INTEGER两个常量，用来表示这个范围的上下限。" class="headerlink" title="6.JavaScript能够准确表示的整数范围在-2的53次方到2的53次方之间(不含两个端点)，超过这个范围就无法精确表示。ES6引入了Number.MAX_SAFE_INTEGER和Number.MIN_SAFE_INTEGER两个常量，用来表示这个范围的上下限。"></a>6.JavaScript能够准确表示的整数范围在-2的53次方到2的53次方之间(不含两个端点)，超过这个范围就无法精确表示。ES6引入了Number.MAX_SAFE_INTEGER和Number.MIN_SAFE_INTEGER两个常量，用来表示这个范围的上下限。</h3><h3 id="7-Math-trunc方法用于去除一个数的小数部分，返回整数部分。对于非数值，Math-trunc内部使用Number方法将其先转为数值。对于空值和无法截取整数的值，返回NaN。"><a href="#7-Math-trunc方法用于去除一个数的小数部分，返回整数部分。对于非数值，Math-trunc内部使用Number方法将其先转为数值。对于空值和无法截取整数的值，返回NaN。" class="headerlink" title="7.Math.trunc方法用于去除一个数的小数部分，返回整数部分。对于非数值，Math.trunc内部使用Number方法将其先转为数值。对于空值和无法截取整数的值，返回NaN。"></a>7.Math.trunc方法用于去除一个数的小数部分，返回整数部分。对于非数值，Math.trunc内部使用Number方法将其先转为数值。对于空值和无法截取整数的值，返回NaN。</h3><h3 id="8-Math-sign方法用来判断一个数到底是正数、负数，还是零。对于非数值，会先将其转换为数值。其返回值共有5种情况"><a href="#8-Math-sign方法用来判断一个数到底是正数、负数，还是零。对于非数值，会先将其转换为数值。其返回值共有5种情况" class="headerlink" title="8.Math.sign方法用来判断一个数到底是正数、负数，还是零。对于非数值，会先将其转换为数值。其返回值共有5种情况:"></a>8.Math.sign方法用来判断一个数到底是正数、负数，还是零。对于非数值，会先将其转换为数值。其返回值共有5种情况:</h3><ul>
+<li>参数为整数，返回+1</li>
+<li>参数为负数，返回-1</li>
+<li>参数为0，返回0</li>
+<li>参数为-0，返回-0</li>
+<li>其他值，返回NaN</li>
+</ul>
+<h3 id="9-Math-cbrt方法用于计算一个数的立方根。对于非数值，Math-cbrt方法内部也是先使用Number方法将其转为数值。"><a href="#9-Math-cbrt方法用于计算一个数的立方根。对于非数值，Math-cbrt方法内部也是先使用Number方法将其转为数值。" class="headerlink" title="9.Math.cbrt方法用于计算一个数的立方根。对于非数值，Math.cbrt方法内部也是先使用Number方法将其转为数值。"></a>9.Math.cbrt方法用于计算一个数的立方根。对于非数值，Math.cbrt方法内部也是先使用Number方法将其转为数值。</h3><h3 id="10-JavaScript的整数使用32位二进制形式表示，Math-clz32方法返回一个数的32位无符号整数形式有多少个前导0。对于空值或其他类型的值，Math-clz32方法会将它们先转为数值，然后再计算。"><a href="#10-JavaScript的整数使用32位二进制形式表示，Math-clz32方法返回一个数的32位无符号整数形式有多少个前导0。对于空值或其他类型的值，Math-clz32方法会将它们先转为数值，然后再计算。" class="headerlink" title="10.JavaScript的整数使用32位二进制形式表示，Math.clz32方法返回一个数的32位无符号整数形式有多少个前导0。对于空值或其他类型的值，Math.clz32方法会将它们先转为数值，然后再计算。"></a>10.JavaScript的整数使用32位二进制形式表示，Math.clz32方法返回一个数的32位无符号整数形式有多少个前导0。对于空值或其他类型的值，Math.clz32方法会将它们先转为数值，然后再计算。</h3><h3 id="11-Math-imul方法返回两个数以32位带符号整数形式相乘的结果，返回的也是一个32位的带符号整数。之所以需要部署这个方法，是因为JavaScript有精度限制，超过2的53次方的值无法精确表示。这就是说，对于那些很大的数的乘法，低位数值往往都是不精确的，Math-imul方法可以返回正确的低位数值"><a href="#11-Math-imul方法返回两个数以32位带符号整数形式相乘的结果，返回的也是一个32位的带符号整数。之所以需要部署这个方法，是因为JavaScript有精度限制，超过2的53次方的值无法精确表示。这就是说，对于那些很大的数的乘法，低位数值往往都是不精确的，Math-imul方法可以返回正确的低位数值" class="headerlink" title="11.Math.imul方法返回两个数以32位带符号整数形式相乘的结果，返回的也是一个32位的带符号整数。之所以需要部署这个方法，是因为JavaScript有精度限制，超过2的53次方的值无法精确表示。这就是说，对于那些很大的数的乘法，低位数值往往都是不精确的，Math.imul方法可以返回正确的低位数值"></a>11.Math.imul方法返回两个数以32位带符号整数形式相乘的结果，返回的也是一个32位的带符号整数。之所以需要部署这个方法，是因为JavaScript有精度限制，超过2的53次方的值无法精确表示。这就是说，对于那些很大的数的乘法，低位数值往往都是不精确的，Math.imul方法可以返回正确的低位数值</h3><h3 id="12-Math-fround方法返回一个数的单精度浮点数形式。对于整数来说，Math-fround方法的返回结果不会有任何不同，区别主要在于那些无法用64个二进制位精确表示的小数。这时，Math-fround会返回最接近这个小数的单精度浮点数。"><a href="#12-Math-fround方法返回一个数的单精度浮点数形式。对于整数来说，Math-fround方法的返回结果不会有任何不同，区别主要在于那些无法用64个二进制位精确表示的小数。这时，Math-fround会返回最接近这个小数的单精度浮点数。" class="headerlink" title="12.Math.fround方法返回一个数的单精度浮点数形式。对于整数来说，Math.fround方法的返回结果不会有任何不同，区别主要在于那些无法用64个二进制位精确表示的小数。这时，Math.fround会返回最接近这个小数的单精度浮点数。"></a>12.Math.fround方法返回一个数的单精度浮点数形式。对于整数来说，Math.fround方法的返回结果不会有任何不同，区别主要在于那些无法用64个二进制位精确表示的小数。这时，Math.fround会返回最接近这个小数的单精度浮点数。</h3><h3 id="13-Math-hypot方法返回所有参数的平方和的平方根。如果参数不是数值，Math-hypot方法会将其转为数值。只要有一个参数无法转为数值，就会返回NaN。"><a href="#13-Math-hypot方法返回所有参数的平方和的平方根。如果参数不是数值，Math-hypot方法会将其转为数值。只要有一个参数无法转为数值，就会返回NaN。" class="headerlink" title="13.Math.hypot方法返回所有参数的平方和的平方根。如果参数不是数值，Math.hypot方法会将其转为数值。只要有一个参数无法转为数值，就会返回NaN。"></a>13.Math.hypot方法返回所有参数的平方和的平方根。如果参数不是数值，Math.hypot方法会将其转为数值。只要有一个参数无法转为数值，就会返回NaN。</h3><h3 id="14-Math-expm1-x-返回ex-1，即Math-exp-x-1。Math-log1p-x-方法返回ln-1-x-，即Math-log-1-x-。如果x小于-1，则返回NaN。Math-log10-x-返回以10为底的x的对数。如果x小于0，则返回NaN。Math-log2-x-返回以2为底的x的对数。如果x小于0，则返回NaN。"><a href="#14-Math-expm1-x-返回ex-1，即Math-exp-x-1。Math-log1p-x-方法返回ln-1-x-，即Math-log-1-x-。如果x小于-1，则返回NaN。Math-log10-x-返回以10为底的x的对数。如果x小于0，则返回NaN。Math-log2-x-返回以2为底的x的对数。如果x小于0，则返回NaN。" class="headerlink" title="14.Math.expm1(x)返回ex-1，即Math.exp(x) - 1。Math.log1p(x)方法返回ln(1+x)，即Math.log(1+x)。如果x小于-1，则返回NaN。Math.log10(x)返回以10为底的x的对数。如果x小于0，则返回NaN。Math.log2(x)返回以2为底的x的对数。如果x小于0，则返回NaN。"></a>14.Math.expm1(x)返回ex-1，即Math.exp(x) - 1。Math.log1p(x)方法返回ln(1+x)，即Math.log(1+x)。如果x小于-1，则返回NaN。Math.log10(x)返回以10为底的x的对数。如果x小于0，则返回NaN。Math.log2(x)返回以2为底的x的对数。如果x小于0，则返回NaN。</h3><h3 id="15-Math-signbit-方法判断一个数的符号位是否已经设置。"><a href="#15-Math-signbit-方法判断一个数的符号位是否已经设置。" class="headerlink" title="15.Math.signbit()方法判断一个数的符号位是否已经设置。"></a>15.Math.signbit()方法判断一个数的符号位是否已经设置。</h3><ul>
+<li>如果参数是NaN，返回false</li>
+<li>如果参数是-0，返回true</li>
+<li>如果参数是负值，返回true</li>
+<li>其他情况返回false</li>
+</ul>
+<h3 id="16-新的数据类型Integer只能用来表示整数，没有位数限制，任何位数的整数都可以精确表示。为了与Number类型区别，Integer类型的数据必须使用后缀n来表示。对于Integer类型的数据，typeof运算符将返回integer。"><a href="#16-新的数据类型Integer只能用来表示整数，没有位数限制，任何位数的整数都可以精确表示。为了与Number类型区别，Integer类型的数据必须使用后缀n来表示。对于Integer类型的数据，typeof运算符将返回integer。" class="headerlink" title="16.新的数据类型Integer只能用来表示整数，没有位数限制，任何位数的整数都可以精确表示。为了与Number类型区别，Integer类型的数据必须使用后缀n来表示。对于Integer类型的数据，typeof运算符将返回integer。"></a>16.新的数据类型Integer只能用来表示整数，没有位数限制，任何位数的整数都可以精确表示。为了与Number类型区别，Integer类型的数据必须使用后缀n来表示。对于Integer类型的数据，typeof运算符将返回integer。</h3><h3 id="17-在数学运算方面，Integer类型的-、-、和-这四个二元运算符与Number类型的行为一致。除法运算-会舍去小数部分，返回一个整数。Integer类型不能与Number类型进行混合运算。这是因为无论返回的是Integer还是Number，都会丢失信息。比如-2n-53n-1n-0-5这个表达式，如果返回Integer类型，0-5这个小数部分会丢失；如果返回Number类型，会超过53位精确数字，精度下降。相等运算符-会改变数据类型，也是不允许混合使用的。精确相等运算符-不会改变数据类型，因此可以混合使用。"><a href="#17-在数学运算方面，Integer类型的-、-、和-这四个二元运算符与Number类型的行为一致。除法运算-会舍去小数部分，返回一个整数。Integer类型不能与Number类型进行混合运算。这是因为无论返回的是Integer还是Number，都会丢失信息。比如-2n-53n-1n-0-5这个表达式，如果返回Integer类型，0-5这个小数部分会丢失；如果返回Number类型，会超过53位精确数字，精度下降。相等运算符-会改变数据类型，也是不允许混合使用的。精确相等运算符-不会改变数据类型，因此可以混合使用。" class="headerlink" title="17.在数学运算方面，Integer类型的+、-、和*这四个二元运算符与Number类型的行为一致。除法运算/会舍去小数部分，返回一个整数。Integer类型不能与Number类型进行混合运算。这是因为无论返回的是Integer还是Number，都会丢失信息。比如(2n**53n+1n) + 0.5这个表达式，如果返回Integer类型，0.5这个小数部分会丢失；如果返回Number类型，会超过53位精确数字，精度下降。相等运算符(==)会改变数据类型，也是不允许混合使用的。精确相等运算符(===)不会改变数据类型，因此可以混合使用。"></a>17.在数学运算方面，Integer类型的+、-、<em>和*</em>这四个二元运算符与Number类型的行为一致。除法运算/会舍去小数部分，返回一个整数。Integer类型不能与Number类型进行混合运算。这是因为无论返回的是Integer还是Number，都会丢失信息。比如(2n**53n+1n) + 0.5这个表达式，如果返回Integer类型，0.5这个小数部分会丢失；如果返回Number类型，会超过53位精确数字，精度下降。相等运算符(==)会改变数据类型，也是不允许混合使用的。精确相等运算符(===)不会改变数据类型，因此可以混合使用。</h3><h2 id="第七章-函数的扩展"><a href="#第七章-函数的扩展" class="headerlink" title="第七章 函数的扩展"></a>第七章 函数的扩展</h2><h3 id="1-参数默认值不是传值的，而是每次都重新计算默认值表达式的值。也就是说，参数默认值是惰性求值的。"><a href="#1-参数默认值不是传值的，而是每次都重新计算默认值表达式的值。也就是说，参数默认值是惰性求值的。" class="headerlink" title="1.参数默认值不是传值的，而是每次都重新计算默认值表达式的值。也就是说，参数默认值是惰性求值的。"></a>1.参数默认值不是传值的，而是每次都重新计算默认值表达式的值。也就是说，参数默认值是惰性求值的。</h3><h3 id="2-指定了默认值以后，函数的length属性将返回没有指定默认值的参数个数。length属性的返回值等于函数的参数个数减去指定了默认值的参数个数。这是因为length属性的含义是该函数预期传入参数个数。某个参数指定默认值以后，预期传入的参数个数就不包括这个参数了。同理，rest参数也不会计入length属性。如果设置了默认值的参数不是尾参数，那么length属性也不再计入后面的参数。"><a href="#2-指定了默认值以后，函数的length属性将返回没有指定默认值的参数个数。length属性的返回值等于函数的参数个数减去指定了默认值的参数个数。这是因为length属性的含义是该函数预期传入参数个数。某个参数指定默认值以后，预期传入的参数个数就不包括这个参数了。同理，rest参数也不会计入length属性。如果设置了默认值的参数不是尾参数，那么length属性也不再计入后面的参数。" class="headerlink" title="2.指定了默认值以后，函数的length属性将返回没有指定默认值的参数个数。length属性的返回值等于函数的参数个数减去指定了默认值的参数个数。这是因为length属性的含义是该函数预期传入参数个数。某个参数指定默认值以后，预期传入的参数个数就不包括这个参数了。同理，rest参数也不会计入length属性。如果设置了默认值的参数不是尾参数，那么length属性也不再计入后面的参数。"></a>2.指定了默认值以后，函数的length属性将返回没有指定默认值的参数个数。length属性的返回值等于函数的参数个数减去指定了默认值的参数个数。这是因为length属性的含义是该函数预期传入参数个数。某个参数指定默认值以后，预期传入的参数个数就不包括这个参数了。同理，rest参数也不会计入length属性。如果设置了默认值的参数不是尾参数，那么length属性也不再计入后面的参数。</h3><h3 id="3-一旦设置了参数的默认值，函数进行声明初始化时，参数会形成一个单独的作用域。等到初始化结束，这个作用域就会消失。这种语法行为在不设置参数默认值时是不会出现的。"><a href="#3-一旦设置了参数的默认值，函数进行声明初始化时，参数会形成一个单独的作用域。等到初始化结束，这个作用域就会消失。这种语法行为在不设置参数默认值时是不会出现的。" class="headerlink" title="3.一旦设置了参数的默认值，函数进行声明初始化时，参数会形成一个单独的作用域。等到初始化结束，这个作用域就会消失。这种语法行为在不设置参数默认值时是不会出现的。"></a>3.一旦设置了参数的默认值，函数进行声明初始化时，参数会形成一个单独的作用域。等到初始化结束，这个作用域就会消失。这种语法行为在不设置参数默认值时是不会出现的。</h3><h3 id="4-可以利用默认参数值来指定某一个参数不得省略，如果省略就抛出一个错误。另外，可以将参数默认值设为undefined，表明这个参数是可以省略的。"><a href="#4-可以利用默认参数值来指定某一个参数不得省略，如果省略就抛出一个错误。另外，可以将参数默认值设为undefined，表明这个参数是可以省略的。" class="headerlink" title="4.可以利用默认参数值来指定某一个参数不得省略，如果省略就抛出一个错误。另外，可以将参数默认值设为undefined，表明这个参数是可以省略的。"></a>4.可以利用默认参数值来指定某一个参数不得省略，如果省略就抛出一个错误。另外，可以将参数默认值设为undefined，表明这个参数是可以省略的。</h3><h3 id="5-rest参数之后不能再有其他参数-即只能是最后一个参数-，否则会报错。函数的length属性不包括rest参数。"><a href="#5-rest参数之后不能再有其他参数-即只能是最后一个参数-，否则会报错。函数的length属性不包括rest参数。" class="headerlink" title="5.rest参数之后不能再有其他参数(即只能是最后一个参数)，否则会报错。函数的length属性不包括rest参数。"></a>5.rest参数之后不能再有其他参数(即只能是最后一个参数)，否则会报错。函数的length属性不包括rest参数。</h3><h3 id="6-在ES6中，规定只要函数参数使用了默认值、解构赋值或者扩展运算符，那么函数内部就不能显式设定为严格模式，否则就会报错。这样规定的原因是，函数内部的严格模式同时适用于函数体和函数参数。但是，函数执行时，先执行函数参数，然后再执行函数体。这样就有一个不合理的地方：只有从函数体之中才能知道参数是否应该以严格模式执行，但是参数却应该先于函数体执行。有两种方法可以规避这种限制。第一种是设定全局性的严格模式，这是合法的。第二种是把函数包在一个无参数的立即执行函数里面。"><a href="#6-在ES6中，规定只要函数参数使用了默认值、解构赋值或者扩展运算符，那么函数内部就不能显式设定为严格模式，否则就会报错。这样规定的原因是，函数内部的严格模式同时适用于函数体和函数参数。但是，函数执行时，先执行函数参数，然后再执行函数体。这样就有一个不合理的地方：只有从函数体之中才能知道参数是否应该以严格模式执行，但是参数却应该先于函数体执行。有两种方法可以规避这种限制。第一种是设定全局性的严格模式，这是合法的。第二种是把函数包在一个无参数的立即执行函数里面。" class="headerlink" title="6.在ES6中，规定只要函数参数使用了默认值、解构赋值或者扩展运算符，那么函数内部就不能显式设定为严格模式，否则就会报错。这样规定的原因是，函数内部的严格模式同时适用于函数体和函数参数。但是，函数执行时，先执行函数参数，然后再执行函数体。这样就有一个不合理的地方：只有从函数体之中才能知道参数是否应该以严格模式执行，但是参数却应该先于函数体执行。有两种方法可以规避这种限制。第一种是设定全局性的严格模式，这是合法的。第二种是把函数包在一个无参数的立即执行函数里面。"></a>6.在ES6中，规定只要函数参数使用了默认值、解构赋值或者扩展运算符，那么函数内部就不能显式设定为严格模式，否则就会报错。这样规定的原因是，函数内部的严格模式同时适用于函数体和函数参数。但是，函数执行时，先执行函数参数，然后再执行函数体。这样就有一个不合理的地方：只有从函数体之中才能知道参数是否应该以严格模式执行，但是参数却应该先于函数体执行。有两种方法可以规避这种限制。第一种是设定全局性的严格模式，这是合法的。第二种是把函数包在一个无参数的立即执行函数里面。</h3><h3 id="7-函数的name属性返回该函数的函数名。如果将一个匿名函数赋值给一个变量，ES5的name属性会返回空字符串，而ES6的name属性会返回实际的函数名。如果将一个具名函数赋值给一个变量，则ES5和ES6的name属性都返回这个具名函数原本的名字。Function构造函数返回的函数实例，name属性的值为anonymous。bind返回的函数，name属性值会加上bound前缀。"><a href="#7-函数的name属性返回该函数的函数名。如果将一个匿名函数赋值给一个变量，ES5的name属性会返回空字符串，而ES6的name属性会返回实际的函数名。如果将一个具名函数赋值给一个变量，则ES5和ES6的name属性都返回这个具名函数原本的名字。Function构造函数返回的函数实例，name属性的值为anonymous。bind返回的函数，name属性值会加上bound前缀。" class="headerlink" title="7.函数的name属性返回该函数的函数名。如果将一个匿名函数赋值给一个变量，ES5的name属性会返回空字符串，而ES6的name属性会返回实际的函数名。如果将一个具名函数赋值给一个变量，则ES5和ES6的name属性都返回这个具名函数原本的名字。Function构造函数返回的函数实例，name属性的值为anonymous。bind返回的函数，name属性值会加上bound前缀。"></a>7.函数的name属性返回该函数的函数名。如果将一个匿名函数赋值给一个变量，ES5的name属性会返回空字符串，而ES6的name属性会返回实际的函数名。如果将一个具名函数赋值给一个变量，则ES5和ES6的name属性都返回这个具名函数原本的名字。Function构造函数返回的函数实例，name属性的值为anonymous。bind返回的函数，name属性值会加上bound前缀。</h3><h3 id="8-如果箭头函数不需要参数或需要多个参数，就使用圆括号代表参数部分。如果箭头函数的代码块部分多于一条语句，就要使用大括号将其括起来，并使用return语句返回。由于大括号被解释为代码块，所以如果箭头函数直接返回一个对象，必须在对象外面加上括号。"><a href="#8-如果箭头函数不需要参数或需要多个参数，就使用圆括号代表参数部分。如果箭头函数的代码块部分多于一条语句，就要使用大括号将其括起来，并使用return语句返回。由于大括号被解释为代码块，所以如果箭头函数直接返回一个对象，必须在对象外面加上括号。" class="headerlink" title="8.如果箭头函数不需要参数或需要多个参数，就使用圆括号代表参数部分。如果箭头函数的代码块部分多于一条语句，就要使用大括号将其括起来，并使用return语句返回。由于大括号被解释为代码块，所以如果箭头函数直接返回一个对象，必须在对象外面加上括号。"></a>8.如果箭头函数不需要参数或需要多个参数，就使用圆括号代表参数部分。如果箭头函数的代码块部分多于一条语句，就要使用大括号将其括起来，并使用return语句返回。由于大括号被解释为代码块，所以如果箭头函数直接返回一个对象，必须在对象外面加上括号。</h3><h3 id="9-箭头函数有以下几个使用注意事项"><a href="#9-箭头函数有以下几个使用注意事项" class="headerlink" title="9.箭头函数有以下几个使用注意事项"></a>9.箭头函数有以下几个使用注意事项</h3><ul>
+<li>函数体内的this对象就是定义时所在的对象，而不是使用时所在的对象</li>
+<li>不可以当作构造函数。也就是说，不可以使用new命令，否则会抛出一个错误</li>
+<li>不可以使用arguments对象，该对象在函数体内不存在。如果要用，可以用rest参数代替</li>
+<li>不可以使用yield命令，因此箭头函数不能用作Generator</li>
+</ul>
+<p>this指向的固定化并不是因为箭头函数内部有绑定this机制，实际原因是箭头函数根本没有自己的this，导致内部的this就是外层代码块的this。正是因为它没有this，所以不能用作构造函数。除了this，以下3个变量在箭头函数中也是不存在的，分别指向外层函数的对应变量：arguments、super和new.target。另外，由于箭头函数没有自己的this，当然也就不能用call()、apply()、bing()这些方法去改变this的指向。</p>
+<h3 id="10-函数绑定运算符是并排的双冒号-，双冒号的左边是一个对象，右边是一个函数。该运算符会自动将左边的对象作为上下文环境-即this对象-绑定到右边的函数上。如果双冒号左边为空，右边是一个对象的方法，则等于将该方法绑定在该对象上。"><a href="#10-函数绑定运算符是并排的双冒号-，双冒号的左边是一个对象，右边是一个函数。该运算符会自动将左边的对象作为上下文环境-即this对象-绑定到右边的函数上。如果双冒号左边为空，右边是一个对象的方法，则等于将该方法绑定在该对象上。" class="headerlink" title="10.函数绑定运算符是并排的双冒号(::)，双冒号的左边是一个对象，右边是一个函数。该运算符会自动将左边的对象作为上下文环境(即this对象)绑定到右边的函数上。如果双冒号左边为空，右边是一个对象的方法，则等于将该方法绑定在该对象上。"></a>10.函数绑定运算符是并排的双冒号(::)，双冒号的左边是一个对象，右边是一个函数。该运算符会自动将左边的对象作为上下文环境(即this对象)绑定到右边的函数上。如果双冒号左边为空，右边是一个对象的方法，则等于将该方法绑定在该对象上。</h3><h3 id="11-尾调用是函数式编程的一个重要概念，本身非常简单，一句话就能说清楚，就是指某个函数的最后一步是调用另一个函数。尾调用不一定出现在函数尾部，只要是最后一步操作即可。"><a href="#11-尾调用是函数式编程的一个重要概念，本身非常简单，一句话就能说清楚，就是指某个函数的最后一步是调用另一个函数。尾调用不一定出现在函数尾部，只要是最后一步操作即可。" class="headerlink" title="11.尾调用是函数式编程的一个重要概念，本身非常简单，一句话就能说清楚，就是指某个函数的最后一步是调用另一个函数。尾调用不一定出现在函数尾部，只要是最后一步操作即可。"></a>11.尾调用是函数式编程的一个重要概念，本身非常简单，一句话就能说清楚，就是指某个函数的最后一步是调用另一个函数。尾调用不一定出现在函数尾部，只要是最后一步操作即可。</h3><h3 id="12-尾调用由于是函数的最后一步操作，所以不需要保留外层函数的调用帧，因为调用位置、内部变量等信息都不会再用到了，直接用内层函数的调用帧取代外层函数即可。尾调用优化即只保留内层函数的调用帧。如果所有函数都是尾调用，那么完全可以做到每次执行时调用帧只有一项，这将大大节省内存。这就是尾调用优化的意义。只有不在用到外层函数的内部变量，内层函数的调用帧才会取代外层函数的调用帧，否则就无法进行”尾调用优化”"><a href="#12-尾调用由于是函数的最后一步操作，所以不需要保留外层函数的调用帧，因为调用位置、内部变量等信息都不会再用到了，直接用内层函数的调用帧取代外层函数即可。尾调用优化即只保留内层函数的调用帧。如果所有函数都是尾调用，那么完全可以做到每次执行时调用帧只有一项，这将大大节省内存。这就是尾调用优化的意义。只有不在用到外层函数的内部变量，内层函数的调用帧才会取代外层函数的调用帧，否则就无法进行”尾调用优化”" class="headerlink" title="12.尾调用由于是函数的最后一步操作，所以不需要保留外层函数的调用帧，因为调用位置、内部变量等信息都不会再用到了，直接用内层函数的调用帧取代外层函数即可。尾调用优化即只保留内层函数的调用帧。如果所有函数都是尾调用，那么完全可以做到每次执行时调用帧只有一项，这将大大节省内存。这就是尾调用优化的意义。只有不在用到外层函数的内部变量，内层函数的调用帧才会取代外层函数的调用帧，否则就无法进行”尾调用优化”"></a>12.尾调用由于是函数的最后一步操作，所以不需要保留外层函数的调用帧，因为调用位置、内部变量等信息都不会再用到了，直接用内层函数的调用帧取代外层函数即可。尾调用优化即只保留内层函数的调用帧。如果所有函数都是尾调用，那么完全可以做到每次执行时调用帧只有一项，这将大大节省内存。这就是尾调用优化的意义。只有不在用到外层函数的内部变量，内层函数的调用帧才会取代外层函数的调用帧，否则就无法进行”尾调用优化”</h3><h3 id="13-尾递归的实现往往需要改写递归函数，确保最后一步只调用自身。做到这一点的方法，就是把所有用到的内部变量改写成函数的参数。"><a href="#13-尾递归的实现往往需要改写递归函数，确保最后一步只调用自身。做到这一点的方法，就是把所有用到的内部变量改写成函数的参数。" class="headerlink" title="13.尾递归的实现往往需要改写递归函数，确保最后一步只调用自身。做到这一点的方法，就是把所有用到的内部变量改写成函数的参数。"></a>13.尾递归的实现往往需要改写递归函数，确保最后一步只调用自身。做到这一点的方法，就是把所有用到的内部变量改写成函数的参数。</h3><h3 id="14-函数式编程有一个概念，叫作柯里化，意思是将多参数的函数转换成单参数的形式。"><a href="#14-函数式编程有一个概念，叫作柯里化，意思是将多参数的函数转换成单参数的形式。" class="headerlink" title="14.函数式编程有一个概念，叫作柯里化，意思是将多参数的函数转换成单参数的形式。"></a>14.函数式编程有一个概念，叫作柯里化，意思是将多参数的函数转换成单参数的形式。</h3><h3 id="15-ES6的尾调用优化只在严格模式下开启，正常模式下是无效的。这是因为，在正常模式下函数内部有两个变量。可以跟踪函数的调用帧。"><a href="#15-ES6的尾调用优化只在严格模式下开启，正常模式下是无效的。这是因为，在正常模式下函数内部有两个变量。可以跟踪函数的调用帧。" class="headerlink" title="15.ES6的尾调用优化只在严格模式下开启，正常模式下是无效的。这是因为，在正常模式下函数内部有两个变量。可以跟踪函数的调用帧。"></a>15.ES6的尾调用优化只在严格模式下开启，正常模式下是无效的。这是因为，在正常模式下函数内部有两个变量。可以跟踪函数的调用帧。</h3><ul>
+<li>func.arguments：返回调用时函数的参数</li>
+<li>func.caller：返回调用当前函数的那个函数</li>
+</ul>
+<p>尾调用优化发生时，函数的调用栈会改写，因此上面两个变量就会失真。严格模式禁用这两个变量，所以尾调用模式仅在严格模式下生效。</p>
+<h3 id="16-在函数参数后添加尾逗号，且将函数写成多行-即每个参数占据一行-，那么以后修改代码时，若想为函数添加新的参数，或者调整参数的次序，势必要在原来最后一个参数后面添加一个逗号。这对于版本管理系统来说，就会显示添加都好的那一行发生了变动，看上去有点冗余，因此允许定义和调用时尾部有一个逗号。"><a href="#16-在函数参数后添加尾逗号，且将函数写成多行-即每个参数占据一行-，那么以后修改代码时，若想为函数添加新的参数，或者调整参数的次序，势必要在原来最后一个参数后面添加一个逗号。这对于版本管理系统来说，就会显示添加都好的那一行发生了变动，看上去有点冗余，因此允许定义和调用时尾部有一个逗号。" class="headerlink" title="16.在函数参数后添加尾逗号，且将函数写成多行(即每个参数占据一行)，那么以后修改代码时，若想为函数添加新的参数，或者调整参数的次序，势必要在原来最后一个参数后面添加一个逗号。这对于版本管理系统来说，就会显示添加都好的那一行发生了变动，看上去有点冗余，因此允许定义和调用时尾部有一个逗号。"></a>16.在函数参数后添加尾逗号，且将函数写成多行(即每个参数占据一行)，那么以后修改代码时，若想为函数添加新的参数，或者调整参数的次序，势必要在原来最后一个参数后面添加一个逗号。这对于版本管理系统来说，就会显示添加都好的那一行发生了变动，看上去有点冗余，因此允许定义和调用时尾部有一个逗号。</h3>
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div>您的支持是我最大的动力</div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/weixin.png" alt="丁可 微信支付">
+        <p>微信支付</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/images/zhifubao.png" alt="丁可 支付宝">
+        <p>支付宝</p>
+      </div>
+
+  </div>
+</div>
+
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>丁可
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://yoursite.com/2021/02/16/ES6two/" title="学习ES6标准入门第二天">http://yoursite.com/2021/02/16/ES6two/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/ES6/" rel="tag"><i class="fa fa-tag"></i> ES6</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/02/13/ES6one/" rel="prev" title="学习ES6标准入门第一天">
+      <i class="fa fa-chevron-left"></i> 学习ES6标准入门第一天
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+      <div>
+  
+    <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>感谢您的阅读-------------</div>
+    
+</div>
+
+  
+</div>
+
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    
+  <div class="comments">
+    <div id="lv-container" data-id="city" data-uid="MTAyMC81MTEwOC8yNzU4OQ=="></div>
+  </div>
+  
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#学习ES6标准入门第二天"><span class="nav-text">学习ES6标准入门第二天</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#第五章-正则的扩展"><span class="nav-text">第五章 正则的扩展</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-在ES5中，RegExp构造函数的参数有两种情况。第一种情况是，参数是字符串，这时第二个参数表示正则表达式的修饰符。第二种情况是，参数是一个正则表达式，这时会返回一个原有正则表达式的拷贝。而在ES6中，如果RegExp构造函数第一个参数是一个正则对象，那么可以使用第二个参数指定修饰符。而且，返回的正则表达式会忽略原有正则表达式的修饰符，只使用新指定的修饰符。"><span class="nav-text">1.在ES5中，RegExp构造函数的参数有两种情况。第一种情况是，参数是字符串，这时第二个参数表示正则表达式的修饰符。第二种情况是，参数是一个正则表达式，这时会返回一个原有正则表达式的拷贝。而在ES6中，如果RegExp构造函数第一个参数是一个正则对象，那么可以使用第二个参数指定修饰符。而且，返回的正则表达式会忽略原有正则表达式的修饰符，只使用新指定的修饰符。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-ES6对正则表达式添加了u修饰符，含义为”Unicode模式”，用来正确处理大于-uFFFF的Unicode字符。也就是说，可以正确处理4个字节的UTF-16编码。"><span class="nav-text">2.ES6对正则表达式添加了u修饰符，含义为”Unicode模式”，用来正确处理大于\uFFFF的Unicode字符。也就是说，可以正确处理4个字节的UTF-16编码。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-点-字符在正则表达式中的含义是除换行符以外的任意单个字符。对于码点大于0xFFFF的Unicode字符，点字符不能识别，必须加上u修饰符"><span class="nav-text">3.点(.)字符在正则表达式中的含义是除换行符以外的任意单个字符。对于码点大于0xFFFF的Unicode字符，点字符不能识别，必须加上u修饰符</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-ES6新增了使用大括号表示Unicode字符的表示法，这种表示法在正则表达式中必须加上u修饰符才能识别当中的大括号，否则会被解读为量词。"><span class="nav-text">4.ES6新增了使用大括号表示Unicode字符的表示法，这种表示法在正则表达式中必须加上u修饰符才能识别当中的大括号，否则会被解读为量词。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-使用u修饰符后，所有的量词都会正确识别码点大于0xFFFF的Unicode字符。u修饰符也影响到预定义模式能否正确识别码点大于0xFFFF的Unicode字符。"><span class="nav-text">5.使用u修饰符后，所有的量词都会正确识别码点大于0xFFFF的Unicode字符。u修饰符也影响到预定义模式能否正确识别码点大于0xFFFF的Unicode字符。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-ES6为正则表达式添加了y修饰符，叫作”粘连”修饰符。y修饰符的作用与g修饰符类似，也是全局匹配，后一次匹配都成上一次匹配成功的下一个位置开始。不同之处在于，g修饰符只要剩余位置中存在匹配就行，而y修饰符会确保匹配必须从剩余的第一个位置开始，这也就是”粘连”的含义。y修饰符的设计本意就是让头部匹配的标志-在全局匹配中都有效。"><span class="nav-text">6.ES6为正则表达式添加了y修饰符，叫作”粘连”修饰符。y修饰符的作用与g修饰符类似，也是全局匹配，后一次匹配都成上一次匹配成功的下一个位置开始。不同之处在于，g修饰符只要剩余位置中存在匹配就行，而y修饰符会确保匹配必须从剩余的第一个位置开始，这也就是”粘连”的含义。y修饰符的设计本意就是让头部匹配的标志(^)在全局匹配中都有效。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7-与y修饰符相匹配，ES6的正则对象多了sticky属性，表示是否设置了y修饰符。ES6为正则表达式新增了flags属性，会返回正则表达式的修饰符。"><span class="nav-text">7.与y修饰符相匹配，ES6的正则对象多了sticky属性，表示是否设置了y修饰符。ES6为正则表达式新增了flags属性，会返回正则表达式的修饰符。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#8-正则表达式中，点-是一个特殊字符，代表任意的单个字符，但是行终止符除外。行终止符包括"><span class="nav-text">8.正则表达式中，点(.)是一个特殊字符，代表任意的单个字符，但是行终止符除外。行终止符包括:</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#9-”先行断言”指的是，x只有在y前面才匹配，必须写成-x-y-的形式。”先行否定断言”指的是，x只有不在y前面才匹配，必须写成-x-y-的形式。”先行断言”括号之中的部分-是不计入返回结果的。”后行断言”正好与”先行断言”相反，x只有在y后面才匹配，必须写成-lt-y-x-的形式。”后行否定断言”则与”先行否定断言”相反，x只有不在y后面才匹配，必须写成-lt-y-x-的形式。”后行断言”括号之中的部分-lt-是不计入返回结果的。”后行断言”的实现需要先匹配-lt-y-x-的x，然后再回到左边匹配y的部分。这种”先右后左”的执行顺序与所有其他正则操作相反，导致了一些不符合预期的结果。其次”后行断言”的反斜杠引用也与通常的顺序相反，必须放在对应的括号之前。"><span class="nav-text">9.”先行断言”指的是，x只有在y前面才匹配，必须写成&#x2F;x(?&#x3D;y)&#x2F;的形式。”先行否定断言”指的是，x只有不在y前面才匹配，必须写成&#x2F;x(?!y)&#x2F;的形式。”先行断言”括号之中的部分(?&#x3D;%)是不计入返回结果的。”后行断言”正好与”先行断言”相反，x只有在y后面才匹配，必须写成&#x2F;(?&lt;&#x3D;y)x&#x2F;的形式。”后行否定断言”则与”先行否定断言”相反，x只有不在y后面才匹配，必须写成&#x2F;(?&lt;!y)x&#x2F;的形式。”后行断言”括号之中的部分(?&lt;&#x3D;$)是不计入返回结果的。”后行断言”的实现需要先匹配&#x2F;(?&lt;&#x3D;y)x&#x2F;的x，然后再回到左边匹配y的部分。这种”先右后左”的执行顺序与所有其他正则操作相反，导致了一些不符合预期的结果。其次”后行断言”的反斜杠引用也与通常的顺序相反，必须放在对应的括号之前。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#10-具名组匹配等于为每一组匹配加上了ID，这样便于描述匹配的目的。如果组的顺序变了，也不用改变匹配后的处理代码。如果要在正则表达式内部引用某个”具名组匹配”，可以使用-k-lt-组名-gt-的写法。"><span class="nav-text">10.具名组匹配等于为每一组匹配加上了ID，这样便于描述匹配的目的。如果组的顺序变了，也不用改变匹配后的处理代码。如果要在正则表达式内部引用某个”具名组匹配”，可以使用\k&lt;组名&gt;的写法。</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第六章-数值的扩展"><span class="nav-text">第六章 数值的扩展</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-如果要将使用0b和0x前缀的字符串数值转为十进制数值，要使用Number方法"><span class="nav-text">1.如果要将使用0b和0x前缀的字符串数值转为十进制数值，要使用Number方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-ES6在Number对象上新提供了Number-isFinite-和Number-isNaN-两个方法。Number-isFinite-用来检查一个数值是否为有限的。Number-isNaN-用来检查一个值是否为NaN。这两个新方法与传统的全局方法isFinite-和isNaN-的区别在于，传统方法先调用Number-将非数值转为数值，再进行判断，而新方法只对数值有效，对于非数值一律返回false"><span class="nav-text">2.ES6在Number对象上新提供了Number.isFinite()和Number.isNaN()两个方法。Number.isFinite()用来检查一个数值是否为有限的。Number.isNaN()用来检查一个值是否为NaN。这两个新方法与传统的全局方法isFinite()和isNaN()的区别在于，传统方法先调用Number()将非数值转为数值，再进行判断，而新方法只对数值有效，对于非数值一律返回false</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-ES6将全局方法parseInt-和parseFloat-移植到了Number对象上面。行为完全保持不变。"><span class="nav-text">3.ES6将全局方法parseInt()和parseFloat()移植到了Number对象上面。行为完全保持不变。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-Number-isInteger-用来判断一个值是否为整数。需要注意的是，在JavaScript内部，整数和浮点数是同样的储存方法，所以3和3-0被视为同一个值。"><span class="nav-text">4.Number.isInteger()用来判断一个值是否为整数。需要注意的是，在JavaScript内部，整数和浮点数是同样的储存方法，所以3和3.0被视为同一个值。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-ES6在Number对象上面新增了一个极小的常量——Number-EPSILON。引入一个这么小的量，目的在于为浮点数计算设置一个误差范围。"><span class="nav-text">5.ES6在Number对象上面新增了一个极小的常量——Number.EPSILON。引入一个这么小的量，目的在于为浮点数计算设置一个误差范围。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-JavaScript能够准确表示的整数范围在-2的53次方到2的53次方之间-不含两个端点-，超过这个范围就无法精确表示。ES6引入了Number-MAX-SAFE-INTEGER和Number-MIN-SAFE-INTEGER两个常量，用来表示这个范围的上下限。"><span class="nav-text">6.JavaScript能够准确表示的整数范围在-2的53次方到2的53次方之间(不含两个端点)，超过这个范围就无法精确表示。ES6引入了Number.MAX_SAFE_INTEGER和Number.MIN_SAFE_INTEGER两个常量，用来表示这个范围的上下限。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7-Math-trunc方法用于去除一个数的小数部分，返回整数部分。对于非数值，Math-trunc内部使用Number方法将其先转为数值。对于空值和无法截取整数的值，返回NaN。"><span class="nav-text">7.Math.trunc方法用于去除一个数的小数部分，返回整数部分。对于非数值，Math.trunc内部使用Number方法将其先转为数值。对于空值和无法截取整数的值，返回NaN。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#8-Math-sign方法用来判断一个数到底是正数、负数，还是零。对于非数值，会先将其转换为数值。其返回值共有5种情况"><span class="nav-text">8.Math.sign方法用来判断一个数到底是正数、负数，还是零。对于非数值，会先将其转换为数值。其返回值共有5种情况:</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#9-Math-cbrt方法用于计算一个数的立方根。对于非数值，Math-cbrt方法内部也是先使用Number方法将其转为数值。"><span class="nav-text">9.Math.cbrt方法用于计算一个数的立方根。对于非数值，Math.cbrt方法内部也是先使用Number方法将其转为数值。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#10-JavaScript的整数使用32位二进制形式表示，Math-clz32方法返回一个数的32位无符号整数形式有多少个前导0。对于空值或其他类型的值，Math-clz32方法会将它们先转为数值，然后再计算。"><span class="nav-text">10.JavaScript的整数使用32位二进制形式表示，Math.clz32方法返回一个数的32位无符号整数形式有多少个前导0。对于空值或其他类型的值，Math.clz32方法会将它们先转为数值，然后再计算。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#11-Math-imul方法返回两个数以32位带符号整数形式相乘的结果，返回的也是一个32位的带符号整数。之所以需要部署这个方法，是因为JavaScript有精度限制，超过2的53次方的值无法精确表示。这就是说，对于那些很大的数的乘法，低位数值往往都是不精确的，Math-imul方法可以返回正确的低位数值"><span class="nav-text">11.Math.imul方法返回两个数以32位带符号整数形式相乘的结果，返回的也是一个32位的带符号整数。之所以需要部署这个方法，是因为JavaScript有精度限制，超过2的53次方的值无法精确表示。这就是说，对于那些很大的数的乘法，低位数值往往都是不精确的，Math.imul方法可以返回正确的低位数值</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#12-Math-fround方法返回一个数的单精度浮点数形式。对于整数来说，Math-fround方法的返回结果不会有任何不同，区别主要在于那些无法用64个二进制位精确表示的小数。这时，Math-fround会返回最接近这个小数的单精度浮点数。"><span class="nav-text">12.Math.fround方法返回一个数的单精度浮点数形式。对于整数来说，Math.fround方法的返回结果不会有任何不同，区别主要在于那些无法用64个二进制位精确表示的小数。这时，Math.fround会返回最接近这个小数的单精度浮点数。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#13-Math-hypot方法返回所有参数的平方和的平方根。如果参数不是数值，Math-hypot方法会将其转为数值。只要有一个参数无法转为数值，就会返回NaN。"><span class="nav-text">13.Math.hypot方法返回所有参数的平方和的平方根。如果参数不是数值，Math.hypot方法会将其转为数值。只要有一个参数无法转为数值，就会返回NaN。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#14-Math-expm1-x-返回ex-1，即Math-exp-x-1。Math-log1p-x-方法返回ln-1-x-，即Math-log-1-x-。如果x小于-1，则返回NaN。Math-log10-x-返回以10为底的x的对数。如果x小于0，则返回NaN。Math-log2-x-返回以2为底的x的对数。如果x小于0，则返回NaN。"><span class="nav-text">14.Math.expm1(x)返回ex-1，即Math.exp(x) - 1。Math.log1p(x)方法返回ln(1+x)，即Math.log(1+x)。如果x小于-1，则返回NaN。Math.log10(x)返回以10为底的x的对数。如果x小于0，则返回NaN。Math.log2(x)返回以2为底的x的对数。如果x小于0，则返回NaN。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#15-Math-signbit-方法判断一个数的符号位是否已经设置。"><span class="nav-text">15.Math.signbit()方法判断一个数的符号位是否已经设置。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#16-新的数据类型Integer只能用来表示整数，没有位数限制，任何位数的整数都可以精确表示。为了与Number类型区别，Integer类型的数据必须使用后缀n来表示。对于Integer类型的数据，typeof运算符将返回integer。"><span class="nav-text">16.新的数据类型Integer只能用来表示整数，没有位数限制，任何位数的整数都可以精确表示。为了与Number类型区别，Integer类型的数据必须使用后缀n来表示。对于Integer类型的数据，typeof运算符将返回integer。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#17-在数学运算方面，Integer类型的-、-、和-这四个二元运算符与Number类型的行为一致。除法运算-会舍去小数部分，返回一个整数。Integer类型不能与Number类型进行混合运算。这是因为无论返回的是Integer还是Number，都会丢失信息。比如-2n-53n-1n-0-5这个表达式，如果返回Integer类型，0-5这个小数部分会丢失；如果返回Number类型，会超过53位精确数字，精度下降。相等运算符-会改变数据类型，也是不允许混合使用的。精确相等运算符-不会改变数据类型，因此可以混合使用。"><span class="nav-text">17.在数学运算方面，Integer类型的+、-、和*这四个二元运算符与Number类型的行为一致。除法运算&#x2F;会舍去小数部分，返回一个整数。Integer类型不能与Number类型进行混合运算。这是因为无论返回的是Integer还是Number，都会丢失信息。比如(2n**53n+1n) + 0.5这个表达式，如果返回Integer类型，0.5这个小数部分会丢失；如果返回Number类型，会超过53位精确数字，精度下降。相等运算符(&#x3D;&#x3D;)会改变数据类型，也是不允许混合使用的。精确相等运算符(&#x3D;&#x3D;&#x3D;)不会改变数据类型，因此可以混合使用。</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第七章-函数的扩展"><span class="nav-text">第七章 函数的扩展</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-参数默认值不是传值的，而是每次都重新计算默认值表达式的值。也就是说，参数默认值是惰性求值的。"><span class="nav-text">1.参数默认值不是传值的，而是每次都重新计算默认值表达式的值。也就是说，参数默认值是惰性求值的。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-指定了默认值以后，函数的length属性将返回没有指定默认值的参数个数。length属性的返回值等于函数的参数个数减去指定了默认值的参数个数。这是因为length属性的含义是该函数预期传入参数个数。某个参数指定默认值以后，预期传入的参数个数就不包括这个参数了。同理，rest参数也不会计入length属性。如果设置了默认值的参数不是尾参数，那么length属性也不再计入后面的参数。"><span class="nav-text">2.指定了默认值以后，函数的length属性将返回没有指定默认值的参数个数。length属性的返回值等于函数的参数个数减去指定了默认值的参数个数。这是因为length属性的含义是该函数预期传入参数个数。某个参数指定默认值以后，预期传入的参数个数就不包括这个参数了。同理，rest参数也不会计入length属性。如果设置了默认值的参数不是尾参数，那么length属性也不再计入后面的参数。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-一旦设置了参数的默认值，函数进行声明初始化时，参数会形成一个单独的作用域。等到初始化结束，这个作用域就会消失。这种语法行为在不设置参数默认值时是不会出现的。"><span class="nav-text">3.一旦设置了参数的默认值，函数进行声明初始化时，参数会形成一个单独的作用域。等到初始化结束，这个作用域就会消失。这种语法行为在不设置参数默认值时是不会出现的。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-可以利用默认参数值来指定某一个参数不得省略，如果省略就抛出一个错误。另外，可以将参数默认值设为undefined，表明这个参数是可以省略的。"><span class="nav-text">4.可以利用默认参数值来指定某一个参数不得省略，如果省略就抛出一个错误。另外，可以将参数默认值设为undefined，表明这个参数是可以省略的。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-rest参数之后不能再有其他参数-即只能是最后一个参数-，否则会报错。函数的length属性不包括rest参数。"><span class="nav-text">5.rest参数之后不能再有其他参数(即只能是最后一个参数)，否则会报错。函数的length属性不包括rest参数。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-在ES6中，规定只要函数参数使用了默认值、解构赋值或者扩展运算符，那么函数内部就不能显式设定为严格模式，否则就会报错。这样规定的原因是，函数内部的严格模式同时适用于函数体和函数参数。但是，函数执行时，先执行函数参数，然后再执行函数体。这样就有一个不合理的地方：只有从函数体之中才能知道参数是否应该以严格模式执行，但是参数却应该先于函数体执行。有两种方法可以规避这种限制。第一种是设定全局性的严格模式，这是合法的。第二种是把函数包在一个无参数的立即执行函数里面。"><span class="nav-text">6.在ES6中，规定只要函数参数使用了默认值、解构赋值或者扩展运算符，那么函数内部就不能显式设定为严格模式，否则就会报错。这样规定的原因是，函数内部的严格模式同时适用于函数体和函数参数。但是，函数执行时，先执行函数参数，然后再执行函数体。这样就有一个不合理的地方：只有从函数体之中才能知道参数是否应该以严格模式执行，但是参数却应该先于函数体执行。有两种方法可以规避这种限制。第一种是设定全局性的严格模式，这是合法的。第二种是把函数包在一个无参数的立即执行函数里面。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7-函数的name属性返回该函数的函数名。如果将一个匿名函数赋值给一个变量，ES5的name属性会返回空字符串，而ES6的name属性会返回实际的函数名。如果将一个具名函数赋值给一个变量，则ES5和ES6的name属性都返回这个具名函数原本的名字。Function构造函数返回的函数实例，name属性的值为anonymous。bind返回的函数，name属性值会加上bound前缀。"><span class="nav-text">7.函数的name属性返回该函数的函数名。如果将一个匿名函数赋值给一个变量，ES5的name属性会返回空字符串，而ES6的name属性会返回实际的函数名。如果将一个具名函数赋值给一个变量，则ES5和ES6的name属性都返回这个具名函数原本的名字。Function构造函数返回的函数实例，name属性的值为anonymous。bind返回的函数，name属性值会加上bound前缀。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#8-如果箭头函数不需要参数或需要多个参数，就使用圆括号代表参数部分。如果箭头函数的代码块部分多于一条语句，就要使用大括号将其括起来，并使用return语句返回。由于大括号被解释为代码块，所以如果箭头函数直接返回一个对象，必须在对象外面加上括号。"><span class="nav-text">8.如果箭头函数不需要参数或需要多个参数，就使用圆括号代表参数部分。如果箭头函数的代码块部分多于一条语句，就要使用大括号将其括起来，并使用return语句返回。由于大括号被解释为代码块，所以如果箭头函数直接返回一个对象，必须在对象外面加上括号。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#9-箭头函数有以下几个使用注意事项"><span class="nav-text">9.箭头函数有以下几个使用注意事项</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#10-函数绑定运算符是并排的双冒号-，双冒号的左边是一个对象，右边是一个函数。该运算符会自动将左边的对象作为上下文环境-即this对象-绑定到右边的函数上。如果双冒号左边为空，右边是一个对象的方法，则等于将该方法绑定在该对象上。"><span class="nav-text">10.函数绑定运算符是并排的双冒号(::)，双冒号的左边是一个对象，右边是一个函数。该运算符会自动将左边的对象作为上下文环境(即this对象)绑定到右边的函数上。如果双冒号左边为空，右边是一个对象的方法，则等于将该方法绑定在该对象上。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#11-尾调用是函数式编程的一个重要概念，本身非常简单，一句话就能说清楚，就是指某个函数的最后一步是调用另一个函数。尾调用不一定出现在函数尾部，只要是最后一步操作即可。"><span class="nav-text">11.尾调用是函数式编程的一个重要概念，本身非常简单，一句话就能说清楚，就是指某个函数的最后一步是调用另一个函数。尾调用不一定出现在函数尾部，只要是最后一步操作即可。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#12-尾调用由于是函数的最后一步操作，所以不需要保留外层函数的调用帧，因为调用位置、内部变量等信息都不会再用到了，直接用内层函数的调用帧取代外层函数即可。尾调用优化即只保留内层函数的调用帧。如果所有函数都是尾调用，那么完全可以做到每次执行时调用帧只有一项，这将大大节省内存。这就是尾调用优化的意义。只有不在用到外层函数的内部变量，内层函数的调用帧才会取代外层函数的调用帧，否则就无法进行”尾调用优化”"><span class="nav-text">12.尾调用由于是函数的最后一步操作，所以不需要保留外层函数的调用帧，因为调用位置、内部变量等信息都不会再用到了，直接用内层函数的调用帧取代外层函数即可。尾调用优化即只保留内层函数的调用帧。如果所有函数都是尾调用，那么完全可以做到每次执行时调用帧只有一项，这将大大节省内存。这就是尾调用优化的意义。只有不在用到外层函数的内部变量，内层函数的调用帧才会取代外层函数的调用帧，否则就无法进行”尾调用优化”</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#13-尾递归的实现往往需要改写递归函数，确保最后一步只调用自身。做到这一点的方法，就是把所有用到的内部变量改写成函数的参数。"><span class="nav-text">13.尾递归的实现往往需要改写递归函数，确保最后一步只调用自身。做到这一点的方法，就是把所有用到的内部变量改写成函数的参数。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#14-函数式编程有一个概念，叫作柯里化，意思是将多参数的函数转换成单参数的形式。"><span class="nav-text">14.函数式编程有一个概念，叫作柯里化，意思是将多参数的函数转换成单参数的形式。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#15-ES6的尾调用优化只在严格模式下开启，正常模式下是无效的。这是因为，在正常模式下函数内部有两个变量。可以跟踪函数的调用帧。"><span class="nav-text">15.ES6的尾调用优化只在严格模式下开启，正常模式下是无效的。这是因为，在正常模式下函数内部有两个变量。可以跟踪函数的调用帧。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#16-在函数参数后添加尾逗号，且将函数写成多行-即每个参数占据一行-，那么以后修改代码时，若想为函数添加新的参数，或者调整参数的次序，势必要在原来最后一个参数后面添加一个逗号。这对于版本管理系统来说，就会显示添加都好的那一行发生了变动，看上去有点冗余，因此允许定义和调用时尾部有一个逗号。"><span class="nav-text">16.在函数参数后添加尾逗号，且将函数写成多行(即每个参数占据一行)，那么以后修改代码时，若想为函数添加新的参数，或者调整参数的次序，势必要在原来最后一个参数后面添加一个逗号。这对于版本管理系统来说，就会显示添加都好的那一行发生了变动，看上去有点冗余，因此允许定义和调用时尾部有一个逗号。</span></a></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="丁可"
+      src="/images/touxiang.jpg">
+  <p class="site-author-name" itemprop="name">丁可</p>
+  <div class="site-description" itemprop="description">哪来的勇气我就是不灰心</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">27</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">10</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/DK-frontend" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;DK-frontend" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/504015629@qq.com" title="E-Mail → 504015629@qq.com"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://blog.csdn.net/DK159753" title="CSDN → https:&#x2F;&#x2F;blog.csdn.net&#x2F;DK159753" rel="noopener" target="_blank"><i class="fab fa-crosshairs fa-fw"></i>CSDN</a>
+      </span>
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+      <iframe allow="autoplay" frameborder="no" border="0" marginwidth="0" marginheight="0" width=330 height=86 src="//music.163.com/outchain/player?type=2&id=1363973661&auto=1&height=66"></iframe>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2020 – 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">丁可</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">175k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">2:39</span>
+</div>
+<div class="theme-info">
+  <div class="powered-by"></div>
+  <span class="post-count">博客全站共82.3k字</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/pjax/pjax.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '#page-configurations',
+    '.content-wrap',
+    '.post-toc-wrap',
+    '.languages',
+    '#pjax'
+  ],
+  switches: {
+    '.post-toc-wrap': Pjax.switches.innerHTML
+  },
+  analytics: false,
+  cacheBust: false,
+  scrollTo : !CONFIG.bookmark.enable
+});
+
+window.addEventListener('pjax:success', () => {
+  document.querySelectorAll('script[data-pjax], script#page-configurations, #pjax script').forEach(element => {
+    var code = element.text || element.textContent || element.innerHTML || '';
+    var parent = element.parentNode;
+    parent.removeChild(element);
+    var script = document.createElement('script');
+    if (element.id) {
+      script.id = element.id;
+    }
+    if (element.className) {
+      script.className = element.className;
+    }
+    if (element.type) {
+      script.type = element.type;
+    }
+    if (element.src) {
+      script.src = element.src;
+      // Force synchronous loading of peripheral JS.
+      script.async = false;
+    }
+    if (element.dataset.pjax !== undefined) {
+      script.dataset.pjax = '';
+    }
+    if (code !== '') {
+      script.appendChild(document.createTextNode(code));
+    }
+    parent.appendChild(script);
+  });
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <div id="pjax">
+  
+
+  
+
+<script>
+NexT.utils.loadComments(document.querySelector('#lv-container'), () => {
+  window.livereOptions = {
+    refer: location.pathname.replace(CONFIG.root, '').replace('index.html', '')
+  };
+  (function(d, s) {
+    var j, e = d.getElementsByTagName(s)[0];
+    if (typeof LivereTower === 'function') { return; }
+    j = d.createElement(s);
+    j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+    j.async = true;
+    e.parentNode.insertBefore(j, e);
+  })(document, 'script');
+});
+</script>
+
+    </div>
+  
+   <canvas class="fireworks" style="position: fixed;left: 0;top: 0;z-index: 1; pointer-events: none;" ></canvas> 
+   <script type="text/javascript" src="//cdn.bootcss.com/animejs/2.2.0/anime.min.js"></script> 
+   <script type="text/javascript" src="/js/src/fireworks.js"></script>
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"model":{"jsonPath":"/live2dw/assets/wanko.model.json"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":false},"log":false});</script></body>
+</html>
+
+
