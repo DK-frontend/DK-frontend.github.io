@@ -154,7 +154,7 @@
   </li>
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">27</span></a>
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">28</span></a>
 
   </li>
   </ul>
@@ -180,6 +180,98 @@
 
           <div class="content index posts-expand">
             
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/02/06/vuethree/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/touxiang.jpg">
+      <meta itemprop="name" content="丁可">
+      <meta itemprop="description" content="哪来的勇气我就是不灰心">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="DKの博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/02/06/vuethree/" class="post-title-link" itemprop="url">深入浅出vue.js学习笔记第四天</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2021-02-06 00:23:47 / 修改时间：02:17:56" itemprop="dateCreated datePublished" datetime="2021-02-06T00:23:47+08:00">2021-02-06</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">学习笔记</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>3.6k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>3 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="深入浅出vue-js学习笔记第四天"><a href="#深入浅出vue-js学习笔记第四天" class="headerlink" title="深入浅出vue.js学习笔记第四天"></a>深入浅出vue.js学习笔记第四天</h1><h2 id="第十三章-实例方法与全局API的实现原理"><a href="#第十三章-实例方法与全局API的实现原理" class="headerlink" title="第十三章 实例方法与全局API的实现原理"></a>第十三章 实例方法与全局API的实现原理</h2><h3 id="1-定义Vue构造函数后会分别调用initMixin、stateMixin、eventsMixin、lifecycleMixin和renderMixin这五个函数，并将Vue构造函数当作参数传给这五个函数，这五个函数的作用就是向Vue的原型中挂在方法。"><a href="#1-定义Vue构造函数后会分别调用initMixin、stateMixin、eventsMixin、lifecycleMixin和renderMixin这五个函数，并将Vue构造函数当作参数传给这五个函数，这五个函数的作用就是向Vue的原型中挂在方法。" class="headerlink" title="1.定义Vue构造函数后会分别调用initMixin、stateMixin、eventsMixin、lifecycleMixin和renderMixin这五个函数，并将Vue构造函数当作参数传给这五个函数，这五个函数的作用就是向Vue的原型中挂在方法。"></a>1.定义Vue构造函数后会分别调用initMixin、stateMixin、eventsMixin、lifecycleMixin和renderMixin这五个函数，并将Vue构造函数当作参数传给这五个函数，这五个函数的作用就是向Vue的原型中挂在方法。</h3><h3 id="2-执行new-Vue-时，会调用-initial方法，该方法实现了一系列初始化操作，包括整个生命周期的流程以及响应式系统流程的启动等"><a href="#2-执行new-Vue-时，会调用-initial方法，该方法实现了一系列初始化操作，包括整个生命周期的流程以及响应式系统流程的启动等" class="headerlink" title="2.执行new Vue()时，会调用_initial方法，该方法实现了一系列初始化操作，包括整个生命周期的流程以及响应式系统流程的启动等"></a>2.执行new Vue()时，会调用_initial方法，该方法实现了一系列初始化操作，包括整个生命周期的流程以及响应式系统流程的启动等</h3><h3 id="3-与数据相关的实例方法有三个，分别是vm-watch、vm-set、和vm-delete，它们是在stateMixin中挂载到Vue的原型上的。"><a href="#3-与数据相关的实例方法有三个，分别是vm-watch、vm-set、和vm-delete，它们是在stateMixin中挂载到Vue的原型上的。" class="headerlink" title="3.与数据相关的实例方法有三个，分别是vm.$watch、vm.$set、和vm.$delete，它们是在stateMixin中挂载到Vue的原型上的。"></a>3.与数据相关的实例方法有三个，分别是vm.$watch、vm.$set、和vm.$delete，它们是在stateMixin中挂载到Vue的原型上的。</h3><h3 id="4-与事件相关的实例方法有4个，分别是：vm-on、vm-once、vm-off、和vm-emit。这四个方法是在eventsMixin中挂载到Vue构造函数的prototype属性中的。"><a href="#4-与事件相关的实例方法有4个，分别是：vm-on、vm-once、vm-off、和vm-emit。这四个方法是在eventsMixin中挂载到Vue构造函数的prototype属性中的。" class="headerlink" title="4.与事件相关的实例方法有4个，分别是：vm.$on、vm.$once、vm.$off、和vm.$emit。这四个方法是在eventsMixin中挂载到Vue构造函数的prototype属性中的。"></a>4.与事件相关的实例方法有4个，分别是：vm.$on、vm.$once、vm.$off、和vm.$emit。这四个方法是在eventsMixin中挂载到Vue构造函数的prototype属性中的。</h3><h3 id="5-vm-on是用来监听当前实例上的自定义事件，事件可以由vm-emit触发。回调函数会接收所有传入事件所触发的函数的额外参数。该事件的实现并不难，只需要在注册事件时将回调函数收集起来，在触发事件时将收集起来的回调函数依次调用即可。若传入的event参数为数组时，需要遍历数组，将其中的每一项递归调用vm-on，使回调可以被注册到数组中每项事件名所指定的事件列表。当event参数不为数组时，就向事件列表中添加回调。"><a href="#5-vm-on是用来监听当前实例上的自定义事件，事件可以由vm-emit触发。回调函数会接收所有传入事件所触发的函数的额外参数。该事件的实现并不难，只需要在注册事件时将回调函数收集起来，在触发事件时将收集起来的回调函数依次调用即可。若传入的event参数为数组时，需要遍历数组，将其中的每一项递归调用vm-on，使回调可以被注册到数组中每项事件名所指定的事件列表。当event参数不为数组时，就向事件列表中添加回调。" class="headerlink" title="5.vm.$on是用来监听当前实例上的自定义事件，事件可以由vm.$emit触发。回调函数会接收所有传入事件所触发的函数的额外参数。该事件的实现并不难，只需要在注册事件时将回调函数收集起来，在触发事件时将收集起来的回调函数依次调用即可。若传入的event参数为数组时，需要遍历数组，将其中的每一项递归调用vm.$on，使回调可以被注册到数组中每项事件名所指定的事件列表。当event参数不为数组时，就向事件列表中添加回调。"></a>5.vm.$on是用来监听当前实例上的自定义事件，事件可以由vm.$emit触发。回调函数会接收所有传入事件所触发的函数的额外参数。该事件的实现并不难，只需要在注册事件时将回调函数收集起来，在触发事件时将收集起来的回调函数依次调用即可。若传入的event参数为数组时，需要遍历数组，将其中的每一项递归调用vm.$on，使回调可以被注册到数组中每项事件名所指定的事件列表。当event参数不为数组时，就向事件列表中添加回调。</h3><h3 id="6-vm-off是用来移除自定义事件监听器"><a href="#6-vm-off是用来移除自定义事件监听器" class="headerlink" title="6.vm.$off是用来移除自定义事件监听器"></a>6.vm.$off是用来移除自定义事件监听器</h3><ul>
+<li>如果没有提供参数，则移除所有的事件监听器</li>
+<li>如果只提供了事件，则移除该事件所有的监听器</li>
+<li>如果同时提供事件与回调，则只移除这个回调的监听器
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2021/02/06/vuethree/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
       
   
   
@@ -1016,104 +1108,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/07/29/gulp/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/touxiang.jpg">
-      <meta itemprop="name" content="丁可">
-      <meta itemprop="description" content="哪来的勇气我就是不灰心">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="DKの博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/07/29/gulp/" class="post-title-link" itemprop="url">自动化构建工具gulp学习笔记</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-07-29 23:30:47" itemprop="dateCreated datePublished" datetime="2020-07-29T23:30:47+08:00">2020-07-29</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-07-30 20:48:59" itemprop="dateModified" datetime="2020-07-30T20:48:59+08:00">2020-07-30</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">学习笔记</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>8.4k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>8 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="一-gulp的特点"><a href="#一-gulp的特点" class="headerlink" title="一.gulp的特点"></a>一.gulp的特点</h2><ul>
-<li>任务化</li>
-<li>基于流</li>
-<li>grunt是同步执行任务，而gulp是异步执行任务，因此更高效<br>gulp不会压缩没有引用的代码<br>gulp注册任务加上return为异步操作，不加return为同步操作
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2020/07/29/gulp/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1184,7 +1178,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">27</span>
+          <span class="site-state-item-count">28</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -1249,17 +1243,17 @@
       <i class="fa fa-chart-area"></i>
     </span>
       <span class="post-meta-item-text">站点总字数：</span>
-    <span title="站点总字数">175k</span>
+    <span title="站点总字数">181k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">2:39</span>
+    <span title="站点阅读时长">2:44</span>
 </div>
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共82.3k字</span>
+  <span class="post-count">博客全站共86k字</span>
 </div>
 
         
