@@ -154,7 +154,7 @@
   </li>
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">28</span></a>
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">29</span></a>
 
   </li>
   </ul>
@@ -180,6 +180,105 @@
 
           <div class="content index posts-expand">
             
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/02/06/vuefour/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/touxiang.jpg">
+      <meta itemprop="name" content="丁可">
+      <meta itemprop="description" content="哪来的勇气我就是不灰心">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="DKの博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/02/06/vuefour/" class="post-title-link" itemprop="url">深入浅出vue.js学习笔记第五天</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-02-06 23:57:14" itemprop="dateCreated datePublished" datetime="2021-02-06T23:57:14+08:00">2021-02-06</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-02-07 01:47:48" itemprop="dateModified" datetime="2021-02-07T01:47:48+08:00">2021-02-07</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">学习笔记</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>3.8k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>3 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="深入浅出vue-js学习笔记第五天"><a href="#深入浅出vue-js学习笔记第五天" class="headerlink" title="深入浅出vue.js学习笔记第五天"></a>深入浅出vue.js学习笔记第五天</h1><h2 id="第十四章-生命周期"><a href="#第十四章-生命周期" class="headerlink" title="第十四章 生命周期"></a>第十四章 生命周期</h2><h3 id="1-Vue-js实例的生命周期可以分为四个阶段：初始化阶段、模板编译阶段、挂在阶段、卸载阶段"><a href="#1-Vue-js实例的生命周期可以分为四个阶段：初始化阶段、模板编译阶段、挂在阶段、卸载阶段" class="headerlink" title="1.Vue.js实例的生命周期可以分为四个阶段：初始化阶段、模板编译阶段、挂在阶段、卸载阶段"></a>1.Vue.js实例的生命周期可以分为四个阶段：初始化阶段、模板编译阶段、挂在阶段、卸载阶段</h3><h3 id="2-在执行初始化流程之前，实例上挂载了-options属性。这部分代码的目的是将用户传递的options选项与当前构造函数的options属性及其父级实例构造函数的options属性，合并成一个新的options并赋值给-options属性"><a href="#2-在执行初始化流程之前，实例上挂载了-options属性。这部分代码的目的是将用户传递的options选项与当前构造函数的options属性及其父级实例构造函数的options属性，合并成一个新的options并赋值给-options属性" class="headerlink" title="2.在执行初始化流程之前，实例上挂载了$options属性。这部分代码的目的是将用户传递的options选项与当前构造函数的options属性及其父级实例构造函数的options属性，合并成一个新的options并赋值给$options属性"></a>2.在执行初始化流程之前，实例上挂载了$options属性。这部分代码的目的是将用户传递的options选项与当前构造函数的options属性及其父级实例构造函数的options属性，合并成一个新的options并赋值给$options属性</h3><h3 id="3-在生命周期钩子beforeCreate被出发之前执行了initLifecycle、initEvents和initRender。在初始化的过程中，首先初始化事件与属性，然后触发生命周期钩子beforeCreate。随后初始化provide-inject和状态，这里的状态指的是props、methods、data、computed以及watch。接着触发生命周期钩子created。最后，判断用户是否在参数中提供了el选项，如果是，则调用vm-mount方法，进入后面的生命周期阶段。"><a href="#3-在生命周期钩子beforeCreate被出发之前执行了initLifecycle、initEvents和initRender。在初始化的过程中，首先初始化事件与属性，然后触发生命周期钩子beforeCreate。随后初始化provide-inject和状态，这里的状态指的是props、methods、data、computed以及watch。接着触发生命周期钩子created。最后，判断用户是否在参数中提供了el选项，如果是，则调用vm-mount方法，进入后面的生命周期阶段。" class="headerlink" title="3.在生命周期钩子beforeCreate被出发之前执行了initLifecycle、initEvents和initRender。在初始化的过程中，首先初始化事件与属性，然后触发生命周期钩子beforeCreate。随后初始化provide/inject和状态，这里的状态指的是props、methods、data、computed以及watch。接着触发生命周期钩子created。最后，判断用户是否在参数中提供了el选项，如果是，则调用vm.$mount方法，进入后面的生命周期阶段。"></a>3.在生命周期钩子beforeCreate被出发之前执行了initLifecycle、initEvents和initRender。在初始化的过程中，首先初始化事件与属性，然后触发生命周期钩子beforeCreate。随后初始化provide/inject和状态，这里的状态指的是props、methods、data、computed以及watch。接着触发生命周期钩子created。最后，判断用户是否在参数中提供了el选项，如果是，则调用vm.$mount方法，进入后面的生命周期阶段。</h3><h3 id="4-Vue-js在合并options的过程中会找出options中所有key是钩子函数的名字，并将它转换成数组。例如有这样一种场景：Vue-mixin和用户在实例化Vue-js时，如果设置了同一个生命周期钩子，那么在触发生命周期时，需要同时触发这两个函数。而转换成数组后，可以在同一个生命周期钩子列表中保存多个生命周期钩子。"><a href="#4-Vue-js在合并options的过程中会找出options中所有key是钩子函数的名字，并将它转换成数组。例如有这样一种场景：Vue-mixin和用户在实例化Vue-js时，如果设置了同一个生命周期钩子，那么在触发生命周期时，需要同时触发这两个函数。而转换成数组后，可以在同一个生命周期钩子列表中保存多个生命周期钩子。" class="headerlink" title="4.Vue.js在合并options的过程中会找出options中所有key是钩子函数的名字，并将它转换成数组。例如有这样一种场景：Vue.mixin和用户在实例化Vue.js时，如果设置了同一个生命周期钩子，那么在触发生命周期时，需要同时触发这两个函数。而转换成数组后，可以在同一个生命周期钩子列表中保存多个生命周期钩子。"></a>4.Vue.js在合并options的过程中会找出options中所有key是钩子函数的名字，并将它转换成数组。例如有这样一种场景：Vue.mixin和用户在实例化Vue.js时，如果设置了同一个生命周期钩子，那么在触发生命周期时，需要同时触发这两个函数。而转换成数组后，可以在同一个生命周期钩子列表中保存多个生命周期钩子。</h3><h3 id="5-errorCaptured钩子函数的作用是捕获来自子孙组件的错误，然后此钩子函数可以返回false，阻止该错误继续向上传播。"><a href="#5-errorCaptured钩子函数的作用是捕获来自子孙组件的错误，然后此钩子函数可以返回false，阻止该错误继续向上传播。" class="headerlink" title="5.errorCaptured钩子函数的作用是捕获来自子孙组件的错误，然后此钩子函数可以返回false，阻止该错误继续向上传播。"></a>5.errorCaptured钩子函数的作用是捕获来自子孙组件的错误，然后此钩子函数可以返回false，阻止该错误继续向上传播。</h3><ul>
+<li>默认情况下，如果全局的config.errorHandler被定义，那么所有的错误都会发送给它，这样这些错误可以在单个位置报告给分析服务。</li>
+<li>如果一个组件继承的链路或其父级从属链路中存在多个errorCaptured钩子，则它们将会被相同的错误逐个唤起。</li>
+<li>如果errorCaptured钩子函数自身抛出了一个错误，则这个新错误和原本被捕获的错误都会发送给全局的config.errorHandler。</li>
+<li>一个errorCaptured钩子函数能够返回false来阻止错误继续向上传播。这本质上是说“这个错误已经被搞定，应该被忽略”。它会阻止其他被这个错误唤起的errorCaptured钩子函数和全局的config.errorHandler。
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2021/02/06/vuefour/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
       
   
   
@@ -1015,99 +1114,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/07/30/hashtable/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/touxiang.jpg">
-      <meta itemprop="name" content="丁可">
-      <meta itemprop="description" content="哪来的勇气我就是不灰心">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="DKの博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/07/30/hashtable/" class="post-title-link" itemprop="url">JavaScript实现哈希表(hashtable)</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2020-07-30 18:44:18 / 修改时间：20:43:50" itemprop="dateCreated datePublished" datetime="2020-07-30T18:44:18+08:00">2020-07-30</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Javascript/" itemprop="url" rel="index"><span itemprop="name">Javascript</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>16k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>14 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="JavaScript实现哈希表"><a href="#JavaScript实现哈希表" class="headerlink" title="JavaScript实现哈希表"></a>JavaScript实现哈希表</h1><h2 id="一、哈希表简介"><a href="#一、哈希表简介" class="headerlink" title="一、哈希表简介"></a>一、哈希表简介</h2><h3 id="1-1-认识哈希表"><a href="#1-1-认识哈希表" class="headerlink" title="1.1.认识哈希表"></a>1.1.认识哈希表</h3><p>哈希表通常是基于<strong>数组</strong>实现的，但是相对于数组，它存在更多优势：</p>
-<ul>
-<li>哈希表可以提供非常快速的<strong>插入-删除-查找操作；</strong></li>
-<li>无论多少数据，插入和删除值都只需要非常短的时间，即O(1)的时间级。实际上，只需要<strong>几个机器指令</strong>即可完成；</li>
-<li>哈希表的速度比<strong>树还要快</strong>，基本可以瞬间查找到想要的元素。但是相对于树来说编码要简单得多。
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2020/07/30/hashtable/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1178,7 +1184,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">28</span>
+          <span class="site-state-item-count">29</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -1243,17 +1249,17 @@
       <i class="fa fa-chart-area"></i>
     </span>
       <span class="post-meta-item-text">站点总字数：</span>
-    <span title="站点总字数">181k</span>
+    <span title="站点总字数">187k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">2:44</span>
+    <span title="站点阅读时长">2:50</span>
 </div>
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共86k字</span>
+  <span class="post-count">博客全站共89.5k字</span>
 </div>
 
         

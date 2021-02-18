@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+ <!--pjax：防止跳转页面音乐暂停-->
+  <script src="https://cdn.jsdelivr.net/npm/pjax@0.2.8/pjax.js"></script> 
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<script src="//cdn.bootcss.com/pace/1.0.2/pace.min.js"></script>
+<link href="//cdn.bootcss.com/pace/1.0.2/themes/pink/pace-theme-flash.css" rel="stylesheet">
+<style>
+    .pace .pace-progress {
+        background: #1E92FB; /*进度条颜色*/
+        height: 3px;
+    }
+    .pace .pace-progress-inner {
+         box-shadow: 0 0 10px #1E92FB, 0 0 5px     #1E92FB; /*阴影颜色*/
+    }
+    .pace .pace-activity {
+        border-top-color: #1E92FB;    /*上边框颜色*/
+        border-left-color: #1E92FB;    /*左边框颜色*/
+    }
+</style>
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-big-counter.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yoursite.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="学习ES6标准入门第四天第十一章 Set和Map数据结构1.Set函数可以接收数组(或者具有iterable接口的其他数据结构)作为参数，用来初始化。向Set加入值时不会发生类型转换，所以5和”5”是两个不同的值。Set内部判断两个值是否相同时使用的算法叫作”Same-value-equality”，它类似于精确相等运算符(&#x3D;&#x3D;&#x3D;)，主要的区别是NaN等于自身，而精确相等运算符认为NaN不等于自身">
+<meta property="og:type" content="article">
+<meta property="og:title" content="学习ES6标准入门第四天">
+<meta property="og:url" content="http://yoursite.com/2021/02/18/ES6four/index.html">
+<meta property="og:site_name" content="DKの博客">
+<meta property="og:description" content="学习ES6标准入门第四天第十一章 Set和Map数据结构1.Set函数可以接收数组(或者具有iterable接口的其他数据结构)作为参数，用来初始化。向Set加入值时不会发生类型转换，所以5和”5”是两个不同的值。Set内部判断两个值是否相同时使用的算法叫作”Same-value-equality”，它类似于精确相等运算符(&#x3D;&#x3D;&#x3D;)，主要的区别是NaN等于自身，而精确相等运算符认为NaN不等于自身">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-02-18T11:00:17.000Z">
+<meta property="article:modified_time" content="2021-02-18T13:04:14.482Z">
+<meta property="article:author" content="丁可">
+<meta property="article:tag" content="ES6">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://yoursite.com/2021/02/18/ES6four/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>学习ES6标准入门第四天 | DKの博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+    <a href="https://github.com/DK-frontend" target="_blank" rel="noopener" class="github-corner" aria-label="View source on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" style="fill:#151513; color:#fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a><style>.github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}</style>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">DKの博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">记录前端学习的历程</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">10</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">3</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">29</span></a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/02/18/ES6four/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/touxiang.jpg">
+      <meta itemprop="name" content="丁可">
+      <meta itemprop="description" content="哪来的勇气我就是不灰心">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="DKの博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          学习ES6标准入门第四天
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2021-02-18 19:00:17 / 修改时间：21:04:14" itemprop="dateCreated datePublished" datetime="2021-02-18T19:00:17+08:00">2021-02-18</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">学习笔记</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>6.1k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>6 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="学习ES6标准入门第四天"><a href="#学习ES6标准入门第四天" class="headerlink" title="学习ES6标准入门第四天"></a>学习ES6标准入门第四天</h1><h2 id="第十一章-Set和Map数据结构"><a href="#第十一章-Set和Map数据结构" class="headerlink" title="第十一章 Set和Map数据结构"></a>第十一章 Set和Map数据结构</h2><h3 id="1-Set函数可以接收数组-或者具有iterable接口的其他数据结构-作为参数，用来初始化。向Set加入值时不会发生类型转换，所以5和”5”是两个不同的值。Set内部判断两个值是否相同时使用的算法叫作”Same-value-equality”，它类似于精确相等运算符-，主要的区别是NaN等于自身，而精确相等运算符认为NaN不等于自身。另外，两个对象总是不相等的。"><a href="#1-Set函数可以接收数组-或者具有iterable接口的其他数据结构-作为参数，用来初始化。向Set加入值时不会发生类型转换，所以5和”5”是两个不同的值。Set内部判断两个值是否相同时使用的算法叫作”Same-value-equality”，它类似于精确相等运算符-，主要的区别是NaN等于自身，而精确相等运算符认为NaN不等于自身。另外，两个对象总是不相等的。" class="headerlink" title="1.Set函数可以接收数组(或者具有iterable接口的其他数据结构)作为参数，用来初始化。向Set加入值时不会发生类型转换，所以5和”5”是两个不同的值。Set内部判断两个值是否相同时使用的算法叫作”Same-value-equality”，它类似于精确相等运算符(===)，主要的区别是NaN等于自身，而精确相等运算符认为NaN不等于自身。另外，两个对象总是不相等的。"></a>1.Set函数可以接收数组(或者具有iterable接口的其他数据结构)作为参数，用来初始化。向Set加入值时不会发生类型转换，所以5和”5”是两个不同的值。Set内部判断两个值是否相同时使用的算法叫作”Same-value-equality”，它类似于精确相等运算符(===)，主要的区别是NaN等于自身，而精确相等运算符认为NaN不等于自身。另外，两个对象总是不相等的。</h3><h3 id="2-Set实例的add方法返回Set结构本身。Set的遍历顺序就是插入顺序。这个特性非常有用，比如使用Set保存一个回调函数列表，调用时就能保证按照添加顺序调用。由于Set结构没有键名，只有键值-或者说键名和键值是同一个值-，所以keys方法和values方法的行为完全一致。Set解构的实例默认可遍历，其默认遍历器生成函数就是它的values方法。另外，forEach方法还可以有第二个参数，表示绑定的this对象。扩展运算符-…-内部使用for…of循环，所以也可以用于Set结构。"><a href="#2-Set实例的add方法返回Set结构本身。Set的遍历顺序就是插入顺序。这个特性非常有用，比如使用Set保存一个回调函数列表，调用时就能保证按照添加顺序调用。由于Set结构没有键名，只有键值-或者说键名和键值是同一个值-，所以keys方法和values方法的行为完全一致。Set解构的实例默认可遍历，其默认遍历器生成函数就是它的values方法。另外，forEach方法还可以有第二个参数，表示绑定的this对象。扩展运算符-…-内部使用for…of循环，所以也可以用于Set结构。" class="headerlink" title="2.Set实例的add方法返回Set结构本身。Set的遍历顺序就是插入顺序。这个特性非常有用，比如使用Set保存一个回调函数列表，调用时就能保证按照添加顺序调用。由于Set结构没有键名，只有键值(或者说键名和键值是同一个值)，所以keys方法和values方法的行为完全一致。Set解构的实例默认可遍历，其默认遍历器生成函数就是它的values方法。另外，forEach方法还可以有第二个参数，表示绑定的this对象。扩展运算符(…)内部使用for…of循环，所以也可以用于Set结构。"></a>2.Set实例的add方法返回Set结构本身。Set的遍历顺序就是插入顺序。这个特性非常有用，比如使用Set保存一个回调函数列表，调用时就能保证按照添加顺序调用。由于Set结构没有键名，只有键值(或者说键名和键值是同一个值)，所以keys方法和values方法的行为完全一致。Set解构的实例默认可遍历，其默认遍历器生成函数就是它的values方法。另外，forEach方法还可以有第二个参数，表示绑定的this对象。扩展运算符(…)内部使用for…of循环，所以也可以用于Set结构。</h3><h3 id="3-如果想在遍历操作中同步改变原来的Set结构，目前没有直接的方法，但有两种变通方法。一种是利用原Set结构映射出一个新的结构，然后赋值给原来的Set结构；另一种是利用Array-from方法。"><a href="#3-如果想在遍历操作中同步改变原来的Set结构，目前没有直接的方法，但有两种变通方法。一种是利用原Set结构映射出一个新的结构，然后赋值给原来的Set结构；另一种是利用Array-from方法。" class="headerlink" title="3.如果想在遍历操作中同步改变原来的Set结构，目前没有直接的方法，但有两种变通方法。一种是利用原Set结构映射出一个新的结构，然后赋值给原来的Set结构；另一种是利用Array.from方法。"></a>3.如果想在遍历操作中同步改变原来的Set结构，目前没有直接的方法，但有两种变通方法。一种是利用原Set结构映射出一个新的结构，然后赋值给原来的Set结构；另一种是利用Array.from方法。</h3><h3 id="4-WeakSet结构与Set类似，也是不重复的值的集合。但是，它与Set有两个区别。"><a href="#4-WeakSet结构与Set类似，也是不重复的值的集合。但是，它与Set有两个区别。" class="headerlink" title="4.WeakSet结构与Set类似，也是不重复的值的集合。但是，它与Set有两个区别。"></a>4.WeakSet结构与Set类似，也是不重复的值的集合。但是，它与Set有两个区别。</h3><ul>
+<li>WeakSet的成员只能是对象，而不能是其他类型的值</li>
+<li>WeakSet中的对象都是弱引用，即垃圾回收机制不考虑WeakSet对该对象的引用，也就是说，如果其他对象都不再引用该对象，那么垃圾回收机制会自动回收该对象所占用的内存，不考虑该对象是否还存在于WeakSet之中<a id="more"></a>
+因此WeakSet适合临时存放一组对象，以及存放跟对象绑定的信息。只要这些对象在外部消失，它在WeakSet里面的引用就会自动消失。另外，WeakSet内部有多少个成员取决于垃圾回收机制有没有运行，运行前后很可能成员个数是不一样的，而垃圾回收机制何时运行是不可预测的，因此ES6规定WeakSet不可遍历。<h3 id="5-作为构造函数，WeakSet可以接受一个数组或类似数组的对象作为参数。实际上，任何具有iterable接口的对象都可以作为WeakSet的参数。该数组的所有成员都会自动成为WeakSet实例对象的成员。成为WeakSet的成员的是数组的成员，而不是数组本身。这意味着，数组的成员只能是对象。"><a href="#5-作为构造函数，WeakSet可以接受一个数组或类似数组的对象作为参数。实际上，任何具有iterable接口的对象都可以作为WeakSet的参数。该数组的所有成员都会自动成为WeakSet实例对象的成员。成为WeakSet的成员的是数组的成员，而不是数组本身。这意味着，数组的成员只能是对象。" class="headerlink" title="5.作为构造函数，WeakSet可以接受一个数组或类似数组的对象作为参数。实际上，任何具有iterable接口的对象都可以作为WeakSet的参数。该数组的所有成员都会自动成为WeakSet实例对象的成员。成为WeakSet的成员的是数组的成员，而不是数组本身。这意味着，数组的成员只能是对象。"></a>5.作为构造函数，WeakSet可以接受一个数组或类似数组的对象作为参数。实际上，任何具有iterable接口的对象都可以作为WeakSet的参数。该数组的所有成员都会自动成为WeakSet实例对象的成员。成为WeakSet的成员的是数组的成员，而不是数组本身。这意味着，数组的成员只能是对象。</h3><h3 id="6-WeakSet不能遍历，因为成员都是弱引用，随时可能消失，遍历机制无法保证成员存在，很可能刚刚遍历结束，成员就取不到了。WeakSet的一个用处就是存储Dom节点，而不用担心这些节点从文档移除时会引发内存泄漏。"><a href="#6-WeakSet不能遍历，因为成员都是弱引用，随时可能消失，遍历机制无法保证成员存在，很可能刚刚遍历结束，成员就取不到了。WeakSet的一个用处就是存储Dom节点，而不用担心这些节点从文档移除时会引发内存泄漏。" class="headerlink" title="6.WeakSet不能遍历，因为成员都是弱引用，随时可能消失，遍历机制无法保证成员存在，很可能刚刚遍历结束，成员就取不到了。WeakSet的一个用处就是存储Dom节点，而不用担心这些节点从文档移除时会引发内存泄漏。"></a>6.WeakSet不能遍历，因为成员都是弱引用，随时可能消失，遍历机制无法保证成员存在，很可能刚刚遍历结束，成员就取不到了。WeakSet的一个用处就是存储Dom节点，而不用担心这些节点从文档移除时会引发内存泄漏。</h3><h3 id="7-ES6提供了Map数据结构。它类似于对象，也是键值对的集合，但是”键”的范围不限于字符串，各种类型的值-包括对象-都可以当作键。只有对同一个对象的引用，Map结构才将其视为同一个键。Map的键实际上是和内存地址绑定的，只要内存地址不一样，就视为两个键。这就解决了同名属性碰撞的问题，我们扩展别人的库时，如果使用对象作为键名，不用担心自己的属性与原作者属性同名。如果Map的键是一个简单类型的值-数字、字符串、布尔值-，则只要两个值严格相等，Map就将其视为一个键，包括0和-0。另外，虽然NaN不严格等于自身，但Map将其视为同一个键。"><a href="#7-ES6提供了Map数据结构。它类似于对象，也是键值对的集合，但是”键”的范围不限于字符串，各种类型的值-包括对象-都可以当作键。只有对同一个对象的引用，Map结构才将其视为同一个键。Map的键实际上是和内存地址绑定的，只要内存地址不一样，就视为两个键。这就解决了同名属性碰撞的问题，我们扩展别人的库时，如果使用对象作为键名，不用担心自己的属性与原作者属性同名。如果Map的键是一个简单类型的值-数字、字符串、布尔值-，则只要两个值严格相等，Map就将其视为一个键，包括0和-0。另外，虽然NaN不严格等于自身，但Map将其视为同一个键。" class="headerlink" title="7.ES6提供了Map数据结构。它类似于对象，也是键值对的集合，但是”键”的范围不限于字符串，各种类型的值(包括对象)都可以当作键。只有对同一个对象的引用，Map结构才将其视为同一个键。Map的键实际上是和内存地址绑定的，只要内存地址不一样，就视为两个键。这就解决了同名属性碰撞的问题，我们扩展别人的库时，如果使用对象作为键名，不用担心自己的属性与原作者属性同名。如果Map的键是一个简单类型的值(数字、字符串、布尔值)，则只要两个值严格相等，Map就将其视为一个键，包括0和-0。另外，虽然NaN不严格等于自身，但Map将其视为同一个键。"></a>7.ES6提供了Map数据结构。它类似于对象，也是键值对的集合，但是”键”的范围不限于字符串，各种类型的值(包括对象)都可以当作键。只有对同一个对象的引用，Map结构才将其视为同一个键。Map的键实际上是和内存地址绑定的，只要内存地址不一样，就视为两个键。这就解决了同名属性碰撞的问题，我们扩展别人的库时，如果使用对象作为键名，不用担心自己的属性与原作者属性同名。如果Map的键是一个简单类型的值(数字、字符串、布尔值)，则只要两个值严格相等，Map就将其视为一个键，包括0和-0。另外，虽然NaN不严格等于自身，但Map将其视为同一个键。</h3><h3 id="8-Map实例的set方法设置key所对应的键值，然后返回整个Map结构。如果key已经有值，则键值会被更新，否则就新生成该键。在Map实例的遍历方法中，Map的遍历顺序就是插入顺序。Map结构的默认遍历器接口-Symbol-iterator属性-就是entries方法。"><a href="#8-Map实例的set方法设置key所对应的键值，然后返回整个Map结构。如果key已经有值，则键值会被更新，否则就新生成该键。在Map实例的遍历方法中，Map的遍历顺序就是插入顺序。Map结构的默认遍历器接口-Symbol-iterator属性-就是entries方法。" class="headerlink" title="8.Map实例的set方法设置key所对应的键值，然后返回整个Map结构。如果key已经有值，则键值会被更新，否则就新生成该键。在Map实例的遍历方法中，Map的遍历顺序就是插入顺序。Map结构的默认遍历器接口(Symbol.iterator属性)就是entries方法。"></a>8.Map实例的set方法设置key所对应的键值，然后返回整个Map结构。如果key已经有值，则键值会被更新，否则就新生成该键。在Map实例的遍历方法中，Map的遍历顺序就是插入顺序。Map结构的默认遍历器接口(Symbol.iterator属性)就是entries方法。</h3><h3 id="9-WeakMap与Map的区别有以下两点"><a href="#9-WeakMap与Map的区别有以下两点" class="headerlink" title="9.WeakMap与Map的区别有以下两点:"></a>9.WeakMap与Map的区别有以下两点:</h3></li>
+<li>WeakMap只接受对象作为键名(null除外)，不接受其他类型的值作为键名</li>
+<li>WeakMap的键名所指向的对象不计入垃圾回收机制。</li>
+</ul>
+<p>WeakMap的一个典型的应用场景是，在网页的DOM元素上添加数据时就可以使用WeakMap结构。当该DOM元素被清除，其所对应的WeakMap记录就会自动被移除。且WeakMap相比于Map来说没有遍历操作也没有size属性，并且无法清空，即不支持clear方法。WeakMap有两个典型的用途，一个就是注册监听事件的listener对象，另一个就是部署私有属性。</p>
+<h2 id="第十二章-Proxy"><a href="#第十二章-Proxy" class="headerlink" title="第十二章 Proxy"></a>第十二章 Proxy</h2><h3 id="1-Proxy用于修改某些操作的默认行为，等同于在语言层面做出修改，所以属于一种”元编程”，即对编程语言进行编程。Proxy可以理解成在目标对象前架设一个”拦截”层，外界对该对象的访问都必须先通过这层拦截，因此提供了一种机制可以对外界的访问进行过滤和改写。"><a href="#1-Proxy用于修改某些操作的默认行为，等同于在语言层面做出修改，所以属于一种”元编程”，即对编程语言进行编程。Proxy可以理解成在目标对象前架设一个”拦截”层，外界对该对象的访问都必须先通过这层拦截，因此提供了一种机制可以对外界的访问进行过滤和改写。" class="headerlink" title="1.Proxy用于修改某些操作的默认行为，等同于在语言层面做出修改，所以属于一种”元编程”，即对编程语言进行编程。Proxy可以理解成在目标对象前架设一个”拦截”层，外界对该对象的访问都必须先通过这层拦截，因此提供了一种机制可以对外界的访问进行过滤和改写。"></a>1.Proxy用于修改某些操作的默认行为，等同于在语言层面做出修改，所以属于一种”元编程”，即对编程语言进行编程。Proxy可以理解成在目标对象前架设一个”拦截”层，外界对该对象的访问都必须先通过这层拦截，因此提供了一种机制可以对外界的访问进行过滤和改写。</h3><h3 id="2-get方法用于拦截某个属性的读取操作。如果一个属性不可配置-configurable-或不可写-writable-，则该属性不能被代理，通过Proxy对象访问该属性将会报错。"><a href="#2-get方法用于拦截某个属性的读取操作。如果一个属性不可配置-configurable-或不可写-writable-，则该属性不能被代理，通过Proxy对象访问该属性将会报错。" class="headerlink" title="2.get方法用于拦截某个属性的读取操作。如果一个属性不可配置(configurable)或不可写(writable)，则该属性不能被代理，通过Proxy对象访问该属性将会报错。"></a>2.get方法用于拦截某个属性的读取操作。如果一个属性不可配置(configurable)或不可写(writable)，则该属性不能被代理，通过Proxy对象访问该属性将会报错。</h3><h3 id="3-set方法用于拦截某个属性的赋值操作。有时，我们会在对象上设置内部属性，属性名的第一个字符使用下画线开头，表示这些属性不应该被外部使用。结合get和set方法，就可以做到防止这些内部属性被外部读-写。如果目标对象自身的某个属性不可写也不可配置，那么set不得改变这个属性的值，只能返回同样的值，否则报错。"><a href="#3-set方法用于拦截某个属性的赋值操作。有时，我们会在对象上设置内部属性，属性名的第一个字符使用下画线开头，表示这些属性不应该被外部使用。结合get和set方法，就可以做到防止这些内部属性被外部读-写。如果目标对象自身的某个属性不可写也不可配置，那么set不得改变这个属性的值，只能返回同样的值，否则报错。" class="headerlink" title="3.set方法用于拦截某个属性的赋值操作。有时，我们会在对象上设置内部属性，属性名的第一个字符使用下画线开头，表示这些属性不应该被外部使用。结合get和set方法，就可以做到防止这些内部属性被外部读/写。如果目标对象自身的某个属性不可写也不可配置，那么set不得改变这个属性的值，只能返回同样的值，否则报错。"></a>3.set方法用于拦截某个属性的赋值操作。有时，我们会在对象上设置内部属性，属性名的第一个字符使用下画线开头，表示这些属性不应该被外部使用。结合get和set方法，就可以做到防止这些内部属性被外部读/写。如果目标对象自身的某个属性不可写也不可配置，那么set不得改变这个属性的值，只能返回同样的值，否则报错。</h3><h3 id="4-apply方法拦截函数的调用、call和apply操作。apply方法可以接受3个参数，分别是目标对象、目标对象的上下文对象-this-和目标对象的参数数组。"><a href="#4-apply方法拦截函数的调用、call和apply操作。apply方法可以接受3个参数，分别是目标对象、目标对象的上下文对象-this-和目标对象的参数数组。" class="headerlink" title="4.apply方法拦截函数的调用、call和apply操作。apply方法可以接受3个参数，分别是目标对象、目标对象的上下文对象(this)和目标对象的参数数组。"></a>4.apply方法拦截函数的调用、call和apply操作。apply方法可以接受3个参数，分别是目标对象、目标对象的上下文对象(this)和目标对象的参数数组。</h3><h3 id="5-has方法用来拦截HasProperty操作，即判断对象是否具有某个属性时，这个方法会生效。典型的操作就是in操作符。如果某个属性不可配置-或者目标对象不可扩展-，则has方法就不得”隐藏”-即返回false-目标对象的该属性。另外，虽然for…in循环也用到了in运算符，但是has拦截对for…in循环不生效。"><a href="#5-has方法用来拦截HasProperty操作，即判断对象是否具有某个属性时，这个方法会生效。典型的操作就是in操作符。如果某个属性不可配置-或者目标对象不可扩展-，则has方法就不得”隐藏”-即返回false-目标对象的该属性。另外，虽然for…in循环也用到了in运算符，但是has拦截对for…in循环不生效。" class="headerlink" title="5.has方法用来拦截HasProperty操作，即判断对象是否具有某个属性时，这个方法会生效。典型的操作就是in操作符。如果某个属性不可配置(或者目标对象不可扩展)，则has方法就不得”隐藏”(即返回false)目标对象的该属性。另外，虽然for…in循环也用到了in运算符，但是has拦截对for…in循环不生效。"></a>5.has方法用来拦截HasProperty操作，即判断对象是否具有某个属性时，这个方法会生效。典型的操作就是in操作符。如果某个属性不可配置(或者目标对象不可扩展)，则has方法就不得”隐藏”(即返回false)目标对象的该属性。另外，虽然for…in循环也用到了in运算符，但是has拦截对for…in循环不生效。</h3><h3 id="6-construct方法用于拦截new命令，下面是拦截对象的写法。construct方法返回的必须是一个对象，否则会报错。"><a href="#6-construct方法用于拦截new命令，下面是拦截对象的写法。construct方法返回的必须是一个对象，否则会报错。" class="headerlink" title="6.construct方法用于拦截new命令，下面是拦截对象的写法。construct方法返回的必须是一个对象，否则会报错。"></a>6.construct方法用于拦截new命令，下面是拦截对象的写法。construct方法返回的必须是一个对象，否则会报错。</h3><h3 id="7-deleteProperty方法用于拦截delete操作，如果这个方法抛出错误或者返回false，当前属性就无法被delete命令删除。目标对象自身的不可配置-configurable-的属性不能被deleteProperty方法删除，否则会报错。"><a href="#7-deleteProperty方法用于拦截delete操作，如果这个方法抛出错误或者返回false，当前属性就无法被delete命令删除。目标对象自身的不可配置-configurable-的属性不能被deleteProperty方法删除，否则会报错。" class="headerlink" title="7.deleteProperty方法用于拦截delete操作，如果这个方法抛出错误或者返回false，当前属性就无法被delete命令删除。目标对象自身的不可配置(configurable)的属性不能被deleteProperty方法删除，否则会报错。"></a>7.deleteProperty方法用于拦截delete操作，如果这个方法抛出错误或者返回false，当前属性就无法被delete命令删除。目标对象自身的不可配置(configurable)的属性不能被deleteProperty方法删除，否则会报错。</h3><h3 id="8-defineProperty方法拦截了Object-defineProperty操作。如果目标对象不可扩展-extensible-，则defineProperty不能增加目标对象中不存在的属性，否则会报错。另外，如果目标对象的某个属性不可写-writable-或不可配置-configurable-，则defineProperty方法不得改变这两个设置。"><a href="#8-defineProperty方法拦截了Object-defineProperty操作。如果目标对象不可扩展-extensible-，则defineProperty不能增加目标对象中不存在的属性，否则会报错。另外，如果目标对象的某个属性不可写-writable-或不可配置-configurable-，则defineProperty方法不得改变这两个设置。" class="headerlink" title="8.defineProperty方法拦截了Object.defineProperty操作。如果目标对象不可扩展(extensible)，则defineProperty不能增加目标对象中不存在的属性，否则会报错。另外，如果目标对象的某个属性不可写(writable)或不可配置(configurable)，则defineProperty方法不得改变这两个设置。"></a>8.defineProperty方法拦截了Object.defineProperty操作。如果目标对象不可扩展(extensible)，则defineProperty不能增加目标对象中不存在的属性，否则会报错。另外，如果目标对象的某个属性不可写(writable)或不可配置(configurable)，则defineProperty方法不得改变这两个设置。</h3><h3 id="9-getOwnPropertyDescriptor方法拦截Object-getOwnPropertyDescriptor-，返回一个属性描述对象或者undefined。"><a href="#9-getOwnPropertyDescriptor方法拦截Object-getOwnPropertyDescriptor-，返回一个属性描述对象或者undefined。" class="headerlink" title="9.getOwnPropertyDescriptor方法拦截Object.getOwnPropertyDescriptor()，返回一个属性描述对象或者undefined。"></a>9.getOwnPropertyDescriptor方法拦截Object.getOwnPropertyDescriptor()，返回一个属性描述对象或者undefined。</h3><h3 id="10-getPrototypeOf方法主要用来拦截获取对象原型。getPrototypeOf方法的返回值必须是对象或者null，否则会报错。另外，如果目标对象不可扩展-extensible-，getPrototypeOf方法必须返回目标对象的原型对象。"><a href="#10-getPrototypeOf方法主要用来拦截获取对象原型。getPrototypeOf方法的返回值必须是对象或者null，否则会报错。另外，如果目标对象不可扩展-extensible-，getPrototypeOf方法必须返回目标对象的原型对象。" class="headerlink" title="10.getPrototypeOf方法主要用来拦截获取对象原型。getPrototypeOf方法的返回值必须是对象或者null，否则会报错。另外，如果目标对象不可扩展(extensible)，getPrototypeOf方法必须返回目标对象的原型对象。"></a>10.getPrototypeOf方法主要用来拦截获取对象原型。getPrototypeOf方法的返回值必须是对象或者null，否则会报错。另外，如果目标对象不可扩展(extensible)，getPrototypeOf方法必须返回目标对象的原型对象。</h3><h3 id="11-isExtensible方法拦截Object-isExtensible操作。该方法只能返回布尔值，否则返回值会被自动转为布尔值。这个方法有一个强限制，它的返回值必须与目标对象的isExtensible属性保持一致，否则就会抛出错误。"><a href="#11-isExtensible方法拦截Object-isExtensible操作。该方法只能返回布尔值，否则返回值会被自动转为布尔值。这个方法有一个强限制，它的返回值必须与目标对象的isExtensible属性保持一致，否则就会抛出错误。" class="headerlink" title="11.isExtensible方法拦截Object.isExtensible操作。该方法只能返回布尔值，否则返回值会被自动转为布尔值。这个方法有一个强限制，它的返回值必须与目标对象的isExtensible属性保持一致，否则就会抛出错误。"></a>11.isExtensible方法拦截Object.isExtensible操作。该方法只能返回布尔值，否则返回值会被自动转为布尔值。这个方法有一个强限制，它的返回值必须与目标对象的isExtensible属性保持一致，否则就会抛出错误。</h3><h3 id="12-ownKeys方法用来拦截对象自身属性的读取操作。在使用Object-keys方法时，有三类属性会被ownKeys方法自动过滤，不会返回。"><a href="#12-ownKeys方法用来拦截对象自身属性的读取操作。在使用Object-keys方法时，有三类属性会被ownKeys方法自动过滤，不会返回。" class="headerlink" title="12.ownKeys方法用来拦截对象自身属性的读取操作。在使用Object.keys方法时，有三类属性会被ownKeys方法自动过滤，不会返回。"></a>12.ownKeys方法用来拦截对象自身属性的读取操作。在使用Object.keys方法时，有三类属性会被ownKeys方法自动过滤，不会返回。</h3><ul>
+<li>目标对象上不存在的属性</li>
+<li>属性名为Symbol值</li>
+<li>不可遍历(enumerable)的属性</li>
+</ul>
+<p>ownKeys方法返回的数组成员只能是字符串或Symbol值。如果有其它类型的值，或者返回的根本不是数组，就会报错。如果目标对象自身包含不可配置的属性，则该属性必须被ownKeys方法返回，否则会报错。另外，如果目标对象是不可扩展的(non-extensition)，这时ownKeys方法返回的数组之中必须包含原对象的所有属性，且不能包含多余的属性，否则会报错。</p>
+<h3 id="13-preventExtensions方法拦截Object-preventExtensions-。该方法必须返回一个布尔值，否则会被自动转为布尔值。这个方法有一个限制，只有目标对象不可扩展时-即Object-isExtensible-proxy-为false-，proxy-preventExtensions才能返回true，否则会报错。"><a href="#13-preventExtensions方法拦截Object-preventExtensions-。该方法必须返回一个布尔值，否则会被自动转为布尔值。这个方法有一个限制，只有目标对象不可扩展时-即Object-isExtensible-proxy-为false-，proxy-preventExtensions才能返回true，否则会报错。" class="headerlink" title="13.preventExtensions方法拦截Object.preventExtensions()。该方法必须返回一个布尔值，否则会被自动转为布尔值。这个方法有一个限制，只有目标对象不可扩展时(即Object.isExtensible(proxy)为false)，proxy.preventExtensions才能返回true，否则会报错。"></a>13.preventExtensions方法拦截Object.preventExtensions()。该方法必须返回一个布尔值，否则会被自动转为布尔值。这个方法有一个限制，只有目标对象不可扩展时(即Object.isExtensible(proxy)为false)，proxy.preventExtensions才能返回true，否则会报错。</h3><h3 id="14-setPrototypeOf方法主要用于拦截Object-setPrototypeOf方法。该方法只能返回布尔值，否则会被自动转为布尔值。另外，如果目标对象不可扩展-extensible-，setPrototypeOf方法不得改变目标对象的原型。"><a href="#14-setPrototypeOf方法主要用于拦截Object-setPrototypeOf方法。该方法只能返回布尔值，否则会被自动转为布尔值。另外，如果目标对象不可扩展-extensible-，setPrototypeOf方法不得改变目标对象的原型。" class="headerlink" title="14.setPrototypeOf方法主要用于拦截Object.setPrototypeOf方法。该方法只能返回布尔值，否则会被自动转为布尔值。另外，如果目标对象不可扩展(extensible)，setPrototypeOf方法不得改变目标对象的原型。"></a>14.setPrototypeOf方法主要用于拦截Object.setPrototypeOf方法。该方法只能返回布尔值，否则会被自动转为布尔值。另外，如果目标对象不可扩展(extensible)，setPrototypeOf方法不得改变目标对象的原型。</h3><h3 id="15-Proxy-revocable方法返回一个可取消的Proxy实例。Proxy-revocable方法返回一个对象，其proxy属性是Proxy实例，revoke属性是个函数，可以取消Proxy实例。Proxy-revocable的一个使用场景是，目标对象不允许直接访问，必须通过代理访问，一旦访问结束，就收回代理权，不允许再次访问。"><a href="#15-Proxy-revocable方法返回一个可取消的Proxy实例。Proxy-revocable方法返回一个对象，其proxy属性是Proxy实例，revoke属性是个函数，可以取消Proxy实例。Proxy-revocable的一个使用场景是，目标对象不允许直接访问，必须通过代理访问，一旦访问结束，就收回代理权，不允许再次访问。" class="headerlink" title="15.Proxy.revocable方法返回一个可取消的Proxy实例。Proxy.revocable方法返回一个对象，其proxy属性是Proxy实例，revoke属性是个函数，可以取消Proxy实例。Proxy.revocable的一个使用场景是，目标对象不允许直接访问，必须通过代理访问，一旦访问结束，就收回代理权，不允许再次访问。"></a>15.Proxy.revocable方法返回一个可取消的Proxy实例。Proxy.revocable方法返回一个对象，其proxy属性是Proxy实例，revoke属性是个函数，可以取消Proxy实例。Proxy.revocable的一个使用场景是，目标对象不允许直接访问，必须通过代理访问，一旦访问结束，就收回代理权，不允许再次访问。</h3><h3 id="16-虽然Proxy可以代理针对目标对象的访问，但它不是目标对象的透明代理，即不做任何拦截的情况下也无法保证与目标对象的行为一致。主要原因就是在Proxy代理的情况下，目标对象内部的this关键字会指向Proxy代理。"><a href="#16-虽然Proxy可以代理针对目标对象的访问，但它不是目标对象的透明代理，即不做任何拦截的情况下也无法保证与目标对象的行为一致。主要原因就是在Proxy代理的情况下，目标对象内部的this关键字会指向Proxy代理。" class="headerlink" title="16.虽然Proxy可以代理针对目标对象的访问，但它不是目标对象的透明代理，即不做任何拦截的情况下也无法保证与目标对象的行为一致。主要原因就是在Proxy代理的情况下，目标对象内部的this关键字会指向Proxy代理。"></a>16.虽然Proxy可以代理针对目标对象的访问，但它不是目标对象的透明代理，即不做任何拦截的情况下也无法保证与目标对象的行为一致。主要原因就是在Proxy代理的情况下，目标对象内部的this关键字会指向Proxy代理。</h3><h2 id="第十三章-Reflect"><a href="#第十三章-Reflect" class="headerlink" title="第十三章 Reflect"></a>第十三章 Reflect</h2><h3 id="1-Reflect对象的设计目的有以下几个"><a href="#1-Reflect对象的设计目的有以下几个" class="headerlink" title="1.Reflect对象的设计目的有以下几个:"></a>1.Reflect对象的设计目的有以下几个:</h3><ul>
+<li>将Object对象的一些明需属于语言内部的方法(比如Object.defineProperty)放到Reflect对象上。</li>
+<li>修改某些Object方法的返回结果，让其变得更合理。</li>
+<li>让Object操作都变成函数行为</li>
+<li>Reflect对象的方法与Proxy对象的方法一一对应，只要是Proxy对象的方法，就能在Reflect对象上找到对于的方法。这就使Proxy对象可以方便地调用对应地Reflect方法来完成默认行为，作为修改行为的基础。</li>
+</ul>
+<h3 id="2-Reflect-get方法查找并返回target对象地name属性，如果没有该属性，则返回undefined。如果name属性部署了读取函数-getter-，则读取函数的this绑定receiver。如果第一个参数不是对象，Reflect-get方法会报错。"><a href="#2-Reflect-get方法查找并返回target对象地name属性，如果没有该属性，则返回undefined。如果name属性部署了读取函数-getter-，则读取函数的this绑定receiver。如果第一个参数不是对象，Reflect-get方法会报错。" class="headerlink" title="2.Reflect.get方法查找并返回target对象地name属性，如果没有该属性，则返回undefined。如果name属性部署了读取函数(getter)，则读取函数的this绑定receiver。如果第一个参数不是对象，Reflect.get方法会报错。"></a>2.Reflect.get方法查找并返回target对象地name属性，如果没有该属性，则返回undefined。如果name属性部署了读取函数(getter)，则读取函数的this绑定receiver。如果第一个参数不是对象，Reflect.get方法会报错。</h3><h3 id="3-Reflect-set方法设置target对象的name属性等于value。如果name属性部署了赋值函数-setter-，则读取函数的this绑定receiver。如果第一个参数不是对象，Reflect-set方法会报错。Reflect-set会触发Proxy-defineProperty拦截。"><a href="#3-Reflect-set方法设置target对象的name属性等于value。如果name属性部署了赋值函数-setter-，则读取函数的this绑定receiver。如果第一个参数不是对象，Reflect-set方法会报错。Reflect-set会触发Proxy-defineProperty拦截。" class="headerlink" title="3.Reflect.set方法设置target对象的name属性等于value。如果name属性部署了赋值函数(setter)，则读取函数的this绑定receiver。如果第一个参数不是对象，Reflect.set方法会报错。Reflect.set会触发Proxy.defineProperty拦截。"></a>3.Reflect.set方法设置target对象的name属性等于value。如果name属性部署了赋值函数(setter)，则读取函数的this绑定receiver。如果第一个参数不是对象，Reflect.set方法会报错。Reflect.set会触发Proxy.defineProperty拦截。</h3><h3 id="4-Reflect-has方法对应name-in-obj中的in运算符。如果第一个参数不是对象，Reflect-has和in运算符都会报错。"><a href="#4-Reflect-has方法对应name-in-obj中的in运算符。如果第一个参数不是对象，Reflect-has和in运算符都会报错。" class="headerlink" title="4.Reflect.has方法对应name in obj中的in运算符。如果第一个参数不是对象，Reflect.has和in运算符都会报错。"></a>4.Reflect.has方法对应name in obj中的in运算符。如果第一个参数不是对象，Reflect.has和in运算符都会报错。</h3><h3 id="5-Reflect-deleteProperty方法等同于delete-obj-name-，用于删除对象的属性。该方法返回一个布尔值。如果删除成功或者被删除的属性不存在，就返回true；如果删除失败或者被删除属性依然存在，则返回false。"><a href="#5-Reflect-deleteProperty方法等同于delete-obj-name-，用于删除对象的属性。该方法返回一个布尔值。如果删除成功或者被删除的属性不存在，就返回true；如果删除失败或者被删除属性依然存在，则返回false。" class="headerlink" title="5.Reflect.deleteProperty方法等同于delete obj[name]，用于删除对象的属性。该方法返回一个布尔值。如果删除成功或者被删除的属性不存在，就返回true；如果删除失败或者被删除属性依然存在，则返回false。"></a>5.Reflect.deleteProperty方法等同于delete obj[name]，用于删除对象的属性。该方法返回一个布尔值。如果删除成功或者被删除的属性不存在，就返回true；如果删除失败或者被删除属性依然存在，则返回false。</h3><h3 id="6-Reflect-construct方法等同于new-target-…args-，提供了一种不使用new来调用构造函数的方法。"><a href="#6-Reflect-construct方法等同于new-target-…args-，提供了一种不使用new来调用构造函数的方法。" class="headerlink" title="6.Reflect.construct方法等同于new target(…args)，提供了一种不使用new来调用构造函数的方法。"></a>6.Reflect.construct方法等同于new target(…args)，提供了一种不使用new来调用构造函数的方法。</h3><h3 id="7-Reflect-getPrototypeOf方法用于读取对象的-proto-属性，对应Object-getPrototypeOf-obj-。Reflect-getPrototypeOf和Object-getPrototypeOf的一个区别是，如果参数不是对象，Object-getPrototypeOf会先将这个参数转为对象，然后再运行，而Reflect-getPrototypeOf会报错。"><a href="#7-Reflect-getPrototypeOf方法用于读取对象的-proto-属性，对应Object-getPrototypeOf-obj-。Reflect-getPrototypeOf和Object-getPrototypeOf的一个区别是，如果参数不是对象，Object-getPrototypeOf会先将这个参数转为对象，然后再运行，而Reflect-getPrototypeOf会报错。" class="headerlink" title="7.Reflect.getPrototypeOf方法用于读取对象的_proto_属性，对应Object.getPrototypeOf(obj)。Reflect.getPrototypeOf和Object.getPrototypeOf的一个区别是，如果参数不是对象，Object.getPrototypeOf会先将这个参数转为对象，然后再运行，而Reflect.getPrototypeOf会报错。"></a>7.Reflect.getPrototypeOf方法用于读取对象的_proto_属性，对应Object.getPrototypeOf(obj)。Reflect.getPrototypeOf和Object.getPrototypeOf的一个区别是，如果参数不是对象，Object.getPrototypeOf会先将这个参数转为对象，然后再运行，而Reflect.getPrototypeOf会报错。</h3><h3 id="8-Reflect-setPrototypeOf方法用于设置对象的-proto-属性，返回第一个参数对象，对应Object-setPrototypeOf-obj，newProto-。如果第一个参数不是对象，Object-setPrototypeOf会返回第一个参数本身，而Reflect-setPrototypeOf会报错。如果第一个参数是undefined或null，Object-setPrototypeOf和Reflect-setPrototypeOf都会报错。"><a href="#8-Reflect-setPrototypeOf方法用于设置对象的-proto-属性，返回第一个参数对象，对应Object-setPrototypeOf-obj，newProto-。如果第一个参数不是对象，Object-setPrototypeOf会返回第一个参数本身，而Reflect-setPrototypeOf会报错。如果第一个参数是undefined或null，Object-setPrototypeOf和Reflect-setPrototypeOf都会报错。" class="headerlink" title="8.Reflect.setPrototypeOf方法用于设置对象的_proto_属性，返回第一个参数对象，对应Object.setPrototypeOf(obj，newProto)。如果第一个参数不是对象，Object.setPrototypeOf会返回第一个参数本身，而Reflect.setPrototypeOf会报错。如果第一个参数是undefined或null，Object.setPrototypeOf和Reflect.setPrototypeOf都会报错。"></a>8.Reflect.setPrototypeOf方法用于设置对象的_proto_属性，返回第一个参数对象，对应Object.setPrototypeOf(obj，newProto)。如果第一个参数不是对象，Object.setPrototypeOf会返回第一个参数本身，而Reflect.setPrototypeOf会报错。如果第一个参数是undefined或null，Object.setPrototypeOf和Reflect.setPrototypeOf都会报错。</h3><h3 id="9-Reflect-apply方法等同于Function-prototype-apply-call-func，thisArg，args-，用于绑定this对象后执行给定函数。"><a href="#9-Reflect-apply方法等同于Function-prototype-apply-call-func，thisArg，args-，用于绑定this对象后执行给定函数。" class="headerlink" title="9.Reflect.apply方法等同于Function.prototype.apply.call(func，thisArg，args)，用于绑定this对象后执行给定函数。"></a>9.Reflect.apply方法等同于Function.prototype.apply.call(func，thisArg，args)，用于绑定this对象后执行给定函数。</h3><h3 id="10-Reflect-defineProperty方法基本等同于Object-defineProperty，用来为对象定义属性。如果Reflect-defineProperty的第一个参数不是对象，就会抛出错误。"><a href="#10-Reflect-defineProperty方法基本等同于Object-defineProperty，用来为对象定义属性。如果Reflect-defineProperty的第一个参数不是对象，就会抛出错误。" class="headerlink" title="10.Reflect.defineProperty方法基本等同于Object.defineProperty，用来为对象定义属性。如果Reflect.defineProperty的第一个参数不是对象，就会抛出错误。"></a>10.Reflect.defineProperty方法基本等同于Object.defineProperty，用来为对象定义属性。如果Reflect.defineProperty的第一个参数不是对象，就会抛出错误。</h3><h3 id="10-Reflect-getOwnPropertyDescriptor基本等同于Object-getOwnPropertyDescriptor，用于获得指定属性的描述对象。Reflect-getOwnPropertyDescriptor和Object-getOwnPropertyDescriptor的一个区别是，如果第一个参数不是对象，Object-getOwnPropertyDescriptor-1，”foo”-不会报错，并返回undefined，而Reflect-getOwnPropertyDescriptor-1，”foo”-会抛出错误，表示参数非法。"><a href="#10-Reflect-getOwnPropertyDescriptor基本等同于Object-getOwnPropertyDescriptor，用于获得指定属性的描述对象。Reflect-getOwnPropertyDescriptor和Object-getOwnPropertyDescriptor的一个区别是，如果第一个参数不是对象，Object-getOwnPropertyDescriptor-1，”foo”-不会报错，并返回undefined，而Reflect-getOwnPropertyDescriptor-1，”foo”-会抛出错误，表示参数非法。" class="headerlink" title="10.Reflect.getOwnPropertyDescriptor基本等同于Object.getOwnPropertyDescriptor，用于获得指定属性的描述对象。Reflect.getOwnPropertyDescriptor和Object.getOwnPropertyDescriptor的一个区别是，如果第一个参数不是对象，Object.getOwnPropertyDescriptor(1，”foo”)不会报错，并返回undefined，而Reflect.getOwnPropertyDescriptor(1，”foo”)会抛出错误，表示参数非法。"></a>10.Reflect.getOwnPropertyDescriptor基本等同于Object.getOwnPropertyDescriptor，用于获得指定属性的描述对象。Reflect.getOwnPropertyDescriptor和Object.getOwnPropertyDescriptor的一个区别是，如果第一个参数不是对象，Object.getOwnPropertyDescriptor(1，”foo”)不会报错，并返回undefined，而Reflect.getOwnPropertyDescriptor(1，”foo”)会抛出错误，表示参数非法。</h3><h3 id="11-Reflect-isExtensible方法对应Object-isExtensible，返回一个布尔值，表示当前对象是否可扩展。如果参数不是对象，Object-isExtensible会返回false-因为非对象本来就是不可扩展的-，而Reflect-isExtensible会报错。"><a href="#11-Reflect-isExtensible方法对应Object-isExtensible，返回一个布尔值，表示当前对象是否可扩展。如果参数不是对象，Object-isExtensible会返回false-因为非对象本来就是不可扩展的-，而Reflect-isExtensible会报错。" class="headerlink" title="11.Reflect.isExtensible方法对应Object.isExtensible，返回一个布尔值，表示当前对象是否可扩展。如果参数不是对象，Object.isExtensible会返回false(因为非对象本来就是不可扩展的)，而Reflect.isExtensible会报错。"></a>11.Reflect.isExtensible方法对应Object.isExtensible，返回一个布尔值，表示当前对象是否可扩展。如果参数不是对象，Object.isExtensible会返回false(因为非对象本来就是不可扩展的)，而Reflect.isExtensible会报错。</h3><h3 id="12-Reflect-preventExtensions对应Object-preventExtensions方法，用于使一个对象变为不可扩展的。它返回一个布尔值，表示是否操作成功。如果参数不是对象，Object-preventExtensions在ES5环境下将报错，在ES6环境下将返回传入的参数，而Reflect-preventExtensions会报错。"><a href="#12-Reflect-preventExtensions对应Object-preventExtensions方法，用于使一个对象变为不可扩展的。它返回一个布尔值，表示是否操作成功。如果参数不是对象，Object-preventExtensions在ES5环境下将报错，在ES6环境下将返回传入的参数，而Reflect-preventExtensions会报错。" class="headerlink" title="12.Reflect.preventExtensions对应Object.preventExtensions方法，用于使一个对象变为不可扩展的。它返回一个布尔值，表示是否操作成功。如果参数不是对象，Object.preventExtensions在ES5环境下将报错，在ES6环境下将返回传入的参数，而Reflect.preventExtensions会报错。"></a>12.Reflect.preventExtensions对应Object.preventExtensions方法，用于使一个对象变为不可扩展的。它返回一个布尔值，表示是否操作成功。如果参数不是对象，Object.preventExtensions在ES5环境下将报错，在ES6环境下将返回传入的参数，而Reflect.preventExtensions会报错。</h3><h3 id="13-Reflect-ownKeys方法用于返回对象的所有属性，基本等同于Object-getOwnPropertyNames与Object-getOwnPropertySymbols之和。"><a href="#13-Reflect-ownKeys方法用于返回对象的所有属性，基本等同于Object-getOwnPropertyNames与Object-getOwnPropertySymbols之和。" class="headerlink" title="13.Reflect.ownKeys方法用于返回对象的所有属性，基本等同于Object.getOwnPropertyNames与Object.getOwnPropertySymbols之和。"></a>13.Reflect.ownKeys方法用于返回对象的所有属性，基本等同于Object.getOwnPropertyNames与Object.getOwnPropertySymbols之和。</h3>
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div>您的支持是我最大的动力</div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/weixin.png" alt="丁可 微信支付">
+        <p>微信支付</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/images/zhifubao.png" alt="丁可 支付宝">
+        <p>支付宝</p>
+      </div>
+
+  </div>
+</div>
+
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>丁可
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://yoursite.com/2021/02/18/ES6four/" title="学习ES6标准入门第四天">http://yoursite.com/2021/02/18/ES6four/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/ES6/" rel="tag"><i class="fa fa-tag"></i> ES6</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/02/17/ES6three/" rel="prev" title="学习ES6标准入门第三天">
+      <i class="fa fa-chevron-left"></i> 学习ES6标准入门第三天
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+      <div>
+  
+    <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>感谢您的阅读-------------</div>
+    
+</div>
+
+  
+</div>
+
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    
+  <div class="comments">
+    <div id="lv-container" data-id="city" data-uid="MTAyMC81MTEwOC8yNzU4OQ=="></div>
+  </div>
+  
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#学习ES6标准入门第四天"><span class="nav-text">学习ES6标准入门第四天</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#第十一章-Set和Map数据结构"><span class="nav-text">第十一章 Set和Map数据结构</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-Set函数可以接收数组-或者具有iterable接口的其他数据结构-作为参数，用来初始化。向Set加入值时不会发生类型转换，所以5和”5”是两个不同的值。Set内部判断两个值是否相同时使用的算法叫作”Same-value-equality”，它类似于精确相等运算符-，主要的区别是NaN等于自身，而精确相等运算符认为NaN不等于自身。另外，两个对象总是不相等的。"><span class="nav-text">1.Set函数可以接收数组(或者具有iterable接口的其他数据结构)作为参数，用来初始化。向Set加入值时不会发生类型转换，所以5和”5”是两个不同的值。Set内部判断两个值是否相同时使用的算法叫作”Same-value-equality”，它类似于精确相等运算符(&#x3D;&#x3D;&#x3D;)，主要的区别是NaN等于自身，而精确相等运算符认为NaN不等于自身。另外，两个对象总是不相等的。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-Set实例的add方法返回Set结构本身。Set的遍历顺序就是插入顺序。这个特性非常有用，比如使用Set保存一个回调函数列表，调用时就能保证按照添加顺序调用。由于Set结构没有键名，只有键值-或者说键名和键值是同一个值-，所以keys方法和values方法的行为完全一致。Set解构的实例默认可遍历，其默认遍历器生成函数就是它的values方法。另外，forEach方法还可以有第二个参数，表示绑定的this对象。扩展运算符-…-内部使用for…of循环，所以也可以用于Set结构。"><span class="nav-text">2.Set实例的add方法返回Set结构本身。Set的遍历顺序就是插入顺序。这个特性非常有用，比如使用Set保存一个回调函数列表，调用时就能保证按照添加顺序调用。由于Set结构没有键名，只有键值(或者说键名和键值是同一个值)，所以keys方法和values方法的行为完全一致。Set解构的实例默认可遍历，其默认遍历器生成函数就是它的values方法。另外，forEach方法还可以有第二个参数，表示绑定的this对象。扩展运算符(…)内部使用for…of循环，所以也可以用于Set结构。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-如果想在遍历操作中同步改变原来的Set结构，目前没有直接的方法，但有两种变通方法。一种是利用原Set结构映射出一个新的结构，然后赋值给原来的Set结构；另一种是利用Array-from方法。"><span class="nav-text">3.如果想在遍历操作中同步改变原来的Set结构，目前没有直接的方法，但有两种变通方法。一种是利用原Set结构映射出一个新的结构，然后赋值给原来的Set结构；另一种是利用Array.from方法。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-WeakSet结构与Set类似，也是不重复的值的集合。但是，它与Set有两个区别。"><span class="nav-text">4.WeakSet结构与Set类似，也是不重复的值的集合。但是，它与Set有两个区别。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-作为构造函数，WeakSet可以接受一个数组或类似数组的对象作为参数。实际上，任何具有iterable接口的对象都可以作为WeakSet的参数。该数组的所有成员都会自动成为WeakSet实例对象的成员。成为WeakSet的成员的是数组的成员，而不是数组本身。这意味着，数组的成员只能是对象。"><span class="nav-text">5.作为构造函数，WeakSet可以接受一个数组或类似数组的对象作为参数。实际上，任何具有iterable接口的对象都可以作为WeakSet的参数。该数组的所有成员都会自动成为WeakSet实例对象的成员。成为WeakSet的成员的是数组的成员，而不是数组本身。这意味着，数组的成员只能是对象。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-WeakSet不能遍历，因为成员都是弱引用，随时可能消失，遍历机制无法保证成员存在，很可能刚刚遍历结束，成员就取不到了。WeakSet的一个用处就是存储Dom节点，而不用担心这些节点从文档移除时会引发内存泄漏。"><span class="nav-text">6.WeakSet不能遍历，因为成员都是弱引用，随时可能消失，遍历机制无法保证成员存在，很可能刚刚遍历结束，成员就取不到了。WeakSet的一个用处就是存储Dom节点，而不用担心这些节点从文档移除时会引发内存泄漏。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7-ES6提供了Map数据结构。它类似于对象，也是键值对的集合，但是”键”的范围不限于字符串，各种类型的值-包括对象-都可以当作键。只有对同一个对象的引用，Map结构才将其视为同一个键。Map的键实际上是和内存地址绑定的，只要内存地址不一样，就视为两个键。这就解决了同名属性碰撞的问题，我们扩展别人的库时，如果使用对象作为键名，不用担心自己的属性与原作者属性同名。如果Map的键是一个简单类型的值-数字、字符串、布尔值-，则只要两个值严格相等，Map就将其视为一个键，包括0和-0。另外，虽然NaN不严格等于自身，但Map将其视为同一个键。"><span class="nav-text">7.ES6提供了Map数据结构。它类似于对象，也是键值对的集合，但是”键”的范围不限于字符串，各种类型的值(包括对象)都可以当作键。只有对同一个对象的引用，Map结构才将其视为同一个键。Map的键实际上是和内存地址绑定的，只要内存地址不一样，就视为两个键。这就解决了同名属性碰撞的问题，我们扩展别人的库时，如果使用对象作为键名，不用担心自己的属性与原作者属性同名。如果Map的键是一个简单类型的值(数字、字符串、布尔值)，则只要两个值严格相等，Map就将其视为一个键，包括0和-0。另外，虽然NaN不严格等于自身，但Map将其视为同一个键。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#8-Map实例的set方法设置key所对应的键值，然后返回整个Map结构。如果key已经有值，则键值会被更新，否则就新生成该键。在Map实例的遍历方法中，Map的遍历顺序就是插入顺序。Map结构的默认遍历器接口-Symbol-iterator属性-就是entries方法。"><span class="nav-text">8.Map实例的set方法设置key所对应的键值，然后返回整个Map结构。如果key已经有值，则键值会被更新，否则就新生成该键。在Map实例的遍历方法中，Map的遍历顺序就是插入顺序。Map结构的默认遍历器接口(Symbol.iterator属性)就是entries方法。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#9-WeakMap与Map的区别有以下两点"><span class="nav-text">9.WeakMap与Map的区别有以下两点:</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第十二章-Proxy"><span class="nav-text">第十二章 Proxy</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-Proxy用于修改某些操作的默认行为，等同于在语言层面做出修改，所以属于一种”元编程”，即对编程语言进行编程。Proxy可以理解成在目标对象前架设一个”拦截”层，外界对该对象的访问都必须先通过这层拦截，因此提供了一种机制可以对外界的访问进行过滤和改写。"><span class="nav-text">1.Proxy用于修改某些操作的默认行为，等同于在语言层面做出修改，所以属于一种”元编程”，即对编程语言进行编程。Proxy可以理解成在目标对象前架设一个”拦截”层，外界对该对象的访问都必须先通过这层拦截，因此提供了一种机制可以对外界的访问进行过滤和改写。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-get方法用于拦截某个属性的读取操作。如果一个属性不可配置-configurable-或不可写-writable-，则该属性不能被代理，通过Proxy对象访问该属性将会报错。"><span class="nav-text">2.get方法用于拦截某个属性的读取操作。如果一个属性不可配置(configurable)或不可写(writable)，则该属性不能被代理，通过Proxy对象访问该属性将会报错。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-set方法用于拦截某个属性的赋值操作。有时，我们会在对象上设置内部属性，属性名的第一个字符使用下画线开头，表示这些属性不应该被外部使用。结合get和set方法，就可以做到防止这些内部属性被外部读-写。如果目标对象自身的某个属性不可写也不可配置，那么set不得改变这个属性的值，只能返回同样的值，否则报错。"><span class="nav-text">3.set方法用于拦截某个属性的赋值操作。有时，我们会在对象上设置内部属性，属性名的第一个字符使用下画线开头，表示这些属性不应该被外部使用。结合get和set方法，就可以做到防止这些内部属性被外部读&#x2F;写。如果目标对象自身的某个属性不可写也不可配置，那么set不得改变这个属性的值，只能返回同样的值，否则报错。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-apply方法拦截函数的调用、call和apply操作。apply方法可以接受3个参数，分别是目标对象、目标对象的上下文对象-this-和目标对象的参数数组。"><span class="nav-text">4.apply方法拦截函数的调用、call和apply操作。apply方法可以接受3个参数，分别是目标对象、目标对象的上下文对象(this)和目标对象的参数数组。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-has方法用来拦截HasProperty操作，即判断对象是否具有某个属性时，这个方法会生效。典型的操作就是in操作符。如果某个属性不可配置-或者目标对象不可扩展-，则has方法就不得”隐藏”-即返回false-目标对象的该属性。另外，虽然for…in循环也用到了in运算符，但是has拦截对for…in循环不生效。"><span class="nav-text">5.has方法用来拦截HasProperty操作，即判断对象是否具有某个属性时，这个方法会生效。典型的操作就是in操作符。如果某个属性不可配置(或者目标对象不可扩展)，则has方法就不得”隐藏”(即返回false)目标对象的该属性。另外，虽然for…in循环也用到了in运算符，但是has拦截对for…in循环不生效。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-construct方法用于拦截new命令，下面是拦截对象的写法。construct方法返回的必须是一个对象，否则会报错。"><span class="nav-text">6.construct方法用于拦截new命令，下面是拦截对象的写法。construct方法返回的必须是一个对象，否则会报错。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7-deleteProperty方法用于拦截delete操作，如果这个方法抛出错误或者返回false，当前属性就无法被delete命令删除。目标对象自身的不可配置-configurable-的属性不能被deleteProperty方法删除，否则会报错。"><span class="nav-text">7.deleteProperty方法用于拦截delete操作，如果这个方法抛出错误或者返回false，当前属性就无法被delete命令删除。目标对象自身的不可配置(configurable)的属性不能被deleteProperty方法删除，否则会报错。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#8-defineProperty方法拦截了Object-defineProperty操作。如果目标对象不可扩展-extensible-，则defineProperty不能增加目标对象中不存在的属性，否则会报错。另外，如果目标对象的某个属性不可写-writable-或不可配置-configurable-，则defineProperty方法不得改变这两个设置。"><span class="nav-text">8.defineProperty方法拦截了Object.defineProperty操作。如果目标对象不可扩展(extensible)，则defineProperty不能增加目标对象中不存在的属性，否则会报错。另外，如果目标对象的某个属性不可写(writable)或不可配置(configurable)，则defineProperty方法不得改变这两个设置。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#9-getOwnPropertyDescriptor方法拦截Object-getOwnPropertyDescriptor-，返回一个属性描述对象或者undefined。"><span class="nav-text">9.getOwnPropertyDescriptor方法拦截Object.getOwnPropertyDescriptor()，返回一个属性描述对象或者undefined。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#10-getPrototypeOf方法主要用来拦截获取对象原型。getPrototypeOf方法的返回值必须是对象或者null，否则会报错。另外，如果目标对象不可扩展-extensible-，getPrototypeOf方法必须返回目标对象的原型对象。"><span class="nav-text">10.getPrototypeOf方法主要用来拦截获取对象原型。getPrototypeOf方法的返回值必须是对象或者null，否则会报错。另外，如果目标对象不可扩展(extensible)，getPrototypeOf方法必须返回目标对象的原型对象。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#11-isExtensible方法拦截Object-isExtensible操作。该方法只能返回布尔值，否则返回值会被自动转为布尔值。这个方法有一个强限制，它的返回值必须与目标对象的isExtensible属性保持一致，否则就会抛出错误。"><span class="nav-text">11.isExtensible方法拦截Object.isExtensible操作。该方法只能返回布尔值，否则返回值会被自动转为布尔值。这个方法有一个强限制，它的返回值必须与目标对象的isExtensible属性保持一致，否则就会抛出错误。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#12-ownKeys方法用来拦截对象自身属性的读取操作。在使用Object-keys方法时，有三类属性会被ownKeys方法自动过滤，不会返回。"><span class="nav-text">12.ownKeys方法用来拦截对象自身属性的读取操作。在使用Object.keys方法时，有三类属性会被ownKeys方法自动过滤，不会返回。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#13-preventExtensions方法拦截Object-preventExtensions-。该方法必须返回一个布尔值，否则会被自动转为布尔值。这个方法有一个限制，只有目标对象不可扩展时-即Object-isExtensible-proxy-为false-，proxy-preventExtensions才能返回true，否则会报错。"><span class="nav-text">13.preventExtensions方法拦截Object.preventExtensions()。该方法必须返回一个布尔值，否则会被自动转为布尔值。这个方法有一个限制，只有目标对象不可扩展时(即Object.isExtensible(proxy)为false)，proxy.preventExtensions才能返回true，否则会报错。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#14-setPrototypeOf方法主要用于拦截Object-setPrototypeOf方法。该方法只能返回布尔值，否则会被自动转为布尔值。另外，如果目标对象不可扩展-extensible-，setPrototypeOf方法不得改变目标对象的原型。"><span class="nav-text">14.setPrototypeOf方法主要用于拦截Object.setPrototypeOf方法。该方法只能返回布尔值，否则会被自动转为布尔值。另外，如果目标对象不可扩展(extensible)，setPrototypeOf方法不得改变目标对象的原型。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#15-Proxy-revocable方法返回一个可取消的Proxy实例。Proxy-revocable方法返回一个对象，其proxy属性是Proxy实例，revoke属性是个函数，可以取消Proxy实例。Proxy-revocable的一个使用场景是，目标对象不允许直接访问，必须通过代理访问，一旦访问结束，就收回代理权，不允许再次访问。"><span class="nav-text">15.Proxy.revocable方法返回一个可取消的Proxy实例。Proxy.revocable方法返回一个对象，其proxy属性是Proxy实例，revoke属性是个函数，可以取消Proxy实例。Proxy.revocable的一个使用场景是，目标对象不允许直接访问，必须通过代理访问，一旦访问结束，就收回代理权，不允许再次访问。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#16-虽然Proxy可以代理针对目标对象的访问，但它不是目标对象的透明代理，即不做任何拦截的情况下也无法保证与目标对象的行为一致。主要原因就是在Proxy代理的情况下，目标对象内部的this关键字会指向Proxy代理。"><span class="nav-text">16.虽然Proxy可以代理针对目标对象的访问，但它不是目标对象的透明代理，即不做任何拦截的情况下也无法保证与目标对象的行为一致。主要原因就是在Proxy代理的情况下，目标对象内部的this关键字会指向Proxy代理。</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第十三章-Reflect"><span class="nav-text">第十三章 Reflect</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-Reflect对象的设计目的有以下几个"><span class="nav-text">1.Reflect对象的设计目的有以下几个:</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-Reflect-get方法查找并返回target对象地name属性，如果没有该属性，则返回undefined。如果name属性部署了读取函数-getter-，则读取函数的this绑定receiver。如果第一个参数不是对象，Reflect-get方法会报错。"><span class="nav-text">2.Reflect.get方法查找并返回target对象地name属性，如果没有该属性，则返回undefined。如果name属性部署了读取函数(getter)，则读取函数的this绑定receiver。如果第一个参数不是对象，Reflect.get方法会报错。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-Reflect-set方法设置target对象的name属性等于value。如果name属性部署了赋值函数-setter-，则读取函数的this绑定receiver。如果第一个参数不是对象，Reflect-set方法会报错。Reflect-set会触发Proxy-defineProperty拦截。"><span class="nav-text">3.Reflect.set方法设置target对象的name属性等于value。如果name属性部署了赋值函数(setter)，则读取函数的this绑定receiver。如果第一个参数不是对象，Reflect.set方法会报错。Reflect.set会触发Proxy.defineProperty拦截。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-Reflect-has方法对应name-in-obj中的in运算符。如果第一个参数不是对象，Reflect-has和in运算符都会报错。"><span class="nav-text">4.Reflect.has方法对应name in obj中的in运算符。如果第一个参数不是对象，Reflect.has和in运算符都会报错。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-Reflect-deleteProperty方法等同于delete-obj-name-，用于删除对象的属性。该方法返回一个布尔值。如果删除成功或者被删除的属性不存在，就返回true；如果删除失败或者被删除属性依然存在，则返回false。"><span class="nav-text">5.Reflect.deleteProperty方法等同于delete obj[name]，用于删除对象的属性。该方法返回一个布尔值。如果删除成功或者被删除的属性不存在，就返回true；如果删除失败或者被删除属性依然存在，则返回false。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-Reflect-construct方法等同于new-target-…args-，提供了一种不使用new来调用构造函数的方法。"><span class="nav-text">6.Reflect.construct方法等同于new target(…args)，提供了一种不使用new来调用构造函数的方法。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7-Reflect-getPrototypeOf方法用于读取对象的-proto-属性，对应Object-getPrototypeOf-obj-。Reflect-getPrototypeOf和Object-getPrototypeOf的一个区别是，如果参数不是对象，Object-getPrototypeOf会先将这个参数转为对象，然后再运行，而Reflect-getPrototypeOf会报错。"><span class="nav-text">7.Reflect.getPrototypeOf方法用于读取对象的_proto_属性，对应Object.getPrototypeOf(obj)。Reflect.getPrototypeOf和Object.getPrototypeOf的一个区别是，如果参数不是对象，Object.getPrototypeOf会先将这个参数转为对象，然后再运行，而Reflect.getPrototypeOf会报错。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#8-Reflect-setPrototypeOf方法用于设置对象的-proto-属性，返回第一个参数对象，对应Object-setPrototypeOf-obj，newProto-。如果第一个参数不是对象，Object-setPrototypeOf会返回第一个参数本身，而Reflect-setPrototypeOf会报错。如果第一个参数是undefined或null，Object-setPrototypeOf和Reflect-setPrototypeOf都会报错。"><span class="nav-text">8.Reflect.setPrototypeOf方法用于设置对象的_proto_属性，返回第一个参数对象，对应Object.setPrototypeOf(obj，newProto)。如果第一个参数不是对象，Object.setPrototypeOf会返回第一个参数本身，而Reflect.setPrototypeOf会报错。如果第一个参数是undefined或null，Object.setPrototypeOf和Reflect.setPrototypeOf都会报错。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#9-Reflect-apply方法等同于Function-prototype-apply-call-func，thisArg，args-，用于绑定this对象后执行给定函数。"><span class="nav-text">9.Reflect.apply方法等同于Function.prototype.apply.call(func，thisArg，args)，用于绑定this对象后执行给定函数。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#10-Reflect-defineProperty方法基本等同于Object-defineProperty，用来为对象定义属性。如果Reflect-defineProperty的第一个参数不是对象，就会抛出错误。"><span class="nav-text">10.Reflect.defineProperty方法基本等同于Object.defineProperty，用来为对象定义属性。如果Reflect.defineProperty的第一个参数不是对象，就会抛出错误。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#10-Reflect-getOwnPropertyDescriptor基本等同于Object-getOwnPropertyDescriptor，用于获得指定属性的描述对象。Reflect-getOwnPropertyDescriptor和Object-getOwnPropertyDescriptor的一个区别是，如果第一个参数不是对象，Object-getOwnPropertyDescriptor-1，”foo”-不会报错，并返回undefined，而Reflect-getOwnPropertyDescriptor-1，”foo”-会抛出错误，表示参数非法。"><span class="nav-text">10.Reflect.getOwnPropertyDescriptor基本等同于Object.getOwnPropertyDescriptor，用于获得指定属性的描述对象。Reflect.getOwnPropertyDescriptor和Object.getOwnPropertyDescriptor的一个区别是，如果第一个参数不是对象，Object.getOwnPropertyDescriptor(1，”foo”)不会报错，并返回undefined，而Reflect.getOwnPropertyDescriptor(1，”foo”)会抛出错误，表示参数非法。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#11-Reflect-isExtensible方法对应Object-isExtensible，返回一个布尔值，表示当前对象是否可扩展。如果参数不是对象，Object-isExtensible会返回false-因为非对象本来就是不可扩展的-，而Reflect-isExtensible会报错。"><span class="nav-text">11.Reflect.isExtensible方法对应Object.isExtensible，返回一个布尔值，表示当前对象是否可扩展。如果参数不是对象，Object.isExtensible会返回false(因为非对象本来就是不可扩展的)，而Reflect.isExtensible会报错。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#12-Reflect-preventExtensions对应Object-preventExtensions方法，用于使一个对象变为不可扩展的。它返回一个布尔值，表示是否操作成功。如果参数不是对象，Object-preventExtensions在ES5环境下将报错，在ES6环境下将返回传入的参数，而Reflect-preventExtensions会报错。"><span class="nav-text">12.Reflect.preventExtensions对应Object.preventExtensions方法，用于使一个对象变为不可扩展的。它返回一个布尔值，表示是否操作成功。如果参数不是对象，Object.preventExtensions在ES5环境下将报错，在ES6环境下将返回传入的参数，而Reflect.preventExtensions会报错。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#13-Reflect-ownKeys方法用于返回对象的所有属性，基本等同于Object-getOwnPropertyNames与Object-getOwnPropertySymbols之和。"><span class="nav-text">13.Reflect.ownKeys方法用于返回对象的所有属性，基本等同于Object.getOwnPropertyNames与Object.getOwnPropertySymbols之和。</span></a></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="丁可"
+      src="/images/touxiang.jpg">
+  <p class="site-author-name" itemprop="name">丁可</p>
+  <div class="site-description" itemprop="description">哪来的勇气我就是不灰心</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">29</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">10</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/DK-frontend" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;DK-frontend" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/504015629@qq.com" title="E-Mail → 504015629@qq.com"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://blog.csdn.net/DK159753" title="CSDN → https:&#x2F;&#x2F;blog.csdn.net&#x2F;DK159753" rel="noopener" target="_blank"><i class="fab fa-crosshairs fa-fw"></i>CSDN</a>
+      </span>
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+      <iframe allow="autoplay" frameborder="no" border="0" marginwidth="0" marginheight="0" width=330 height=86 src="//music.163.com/outchain/player?type=2&id=1363973661&auto=1&height=66"></iframe>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2020 – 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">丁可</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">187k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">2:50</span>
+</div>
+<div class="theme-info">
+  <div class="powered-by"></div>
+  <span class="post-count">博客全站共89.5k字</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/pjax/pjax.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '#page-configurations',
+    '.content-wrap',
+    '.post-toc-wrap',
+    '.languages',
+    '#pjax'
+  ],
+  switches: {
+    '.post-toc-wrap': Pjax.switches.innerHTML
+  },
+  analytics: false,
+  cacheBust: false,
+  scrollTo : !CONFIG.bookmark.enable
+});
+
+window.addEventListener('pjax:success', () => {
+  document.querySelectorAll('script[data-pjax], script#page-configurations, #pjax script').forEach(element => {
+    var code = element.text || element.textContent || element.innerHTML || '';
+    var parent = element.parentNode;
+    parent.removeChild(element);
+    var script = document.createElement('script');
+    if (element.id) {
+      script.id = element.id;
+    }
+    if (element.className) {
+      script.className = element.className;
+    }
+    if (element.type) {
+      script.type = element.type;
+    }
+    if (element.src) {
+      script.src = element.src;
+      // Force synchronous loading of peripheral JS.
+      script.async = false;
+    }
+    if (element.dataset.pjax !== undefined) {
+      script.dataset.pjax = '';
+    }
+    if (code !== '') {
+      script.appendChild(document.createTextNode(code));
+    }
+    parent.appendChild(script);
+  });
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <div id="pjax">
+  
+
+  
+
+<script>
+NexT.utils.loadComments(document.querySelector('#lv-container'), () => {
+  window.livereOptions = {
+    refer: location.pathname.replace(CONFIG.root, '').replace('index.html', '')
+  };
+  (function(d, s) {
+    var j, e = d.getElementsByTagName(s)[0];
+    if (typeof LivereTower === 'function') { return; }
+    j = d.createElement(s);
+    j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+    j.async = true;
+    e.parentNode.insertBefore(j, e);
+  })(document, 'script');
+});
+</script>
+
+    </div>
+  
+   <canvas class="fireworks" style="position: fixed;left: 0;top: 0;z-index: 1; pointer-events: none;" ></canvas> 
+   <script type="text/javascript" src="//cdn.bootcss.com/animejs/2.2.0/anime.min.js"></script> 
+   <script type="text/javascript" src="/js/src/fireworks.js"></script>
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"model":{"jsonPath":"/live2dw/assets/wanko.model.json"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":false},"log":false});</script></body>
+</html>
+
+
