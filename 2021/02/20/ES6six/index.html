@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+ <!--pjax：防止跳转页面音乐暂停-->
+  <script src="https://cdn.jsdelivr.net/npm/pjax@0.2.8/pjax.js"></script> 
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<script src="//cdn.bootcss.com/pace/1.0.2/pace.min.js"></script>
+<link href="//cdn.bootcss.com/pace/1.0.2/themes/pink/pace-theme-flash.css" rel="stylesheet">
+<style>
+    .pace .pace-progress {
+        background: #1E92FB; /*进度条颜色*/
+        height: 3px;
+    }
+    .pace .pace-progress-inner {
+         box-shadow: 0 0 10px #1E92FB, 0 0 5px     #1E92FB; /*阴影颜色*/
+    }
+    .pace .pace-activity {
+        border-top-color: #1E92FB;    /*上边框颜色*/
+        border-left-color: #1E92FB;    /*左边框颜色*/
+    }
+</style>
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-big-counter.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yoursite.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="学习ES6标准入门第六天第十七章 Generator函数的异步应用1.所谓”异步”，简单来说就是一个任务不是连续完成的，可以理解成该任务被人分为成两段，先执行第一段，然后转而执行其他任何，等做好准备后再回过头执行第二段。相应地，连续执行叫作同步。2.为什么Node约定回调函数的第一个参数必须是错误对象err(如果没有错误，该参数就是null)呢？原因在于，执行分成两段，第一段执行完以后，任务所在的">
+<meta property="og:type" content="article">
+<meta property="og:title" content="学习ES6标准入门第六天">
+<meta property="og:url" content="http://yoursite.com/2021/02/20/ES6six/index.html">
+<meta property="og:site_name" content="DKの博客">
+<meta property="og:description" content="学习ES6标准入门第六天第十七章 Generator函数的异步应用1.所谓”异步”，简单来说就是一个任务不是连续完成的，可以理解成该任务被人分为成两段，先执行第一段，然后转而执行其他任何，等做好准备后再回过头执行第二段。相应地，连续执行叫作同步。2.为什么Node约定回调函数的第一个参数必须是错误对象err(如果没有错误，该参数就是null)呢？原因在于，执行分成两段，第一段执行完以后，任务所在的">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-02-20T10:46:26.000Z">
+<meta property="article:modified_time" content="2021-02-20T12:54:42.321Z">
+<meta property="article:author" content="丁可">
+<meta property="article:tag" content="ES6">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://yoursite.com/2021/02/20/ES6six/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>学习ES6标准入门第六天 | DKの博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+    <a href="https://github.com/DK-frontend" target="_blank" rel="noopener" class="github-corner" aria-label="View source on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" style="fill:#151513; color:#fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a><style>.github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}</style>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">DKの博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">记录前端学习的历程</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">10</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">3</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">31</span></a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/02/20/ES6six/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/touxiang.jpg">
+      <meta itemprop="name" content="丁可">
+      <meta itemprop="description" content="哪来的勇气我就是不灰心">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="DKの博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          学习ES6标准入门第六天
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2021-02-20 18:46:26 / 修改时间：20:54:42" itemprop="dateCreated datePublished" datetime="2021-02-20T18:46:26+08:00">2021-02-20</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">学习笔记</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>4.9k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>4 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="学习ES6标准入门第六天"><a href="#学习ES6标准入门第六天" class="headerlink" title="学习ES6标准入门第六天"></a>学习ES6标准入门第六天</h1><h2 id="第十七章-Generator函数的异步应用"><a href="#第十七章-Generator函数的异步应用" class="headerlink" title="第十七章 Generator函数的异步应用"></a>第十七章 Generator函数的异步应用</h2><h3 id="1-所谓”异步”，简单来说就是一个任务不是连续完成的，可以理解成该任务被人分为成两段，先执行第一段，然后转而执行其他任何，等做好准备后再回过头执行第二段。相应地，连续执行叫作同步。"><a href="#1-所谓”异步”，简单来说就是一个任务不是连续完成的，可以理解成该任务被人分为成两段，先执行第一段，然后转而执行其他任何，等做好准备后再回过头执行第二段。相应地，连续执行叫作同步。" class="headerlink" title="1.所谓”异步”，简单来说就是一个任务不是连续完成的，可以理解成该任务被人分为成两段，先执行第一段，然后转而执行其他任何，等做好准备后再回过头执行第二段。相应地，连续执行叫作同步。"></a>1.所谓”异步”，简单来说就是一个任务不是连续完成的，可以理解成该任务被人分为成两段，先执行第一段，然后转而执行其他任何，等做好准备后再回过头执行第二段。相应地，连续执行叫作同步。</h3><h3 id="2-为什么Node约定回调函数的第一个参数必须是错误对象err-如果没有错误，该参数就是null-呢？原因在于，执行分成两段，第一段执行完以后，任务所在的上下文环境就已经结束了。在这以后抛出的错误，其原来的上下文环境已经无法捕捉，因此只能当作参数被传入第二段。"><a href="#2-为什么Node约定回调函数的第一个参数必须是错误对象err-如果没有错误，该参数就是null-呢？原因在于，执行分成两段，第一段执行完以后，任务所在的上下文环境就已经结束了。在这以后抛出的错误，其原来的上下文环境已经无法捕捉，因此只能当作参数被传入第二段。" class="headerlink" title="2.为什么Node约定回调函数的第一个参数必须是错误对象err(如果没有错误，该参数就是null)呢？原因在于，执行分成两段，第一段执行完以后，任务所在的上下文环境就已经结束了。在这以后抛出的错误，其原来的上下文环境已经无法捕捉，因此只能当作参数被传入第二段。"></a>2.为什么Node约定回调函数的第一个参数必须是错误对象err(如果没有错误，该参数就是null)呢？原因在于，执行分成两段，第一段执行完以后，任务所在的上下文环境就已经结束了。在这以后抛出的错误，其原来的上下文环境已经无法捕捉，因此只能当作参数被传入第二段。</h3><h3 id="3-Promise的最大问题是代码冗余，原来的任务被Promise包装之后，无论什么操作，一眼看去都是许多then的堆积，原来的语义变得很不清楚。"><a href="#3-Promise的最大问题是代码冗余，原来的任务被Promise包装之后，无论什么操作，一眼看去都是许多then的堆积，原来的语义变得很不清楚。" class="headerlink" title="3.Promise的最大问题是代码冗余，原来的任务被Promise包装之后，无论什么操作，一眼看去都是许多then的堆积，原来的语义变得很不清楚。"></a>3.Promise的最大问题是代码冗余，原来的任务被Promise包装之后，无论什么操作，一眼看去都是许多then的堆积，原来的语义变得很不清楚。</h3><h3 id="4-Generator函数可以暂停执行和恢复执行，这是它能封装异步任务的根本原因。除此之外，还有两个特性使它可以作为异步编程的完整解决方案-函数体内外的数据交换和错误处理机制。next返回值的value属性是Generator函数向外输出数据；next方法还可以接收参数，向Generator函数体内输入数据。Generator函数内还可以部署错误处理代码，捕获函数体外抛出的错误。"><a href="#4-Generator函数可以暂停执行和恢复执行，这是它能封装异步任务的根本原因。除此之外，还有两个特性使它可以作为异步编程的完整解决方案-函数体内外的数据交换和错误处理机制。next返回值的value属性是Generator函数向外输出数据；next方法还可以接收参数，向Generator函数体内输入数据。Generator函数内还可以部署错误处理代码，捕获函数体外抛出的错误。" class="headerlink" title="4.Generator函数可以暂停执行和恢复执行，这是它能封装异步任务的根本原因。除此之外，还有两个特性使它可以作为异步编程的完整解决方案:函数体内外的数据交换和错误处理机制。next返回值的value属性是Generator函数向外输出数据；next方法还可以接收参数，向Generator函数体内输入数据。Generator函数内还可以部署错误处理代码，捕获函数体外抛出的错误。"></a>4.Generator函数可以暂停执行和恢复执行，这是它能封装异步任务的根本原因。除此之外，还有两个特性使它可以作为异步编程的完整解决方案:函数体内外的数据交换和错误处理机制。next返回值的value属性是Generator函数向外输出数据；next方法还可以接收参数，向Generator函数体内输入数据。Generator函数内还可以部署错误处理代码，捕获函数体外抛出的错误。</h3><h3 id="5-函数参数的传值分为两种-一种是”传值调用”，即在进入函数体之前就计算参数的表达式的值，再将这个值传入函数。另一种是”传名调用”，即直接将表达式传入函数体，只在用到它的时候求值。传值调用比较简单，但是对参数求值的时候，实际上还没有用到这个参数，有可能造成性能损失。"><a href="#5-函数参数的传值分为两种-一种是”传值调用”，即在进入函数体之前就计算参数的表达式的值，再将这个值传入函数。另一种是”传名调用”，即直接将表达式传入函数体，只在用到它的时候求值。传值调用比较简单，但是对参数求值的时候，实际上还没有用到这个参数，有可能造成性能损失。" class="headerlink" title="5.函数参数的传值分为两种:一种是”传值调用”，即在进入函数体之前就计算参数的表达式的值，再将这个值传入函数。另一种是”传名调用”，即直接将表达式传入函数体，只在用到它的时候求值。传值调用比较简单，但是对参数求值的时候，实际上还没有用到这个参数，有可能造成性能损失。"></a>5.函数参数的传值分为两种:一种是”传值调用”，即在进入函数体之前就计算参数的表达式的值，再将这个值传入函数。另一种是”传名调用”，即直接将表达式传入函数体，只在用到它的时候求值。传值调用比较简单，但是对参数求值的时候，实际上还没有用到这个参数，有可能造成性能损失。</h3><a id="more"></a>
+<h3 id="6-编译器的”传名调用”的实现往往是将参数放到一个临时函数之中，再将这个临时函数传入函数体。这个临时函数就称为Thunk函数。"><a href="#6-编译器的”传名调用”的实现往往是将参数放到一个临时函数之中，再将这个临时函数传入函数体。这个临时函数就称为Thunk函数。" class="headerlink" title="6.编译器的”传名调用”的实现往往是将参数放到一个临时函数之中，再将这个临时函数传入函数体。这个临时函数就称为Thunk函数。"></a>6.编译器的”传名调用”的实现往往是将参数放到一个临时函数之中，再将这个临时函数传入函数体。这个临时函数就称为Thunk函数。</h3><h3 id="7-JavaScript语言是传值调用，它的Thunk函数含义有所不同。在JavaScript语言中，Thunk函数替换的不是表达式，而是多参数函数，将其替换成一个只接受回调函数作为参数的单参数函数。Node生产环境提供了封装好Thunk函数的Thunkify模块。该模块与Thunk函数的区别在于多了一个检查机制，确保回调函数只运行一次。"><a href="#7-JavaScript语言是传值调用，它的Thunk函数含义有所不同。在JavaScript语言中，Thunk函数替换的不是表达式，而是多参数函数，将其替换成一个只接受回调函数作为参数的单参数函数。Node生产环境提供了封装好Thunk函数的Thunkify模块。该模块与Thunk函数的区别在于多了一个检查机制，确保回调函数只运行一次。" class="headerlink" title="7.JavaScript语言是传值调用，它的Thunk函数含义有所不同。在JavaScript语言中，Thunk函数替换的不是表达式，而是多参数函数，将其替换成一个只接受回调函数作为参数的单参数函数。Node生产环境提供了封装好Thunk函数的Thunkify模块。该模块与Thunk函数的区别在于多了一个检查机制，确保回调函数只运行一次。"></a>7.JavaScript语言是传值调用，它的Thunk函数含义有所不同。在JavaScript语言中，Thunk函数替换的不是表达式，而是多参数函数，将其替换成一个只接受回调函数作为参数的单参数函数。Node生产环境提供了封装好Thunk函数的Thunkify模块。该模块与Thunk函数的区别在于多了一个检查机制，确保回调函数只运行一次。</h3><h3 id="8-Thunk函数并不是Generator函数自动执行的唯一方案。因为自动执行的关键是，必须有一种机制自动控制Generator函数的流程，接收和交还程序的执行权。回调函数可以做到这一点，Promise对象也可以做到这一点。"><a href="#8-Thunk函数并不是Generator函数自动执行的唯一方案。因为自动执行的关键是，必须有一种机制自动控制Generator函数的流程，接收和交还程序的执行权。回调函数可以做到这一点，Promise对象也可以做到这一点。" class="headerlink" title="8.Thunk函数并不是Generator函数自动执行的唯一方案。因为自动执行的关键是，必须有一种机制自动控制Generator函数的流程，接收和交还程序的执行权。回调函数可以做到这一点，Promise对象也可以做到这一点。"></a>8.Thunk函数并不是Generator函数自动执行的唯一方案。因为自动执行的关键是，必须有一种机制自动控制Generator函数的流程，接收和交还程序的执行权。回调函数可以做到这一点，Promise对象也可以做到这一点。</h3><h3 id="9-Node提供Stream模式读写数据，特点是一次只处理数据的一部分，数据被分成一块一块依次处理，就好像”数据流”一样。这对于处理大规模数据非常有利。"><a href="#9-Node提供Stream模式读写数据，特点是一次只处理数据的一部分，数据被分成一块一块依次处理，就好像”数据流”一样。这对于处理大规模数据非常有利。" class="headerlink" title="9.Node提供Stream模式读写数据，特点是一次只处理数据的一部分，数据被分成一块一块依次处理，就好像”数据流”一样。这对于处理大规模数据非常有利。"></a>9.Node提供Stream模式读写数据，特点是一次只处理数据的一部分，数据被分成一块一块依次处理，就好像”数据流”一样。这对于处理大规模数据非常有利。</h3><h2 id="第十八章-async函数"><a href="#第十八章-async函数" class="headerlink" title="第十八章 async函数"></a>第十八章 async函数</h2><h3 id="1-async函数就是将Generator函数的星号-替换成async，将yield替换成await，仅此而已。async函数对Generator函数的改进体现在以下4点"><a href="#1-async函数就是将Generator函数的星号-替换成async，将yield替换成await，仅此而已。async函数对Generator函数的改进体现在以下4点" class="headerlink" title="1.async函数就是将Generator函数的星号(*)替换成async，将yield替换成await，仅此而已。async函数对Generator函数的改进体现在以下4点:"></a>1.async函数就是将Generator函数的星号(*)替换成async，将yield替换成await，仅此而已。async函数对Generator函数的改进体现在以下4点:</h3><ul>
+<li>内置执行器<br>Generator函数的执行必须靠执行器，所以才有了co模块，而async函数自带执行器。也就是说，async函数的执行与普通函数一摸一样，只要一行。</li>
+<li>更好的语义<br>async和await比起星号和yield，语义更清楚了。async表示函数里有异步操作，await表示紧跟在后面的表达式需要等待结果。</li>
+<li>更广的适用性<br>co模块约定，yield命令后面只能是Thunk函数或Promise对象，而async函数的await命令后面，可以是Promise对象和原始类型的值(数值、字符串和布尔值，但这时等同于同步操作)。</li>
+<li>返回值是Promise<br>async函数的返回值是Promise对象，这比Generator函数的返回值是Iterator对象方便了许多。可以用then方法指定下一步的操作。<h3 id="2-async函数返回一个Promise对象。async函数内部return语句返回的值，会成为then方法回调函数的参数。async函数内部抛出错误会导致返回的Promise对象变为reject状态。抛出的错误对象会被catch方法回调函数接收到。"><a href="#2-async函数返回一个Promise对象。async函数内部return语句返回的值，会成为then方法回调函数的参数。async函数内部抛出错误会导致返回的Promise对象变为reject状态。抛出的错误对象会被catch方法回调函数接收到。" class="headerlink" title="2.async函数返回一个Promise对象。async函数内部return语句返回的值，会成为then方法回调函数的参数。async函数内部抛出错误会导致返回的Promise对象变为reject状态。抛出的错误对象会被catch方法回调函数接收到。"></a>2.async函数返回一个Promise对象。async函数内部return语句返回的值，会成为then方法回调函数的参数。async函数内部抛出错误会导致返回的Promise对象变为reject状态。抛出的错误对象会被catch方法回调函数接收到。</h3><h3 id="3-async函数返回的Promise对象必须等到内部所有await命令后面的Promise对象执行完才会发生状态改变，除非遇到return语句或者抛出错误。也就是说，只有async函数内部的异步操作执行完，才会执行then方法指定的回调函数。"><a href="#3-async函数返回的Promise对象必须等到内部所有await命令后面的Promise对象执行完才会发生状态改变，除非遇到return语句或者抛出错误。也就是说，只有async函数内部的异步操作执行完，才会执行then方法指定的回调函数。" class="headerlink" title="3.async函数返回的Promise对象必须等到内部所有await命令后面的Promise对象执行完才会发生状态改变，除非遇到return语句或者抛出错误。也就是说，只有async函数内部的异步操作执行完，才会执行then方法指定的回调函数。"></a>3.async函数返回的Promise对象必须等到内部所有await命令后面的Promise对象执行完才会发生状态改变，除非遇到return语句或者抛出错误。也就是说，只有async函数内部的异步操作执行完，才会执行then方法指定的回调函数。</h3><h3 id="4-正常情况下，await命令后面是一个Promise对象。如果不是，会被转成一个立即resolve的Promise对象。await命令后面的Promise对象如果变为reject状态，则reject的参数会被catch方法的回调函数接收到。上面的代码中，await语句前面没有renturn，但是reject方法的参数依然传入了catch方法的回调函数。这里如果在await前面加上return，效果是一样的。只要一个await语句后面的Promise变为reject，那么整个async函数都会中断执行。有时，我们希望即使前一个异步操作失败，也不要中断后面的异步操作。这时可以将第一个await放在try…catch结构里面，这样不管这个异步操作是否成功，第二个await都会执行。另一种方法是在await后面的Promise对象后添加一个catch方法，处理前面可能出现的错误。"><a href="#4-正常情况下，await命令后面是一个Promise对象。如果不是，会被转成一个立即resolve的Promise对象。await命令后面的Promise对象如果变为reject状态，则reject的参数会被catch方法的回调函数接收到。上面的代码中，await语句前面没有renturn，但是reject方法的参数依然传入了catch方法的回调函数。这里如果在await前面加上return，效果是一样的。只要一个await语句后面的Promise变为reject，那么整个async函数都会中断执行。有时，我们希望即使前一个异步操作失败，也不要中断后面的异步操作。这时可以将第一个await放在try…catch结构里面，这样不管这个异步操作是否成功，第二个await都会执行。另一种方法是在await后面的Promise对象后添加一个catch方法，处理前面可能出现的错误。" class="headerlink" title="4.正常情况下，await命令后面是一个Promise对象。如果不是，会被转成一个立即resolve的Promise对象。await命令后面的Promise对象如果变为reject状态，则reject的参数会被catch方法的回调函数接收到。上面的代码中，await语句前面没有renturn，但是reject方法的参数依然传入了catch方法的回调函数。这里如果在await前面加上return，效果是一样的。只要一个await语句后面的Promise变为reject，那么整个async函数都会中断执行。有时，我们希望即使前一个异步操作失败，也不要中断后面的异步操作。这时可以将第一个await放在try…catch结构里面，这样不管这个异步操作是否成功，第二个await都会执行。另一种方法是在await后面的Promise对象后添加一个catch方法，处理前面可能出现的错误。"></a>4.正常情况下，await命令后面是一个Promise对象。如果不是，会被转成一个立即resolve的Promise对象。await命令后面的Promise对象如果变为reject状态，则reject的参数会被catch方法的回调函数接收到。上面的代码中，await语句前面没有renturn，但是reject方法的参数依然传入了catch方法的回调函数。这里如果在await前面加上return，效果是一样的。只要一个await语句后面的Promise变为reject，那么整个async函数都会中断执行。有时，我们希望即使前一个异步操作失败，也不要中断后面的异步操作。这时可以将第一个await放在try…catch结构里面，这样不管这个异步操作是否成功，第二个await都会执行。另一种方法是在await后面的Promise对象后添加一个catch方法，处理前面可能出现的错误。</h3><h3 id="5-await的使用注意点"><a href="#5-await的使用注意点" class="headerlink" title="5.await的使用注意点:"></a>5.await的使用注意点:</h3></li>
+<li>await命令后面的Promise对象的运行结果可能是rejected，所以最好把await命令放在try…catch代码块中。</li>
+<li>多个await命令后面的异步操作如果不存在继发关系，最好让它们同时触发。</li>
+<li>await命令只能用在async函数之中，如果用在普通函数中就会报错。</li>
+</ul>
+<p>如果将forEach方法的参数改成async函数可能不会正常工作，因为这时forEach中的操作将是并发执行，即同时执行，而不是继发执行。正确的写法是采用for循环。</p>
+<h3 id="6-为异步操作提供原生的遍历器接口，即value和done这两个属性都是异步产生的，这称为”异步遍历器”。"><a href="#6-为异步操作提供原生的遍历器接口，即value和done这两个属性都是异步产生的，这称为”异步遍历器”。" class="headerlink" title="6.为异步操作提供原生的遍历器接口，即value和done这两个属性都是异步产生的，这称为”异步遍历器”。"></a>6.为异步操作提供原生的遍历器接口，即value和done这两个属性都是异步产生的，这称为”异步遍历器”。</h3><h3 id="7-我们知道，一个对象的同步遍历器的接口部署在Symbol-iterator属性上面。同样的，对象的异步遍历器接口部署在Symbol-asyncIterator属性上面。不管是什么样的对象，只要它的Symbol-asyncIterator属性有值，就表示应该对它进行异步遍历。"><a href="#7-我们知道，一个对象的同步遍历器的接口部署在Symbol-iterator属性上面。同样的，对象的异步遍历器接口部署在Symbol-asyncIterator属性上面。不管是什么样的对象，只要它的Symbol-asyncIterator属性有值，就表示应该对它进行异步遍历。" class="headerlink" title="7.我们知道，一个对象的同步遍历器的接口部署在Symbol.iterator属性上面。同样的，对象的异步遍历器接口部署在Symbol.asyncIterator属性上面。不管是什么样的对象，只要它的Symbol.asyncIterator属性有值，就表示应该对它进行异步遍历。"></a>7.我们知道，一个对象的同步遍历器的接口部署在Symbol.iterator属性上面。同样的，对象的异步遍历器接口部署在Symbol.asyncIterator属性上面。不管是什么样的对象，只要它的Symbol.asyncIterator属性有值，就表示应该对它进行异步遍历。</h3><h3 id="8-for…of循环用于遍历同步的Iterator接口。新引入的for-await…of循环则用于遍历异步的Iterator接口。如果next方法返回的Promise对象被reject，for-await…of就会报错，要用try…catch捕捉。注意，for-await…of循环也可以用于同步遍历器。"><a href="#8-for…of循环用于遍历同步的Iterator接口。新引入的for-await…of循环则用于遍历异步的Iterator接口。如果next方法返回的Promise对象被reject，for-await…of就会报错，要用try…catch捕捉。注意，for-await…of循环也可以用于同步遍历器。" class="headerlink" title="8.for…of循环用于遍历同步的Iterator接口。新引入的for await…of循环则用于遍历异步的Iterator接口。如果next方法返回的Promise对象被reject，for await…of就会报错，要用try…catch捕捉。注意，for await…of循环也可以用于同步遍历器。"></a>8.for…of循环用于遍历同步的Iterator接口。新引入的for await…of循环则用于遍历异步的Iterator接口。如果next方法返回的Promise对象被reject，for await…of就会报错，要用try…catch捕捉。注意，for await…of循环也可以用于同步遍历器。</h3><h3 id="9-就像Generator函数返回一个同步遍历器对象一样，异步Generator函数的作用是返回一个异步遍历器对象。在语法上，异步Generator函数就是async函数与Generator函数的结合。异步Generator函数执行后返回一个异步Iterator对象，对该对象调用next方法返回一个Promise对象。"><a href="#9-就像Generator函数返回一个同步遍历器对象一样，异步Generator函数的作用是返回一个异步遍历器对象。在语法上，异步Generator函数就是async函数与Generator函数的结合。异步Generator函数执行后返回一个异步Iterator对象，对该对象调用next方法返回一个Promise对象。" class="headerlink" title="9.就像Generator函数返回一个同步遍历器对象一样，异步Generator函数的作用是返回一个异步遍历器对象。在语法上，异步Generator函数就是async函数与Generator函数的结合。异步Generator函数执行后返回一个异步Iterator对象，对该对象调用next方法返回一个Promise对象。"></a>9.就像Generator函数返回一个同步遍历器对象一样，异步Generator函数的作用是返回一个异步遍历器对象。在语法上，异步Generator函数就是async函数与Generator函数的结合。异步Generator函数执行后返回一个异步Iterator对象，对该对象调用next方法返回一个Promise对象。</h3><h3 id="10-异步操作前面使用await关键字标明，即await后面的操作应该返回Promise对象。凡是使用yield关键字的地方，就是next方法的停下来的地方，它后面的表达式的值会作为next-返回对象的value属性，这一点是与同步Generator函数一致。异步Generator函数内部能够同时使用await和yield命令。可以这样理解，await命令用于将外部操作产生的值输入函数内部，yield命令用于将函数内部的值输出。异步Generator函数的返回值是一个异步Iterator，即每次调用它的next方法都会返回一个Promise对象，也就是说，跟在yield命令后面的应该是一个Promise对象。"><a href="#10-异步操作前面使用await关键字标明，即await后面的操作应该返回Promise对象。凡是使用yield关键字的地方，就是next方法的停下来的地方，它后面的表达式的值会作为next-返回对象的value属性，这一点是与同步Generator函数一致。异步Generator函数内部能够同时使用await和yield命令。可以这样理解，await命令用于将外部操作产生的值输入函数内部，yield命令用于将函数内部的值输出。异步Generator函数的返回值是一个异步Iterator，即每次调用它的next方法都会返回一个Promise对象，也就是说，跟在yield命令后面的应该是一个Promise对象。" class="headerlink" title="10.异步操作前面使用await关键字标明，即await后面的操作应该返回Promise对象。凡是使用yield关键字的地方，就是next方法的停下来的地方，它后面的表达式的值会作为next()返回对象的value属性，这一点是与同步Generator函数一致。异步Generator函数内部能够同时使用await和yield命令。可以这样理解，await命令用于将外部操作产生的值输入函数内部，yield命令用于将函数内部的值输出。异步Generator函数的返回值是一个异步Iterator，即每次调用它的next方法都会返回一个Promise对象，也就是说，跟在yield命令后面的应该是一个Promise对象。"></a>10.异步操作前面使用await关键字标明，即await后面的操作应该返回Promise对象。凡是使用yield关键字的地方，就是next方法的停下来的地方，它后面的表达式的值会作为next()返回对象的value属性，这一点是与同步Generator函数一致。异步Generator函数内部能够同时使用await和yield命令。可以这样理解，await命令用于将外部操作产生的值输入函数内部，yield命令用于将函数内部的值输出。异步Generator函数的返回值是一个异步Iterator，即每次调用它的next方法都会返回一个Promise对象，也就是说，跟在yield命令后面的应该是一个Promise对象。</h3><h3 id="11-如果异步Generator函数抛出错误，则会被Promise对象reject，然后抛出的错误会被catch方法捕获。普通的async函数返回的是一个Promise对象，而异步Generator函数返回的是一个异步Iterator对象。可以这样理解，async函数和异步Generator函数是封装异步操作的两种方法，都用来达到同一种目的。区别在于，前者自带执行器，后者通过for-await…of执行，或自己编写执行器。异步Generator函数也可以通过next方法的参数接收外部传入的数据。"><a href="#11-如果异步Generator函数抛出错误，则会被Promise对象reject，然后抛出的错误会被catch方法捕获。普通的async函数返回的是一个Promise对象，而异步Generator函数返回的是一个异步Iterator对象。可以这样理解，async函数和异步Generator函数是封装异步操作的两种方法，都用来达到同一种目的。区别在于，前者自带执行器，后者通过for-await…of执行，或自己编写执行器。异步Generator函数也可以通过next方法的参数接收外部传入的数据。" class="headerlink" title="11.如果异步Generator函数抛出错误，则会被Promise对象reject，然后抛出的错误会被catch方法捕获。普通的async函数返回的是一个Promise对象，而异步Generator函数返回的是一个异步Iterator对象。可以这样理解，async函数和异步Generator函数是封装异步操作的两种方法，都用来达到同一种目的。区别在于，前者自带执行器，后者通过for await…of执行，或自己编写执行器。异步Generator函数也可以通过next方法的参数接收外部传入的数据。"></a>11.如果异步Generator函数抛出错误，则会被Promise对象reject，然后抛出的错误会被catch方法捕获。普通的async函数返回的是一个Promise对象，而异步Generator函数返回的是一个异步Iterator对象。可以这样理解，async函数和异步Generator函数是封装异步操作的两种方法，都用来达到同一种目的。区别在于，前者自带执行器，后者通过for await…of执行，或自己编写执行器。异步Generator函数也可以通过next方法的参数接收外部传入的数据。</h3><h2 id="第十九章-Class的基本语法"><a href="#第十九章-Class的基本语法" class="headerlink" title="第十九章 Class的基本语法"></a>第十九章 Class的基本语法</h2><h3 id="1-类的数据类型就是函数，类本身就指向构造函数。使用的时候也是直接对类使用new命令，跟构造函数的用法完全一致。类的内部定义的所有方法都是不可枚举的，这一点与ES5的行为不一致。"><a href="#1-类的数据类型就是函数，类本身就指向构造函数。使用的时候也是直接对类使用new命令，跟构造函数的用法完全一致。类的内部定义的所有方法都是不可枚举的，这一点与ES5的行为不一致。" class="headerlink" title="1.类的数据类型就是函数，类本身就指向构造函数。使用的时候也是直接对类使用new命令，跟构造函数的用法完全一致。类的内部定义的所有方法都是不可枚举的，这一点与ES5的行为不一致。"></a>1.类的数据类型就是函数，类本身就指向构造函数。使用的时候也是直接对类使用new命令，跟构造函数的用法完全一致。类的内部定义的所有方法都是不可枚举的，这一点与ES5的行为不一致。</h3><h3 id="2-类和模块的内部默认使用严格模式，所以不需要使用use-strict指定运行模式。只要将代码写在类或模块之中，那么就只有严格模式可用。"><a href="#2-类和模块的内部默认使用严格模式，所以不需要使用use-strict指定运行模式。只要将代码写在类或模块之中，那么就只有严格模式可用。" class="headerlink" title="2.类和模块的内部默认使用严格模式，所以不需要使用use strict指定运行模式。只要将代码写在类或模块之中，那么就只有严格模式可用。"></a>2.类和模块的内部默认使用严格模式，所以不需要使用use strict指定运行模式。只要将代码写在类或模块之中，那么就只有严格模式可用。</h3><h3 id="3-constructor方法是类的默认方法，通过new命令生成对象实例时自动调用该方法。一个类必须有constructor方法，如果没有显式定义，一个空的constructor方法会被默认添加。constructor方法默认返回实例对象-即thsi-，不过完全可以指定返回另外一个对象。类必须使用new来调用，否则会报错。这是它跟普通构造函数的一个主要区别，后者不用new也可以执行。"><a href="#3-constructor方法是类的默认方法，通过new命令生成对象实例时自动调用该方法。一个类必须有constructor方法，如果没有显式定义，一个空的constructor方法会被默认添加。constructor方法默认返回实例对象-即thsi-，不过完全可以指定返回另外一个对象。类必须使用new来调用，否则会报错。这是它跟普通构造函数的一个主要区别，后者不用new也可以执行。" class="headerlink" title="3.constructor方法是类的默认方法，通过new命令生成对象实例时自动调用该方法。一个类必须有constructor方法，如果没有显式定义，一个空的constructor方法会被默认添加。constructor方法默认返回实例对象(即thsi)，不过完全可以指定返回另外一个对象。类必须使用new来调用，否则会报错。这是它跟普通构造函数的一个主要区别，后者不用new也可以执行。"></a>3.constructor方法是类的默认方法，通过new命令生成对象实例时自动调用该方法。一个类必须有constructor方法，如果没有显式定义，一个空的constructor方法会被默认添加。constructor方法默认返回实例对象(即thsi)，不过完全可以指定返回另外一个对象。类必须使用new来调用，否则会报错。这是它跟普通构造函数的一个主要区别，后者不用new也可以执行。</h3><h3 id="4-与ES5一样，实例的属性除非显式定义在其本身-即this对象-上，否则都是定义在原型-即Class-上。"><a href="#4-与ES5一样，实例的属性除非显式定义在其本身-即this对象-上，否则都是定义在原型-即Class-上。" class="headerlink" title="4.与ES5一样，实例的属性除非显式定义在其本身(即this对象)上，否则都是定义在原型(即Class)上。"></a>4.与ES5一样，实例的属性除非显式定义在其本身(即this对象)上，否则都是定义在原型(即Class)上。</h3><h3 id="5-与函数一样，Class也可以使用表达式的形式定义。用表达式定义的类的名字是表达式所赋值的变量而不是Class后面跟的名称，Class后面跟的名称只能在Class的内部使用，指代当前类。"><a href="#5-与函数一样，Class也可以使用表达式的形式定义。用表达式定义的类的名字是表达式所赋值的变量而不是Class后面跟的名称，Class后面跟的名称只能在Class的内部使用，指代当前类。" class="headerlink" title="5.与函数一样，Class也可以使用表达式的形式定义。用表达式定义的类的名字是表达式所赋值的变量而不是Class后面跟的名称，Class后面跟的名称只能在Class的内部使用，指代当前类。"></a>5.与函数一样，Class也可以使用表达式的形式定义。用表达式定义的类的名字是表达式所赋值的变量而不是Class后面跟的名称，Class后面跟的名称只能在Class的内部使用，指代当前类。</h3><h3 id="6-类不存在变量提升，这一点与ES5完全不同。这种规定的原因与继承有关，必须保证子类在父类之后定义。"><a href="#6-类不存在变量提升，这一点与ES5完全不同。这种规定的原因与继承有关，必须保证子类在父类之后定义。" class="headerlink" title="6.类不存在变量提升，这一点与ES5完全不同。这种规定的原因与继承有关，必须保证子类在父类之后定义。"></a>6.类不存在变量提升，这一点与ES5完全不同。这种规定的原因与继承有关，必须保证子类在父类之后定义。</h3><h3 id="7-在类中定义私有方法只能通过变通方法来模拟实现"><a href="#7-在类中定义私有方法只能通过变通方法来模拟实现" class="headerlink" title="7.在类中定义私有方法只能通过变通方法来模拟实现:"></a>7.在类中定义私有方法只能通过变通方法来模拟实现:</h3><ul>
+<li>在命名上加以区别，例如在名字前加上下划线（”_”）</li>
+<li>索性将私有方法移除模块，因为模块内部的所有方法都是对外可见的</li>
+<li>利用Symbol值的唯一性将私有方法的名字命名为一个Symbol值</li>
+</ul>
+<h3 id="8-为class加私有属性，方法是在属性名之前，使用-来表示。私有属性可以指定初始值在构造函数执行时进行初始化。"><a href="#8-为class加私有属性，方法是在属性名之前，使用-来表示。私有属性可以指定初始值在构造函数执行时进行初始化。" class="headerlink" title="8.为class加私有属性，方法是在属性名之前，使用#来表示。私有属性可以指定初始值在构造函数执行时进行初始化。"></a>8.为class加私有属性，方法是在属性名之前，使用#来表示。私有属性可以指定初始值在构造函数执行时进行初始化。</h3><h3 id="9-类的方法内部如果含有this，它将默认指向类的实例。如果将这个方法提取出来单独使用，this会指向该方法运行时所在的环境，很可能会报错。"><a href="#9-类的方法内部如果含有this，它将默认指向类的实例。如果将这个方法提取出来单独使用，this会指向该方法运行时所在的环境，很可能会报错。" class="headerlink" title="9.类的方法内部如果含有this，它将默认指向类的实例。如果将这个方法提取出来单独使用，this会指向该方法运行时所在的环境，很可能会报错。"></a>9.类的方法内部如果含有this，它将默认指向类的实例。如果将这个方法提取出来单独使用，this会指向该方法运行时所在的环境，很可能会报错。</h3><h3 id="10-与ES5一样，在”类”的内部可以使用get和set关键字对某个属性设置存值函数和取值函数，拦截该属性的存取行为。存值函数和取值函数是设置在属性的Descriptor对象上的。"><a href="#10-与ES5一样，在”类”的内部可以使用get和set关键字对某个属性设置存值函数和取值函数，拦截该属性的存取行为。存值函数和取值函数是设置在属性的Descriptor对象上的。" class="headerlink" title="10.与ES5一样，在”类”的内部可以使用get和set关键字对某个属性设置存值函数和取值函数，拦截该属性的存取行为。存值函数和取值函数是设置在属性的Descriptor对象上的。"></a>10.与ES5一样，在”类”的内部可以使用get和set关键字对某个属性设置存值函数和取值函数，拦截该属性的存取行为。存值函数和取值函数是设置在属性的Descriptor对象上的。</h3><h3 id="11-类相当于实例的原型，所有在类中定义的方法都会被实例继承。如果在一个方法前加上static关键字，就表示该方法不会被实例继承，而是直接通过类调用，称为”静态方法”。父类的静态方法可以被子类继承。静态方法也可以从super对象上调用。"><a href="#11-类相当于实例的原型，所有在类中定义的方法都会被实例继承。如果在一个方法前加上static关键字，就表示该方法不会被实例继承，而是直接通过类调用，称为”静态方法”。父类的静态方法可以被子类继承。静态方法也可以从super对象上调用。" class="headerlink" title="11.类相当于实例的原型，所有在类中定义的方法都会被实例继承。如果在一个方法前加上static关键字，就表示该方法不会被实例继承，而是直接通过类调用，称为”静态方法”。父类的静态方法可以被子类继承。静态方法也可以从super对象上调用。"></a>11.类相当于实例的原型，所有在类中定义的方法都会被实例继承。如果在一个方法前加上static关键字，就表示该方法不会被实例继承，而是直接通过类调用，称为”静态方法”。父类的静态方法可以被子类继承。静态方法也可以从super对象上调用。</h3><h3 id="12-静态属性指的是Class本身的属性，即Class-propname，而不是定义在实例对象-this-上的属性。"><a href="#12-静态属性指的是Class本身的属性，即Class-propname，而不是定义在实例对象-this-上的属性。" class="headerlink" title="12.静态属性指的是Class本身的属性，即Class.propname，而不是定义在实例对象(this)上的属性。"></a>12.静态属性指的是Class本身的属性，即Class.propname，而不是定义在实例对象(this)上的属性。</h3><h3 id="13-Class的实例属性可以用等式写入类的定义之中。以前，我们定义实例属性时只能写在类的constructor方法里面。有了新的写法以后，可以不在constructor方法里面定义。"><a href="#13-Class的实例属性可以用等式写入类的定义之中。以前，我们定义实例属性时只能写在类的constructor方法里面。有了新的写法以后，可以不在constructor方法里面定义。" class="headerlink" title="13.Class的实例属性可以用等式写入类的定义之中。以前，我们定义实例属性时只能写在类的constructor方法里面。有了新的写法以后，可以不在constructor方法里面定义。"></a>13.Class的实例属性可以用等式写入类的定义之中。以前，我们定义实例属性时只能写在类的constructor方法里面。有了新的写法以后，可以不在constructor方法里面定义。</h3><h3 id="14-Class的静态属性只要在上面的实例属性写法前面加上static关键字就可以了。"><a href="#14-Class的静态属性只要在上面的实例属性写法前面加上static关键字就可以了。" class="headerlink" title="14.Class的静态属性只要在上面的实例属性写法前面加上static关键字就可以了。"></a>14.Class的静态属性只要在上面的实例属性写法前面加上static关键字就可以了。</h3><h3 id="15-new是从构造函数生成实例的命令。ES6为new命令引入了new-target属性，-在构造函数中-返回new命令所作用的构造函数。如果构造函数不是通过new命令调用的，那么new-target会返回undefined，因此这个属性可用于确定构造函数是怎么调用的。Class内部调用new-target，返回当前Class。需要注意的是，子类继承父类时new-target会返回子类。在函数外部，使用new-target会报错。"><a href="#15-new是从构造函数生成实例的命令。ES6为new命令引入了new-target属性，-在构造函数中-返回new命令所作用的构造函数。如果构造函数不是通过new命令调用的，那么new-target会返回undefined，因此这个属性可用于确定构造函数是怎么调用的。Class内部调用new-target，返回当前Class。需要注意的是，子类继承父类时new-target会返回子类。在函数外部，使用new-target会报错。" class="headerlink" title="15.new是从构造函数生成实例的命令。ES6为new命令引入了new.target属性，(在构造函数中)返回new命令所作用的构造函数。如果构造函数不是通过new命令调用的，那么new.target会返回undefined，因此这个属性可用于确定构造函数是怎么调用的。Class内部调用new.target，返回当前Class。需要注意的是，子类继承父类时new.target会返回子类。在函数外部，使用new.target会报错。"></a>15.new是从构造函数生成实例的命令。ES6为new命令引入了new.target属性，(在构造函数中)返回new命令所作用的构造函数。如果构造函数不是通过new命令调用的，那么new.target会返回undefined，因此这个属性可用于确定构造函数是怎么调用的。Class内部调用new.target，返回当前Class。需要注意的是，子类继承父类时new.target会返回子类。在函数外部，使用new.target会报错。</h3>
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div>您的支持是我最大的动力</div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/weixin.png" alt="丁可 微信支付">
+        <p>微信支付</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/images/zhifubao.png" alt="丁可 支付宝">
+        <p>支付宝</p>
+      </div>
+
+  </div>
+</div>
+
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>丁可
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://yoursite.com/2021/02/20/ES6six/" title="学习ES6标准入门第六天">http://yoursite.com/2021/02/20/ES6six/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/ES6/" rel="tag"><i class="fa fa-tag"></i> ES6</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/02/19/ES6five/" rel="prev" title="学习ES6标准入门第五天">
+      <i class="fa fa-chevron-left"></i> 学习ES6标准入门第五天
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+      <div>
+  
+    <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>感谢您的阅读-------------</div>
+    
+</div>
+
+  
+</div>
+
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    
+  <div class="comments">
+    <div id="lv-container" data-id="city" data-uid="MTAyMC81MTEwOC8yNzU4OQ=="></div>
+  </div>
+  
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#学习ES6标准入门第六天"><span class="nav-text">学习ES6标准入门第六天</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#第十七章-Generator函数的异步应用"><span class="nav-text">第十七章 Generator函数的异步应用</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-所谓”异步”，简单来说就是一个任务不是连续完成的，可以理解成该任务被人分为成两段，先执行第一段，然后转而执行其他任何，等做好准备后再回过头执行第二段。相应地，连续执行叫作同步。"><span class="nav-text">1.所谓”异步”，简单来说就是一个任务不是连续完成的，可以理解成该任务被人分为成两段，先执行第一段，然后转而执行其他任何，等做好准备后再回过头执行第二段。相应地，连续执行叫作同步。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-为什么Node约定回调函数的第一个参数必须是错误对象err-如果没有错误，该参数就是null-呢？原因在于，执行分成两段，第一段执行完以后，任务所在的上下文环境就已经结束了。在这以后抛出的错误，其原来的上下文环境已经无法捕捉，因此只能当作参数被传入第二段。"><span class="nav-text">2.为什么Node约定回调函数的第一个参数必须是错误对象err(如果没有错误，该参数就是null)呢？原因在于，执行分成两段，第一段执行完以后，任务所在的上下文环境就已经结束了。在这以后抛出的错误，其原来的上下文环境已经无法捕捉，因此只能当作参数被传入第二段。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-Promise的最大问题是代码冗余，原来的任务被Promise包装之后，无论什么操作，一眼看去都是许多then的堆积，原来的语义变得很不清楚。"><span class="nav-text">3.Promise的最大问题是代码冗余，原来的任务被Promise包装之后，无论什么操作，一眼看去都是许多then的堆积，原来的语义变得很不清楚。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-Generator函数可以暂停执行和恢复执行，这是它能封装异步任务的根本原因。除此之外，还有两个特性使它可以作为异步编程的完整解决方案-函数体内外的数据交换和错误处理机制。next返回值的value属性是Generator函数向外输出数据；next方法还可以接收参数，向Generator函数体内输入数据。Generator函数内还可以部署错误处理代码，捕获函数体外抛出的错误。"><span class="nav-text">4.Generator函数可以暂停执行和恢复执行，这是它能封装异步任务的根本原因。除此之外，还有两个特性使它可以作为异步编程的完整解决方案:函数体内外的数据交换和错误处理机制。next返回值的value属性是Generator函数向外输出数据；next方法还可以接收参数，向Generator函数体内输入数据。Generator函数内还可以部署错误处理代码，捕获函数体外抛出的错误。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-函数参数的传值分为两种-一种是”传值调用”，即在进入函数体之前就计算参数的表达式的值，再将这个值传入函数。另一种是”传名调用”，即直接将表达式传入函数体，只在用到它的时候求值。传值调用比较简单，但是对参数求值的时候，实际上还没有用到这个参数，有可能造成性能损失。"><span class="nav-text">5.函数参数的传值分为两种:一种是”传值调用”，即在进入函数体之前就计算参数的表达式的值，再将这个值传入函数。另一种是”传名调用”，即直接将表达式传入函数体，只在用到它的时候求值。传值调用比较简单，但是对参数求值的时候，实际上还没有用到这个参数，有可能造成性能损失。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-编译器的”传名调用”的实现往往是将参数放到一个临时函数之中，再将这个临时函数传入函数体。这个临时函数就称为Thunk函数。"><span class="nav-text">6.编译器的”传名调用”的实现往往是将参数放到一个临时函数之中，再将这个临时函数传入函数体。这个临时函数就称为Thunk函数。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7-JavaScript语言是传值调用，它的Thunk函数含义有所不同。在JavaScript语言中，Thunk函数替换的不是表达式，而是多参数函数，将其替换成一个只接受回调函数作为参数的单参数函数。Node生产环境提供了封装好Thunk函数的Thunkify模块。该模块与Thunk函数的区别在于多了一个检查机制，确保回调函数只运行一次。"><span class="nav-text">7.JavaScript语言是传值调用，它的Thunk函数含义有所不同。在JavaScript语言中，Thunk函数替换的不是表达式，而是多参数函数，将其替换成一个只接受回调函数作为参数的单参数函数。Node生产环境提供了封装好Thunk函数的Thunkify模块。该模块与Thunk函数的区别在于多了一个检查机制，确保回调函数只运行一次。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#8-Thunk函数并不是Generator函数自动执行的唯一方案。因为自动执行的关键是，必须有一种机制自动控制Generator函数的流程，接收和交还程序的执行权。回调函数可以做到这一点，Promise对象也可以做到这一点。"><span class="nav-text">8.Thunk函数并不是Generator函数自动执行的唯一方案。因为自动执行的关键是，必须有一种机制自动控制Generator函数的流程，接收和交还程序的执行权。回调函数可以做到这一点，Promise对象也可以做到这一点。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#9-Node提供Stream模式读写数据，特点是一次只处理数据的一部分，数据被分成一块一块依次处理，就好像”数据流”一样。这对于处理大规模数据非常有利。"><span class="nav-text">9.Node提供Stream模式读写数据，特点是一次只处理数据的一部分，数据被分成一块一块依次处理，就好像”数据流”一样。这对于处理大规模数据非常有利。</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第十八章-async函数"><span class="nav-text">第十八章 async函数</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-async函数就是将Generator函数的星号-替换成async，将yield替换成await，仅此而已。async函数对Generator函数的改进体现在以下4点"><span class="nav-text">1.async函数就是将Generator函数的星号(*)替换成async，将yield替换成await，仅此而已。async函数对Generator函数的改进体现在以下4点:</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-async函数返回一个Promise对象。async函数内部return语句返回的值，会成为then方法回调函数的参数。async函数内部抛出错误会导致返回的Promise对象变为reject状态。抛出的错误对象会被catch方法回调函数接收到。"><span class="nav-text">2.async函数返回一个Promise对象。async函数内部return语句返回的值，会成为then方法回调函数的参数。async函数内部抛出错误会导致返回的Promise对象变为reject状态。抛出的错误对象会被catch方法回调函数接收到。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-async函数返回的Promise对象必须等到内部所有await命令后面的Promise对象执行完才会发生状态改变，除非遇到return语句或者抛出错误。也就是说，只有async函数内部的异步操作执行完，才会执行then方法指定的回调函数。"><span class="nav-text">3.async函数返回的Promise对象必须等到内部所有await命令后面的Promise对象执行完才会发生状态改变，除非遇到return语句或者抛出错误。也就是说，只有async函数内部的异步操作执行完，才会执行then方法指定的回调函数。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-正常情况下，await命令后面是一个Promise对象。如果不是，会被转成一个立即resolve的Promise对象。await命令后面的Promise对象如果变为reject状态，则reject的参数会被catch方法的回调函数接收到。上面的代码中，await语句前面没有renturn，但是reject方法的参数依然传入了catch方法的回调函数。这里如果在await前面加上return，效果是一样的。只要一个await语句后面的Promise变为reject，那么整个async函数都会中断执行。有时，我们希望即使前一个异步操作失败，也不要中断后面的异步操作。这时可以将第一个await放在try…catch结构里面，这样不管这个异步操作是否成功，第二个await都会执行。另一种方法是在await后面的Promise对象后添加一个catch方法，处理前面可能出现的错误。"><span class="nav-text">4.正常情况下，await命令后面是一个Promise对象。如果不是，会被转成一个立即resolve的Promise对象。await命令后面的Promise对象如果变为reject状态，则reject的参数会被catch方法的回调函数接收到。上面的代码中，await语句前面没有renturn，但是reject方法的参数依然传入了catch方法的回调函数。这里如果在await前面加上return，效果是一样的。只要一个await语句后面的Promise变为reject，那么整个async函数都会中断执行。有时，我们希望即使前一个异步操作失败，也不要中断后面的异步操作。这时可以将第一个await放在try…catch结构里面，这样不管这个异步操作是否成功，第二个await都会执行。另一种方法是在await后面的Promise对象后添加一个catch方法，处理前面可能出现的错误。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-await的使用注意点"><span class="nav-text">5.await的使用注意点:</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-为异步操作提供原生的遍历器接口，即value和done这两个属性都是异步产生的，这称为”异步遍历器”。"><span class="nav-text">6.为异步操作提供原生的遍历器接口，即value和done这两个属性都是异步产生的，这称为”异步遍历器”。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7-我们知道，一个对象的同步遍历器的接口部署在Symbol-iterator属性上面。同样的，对象的异步遍历器接口部署在Symbol-asyncIterator属性上面。不管是什么样的对象，只要它的Symbol-asyncIterator属性有值，就表示应该对它进行异步遍历。"><span class="nav-text">7.我们知道，一个对象的同步遍历器的接口部署在Symbol.iterator属性上面。同样的，对象的异步遍历器接口部署在Symbol.asyncIterator属性上面。不管是什么样的对象，只要它的Symbol.asyncIterator属性有值，就表示应该对它进行异步遍历。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#8-for…of循环用于遍历同步的Iterator接口。新引入的for-await…of循环则用于遍历异步的Iterator接口。如果next方法返回的Promise对象被reject，for-await…of就会报错，要用try…catch捕捉。注意，for-await…of循环也可以用于同步遍历器。"><span class="nav-text">8.for…of循环用于遍历同步的Iterator接口。新引入的for await…of循环则用于遍历异步的Iterator接口。如果next方法返回的Promise对象被reject，for await…of就会报错，要用try…catch捕捉。注意，for await…of循环也可以用于同步遍历器。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#9-就像Generator函数返回一个同步遍历器对象一样，异步Generator函数的作用是返回一个异步遍历器对象。在语法上，异步Generator函数就是async函数与Generator函数的结合。异步Generator函数执行后返回一个异步Iterator对象，对该对象调用next方法返回一个Promise对象。"><span class="nav-text">9.就像Generator函数返回一个同步遍历器对象一样，异步Generator函数的作用是返回一个异步遍历器对象。在语法上，异步Generator函数就是async函数与Generator函数的结合。异步Generator函数执行后返回一个异步Iterator对象，对该对象调用next方法返回一个Promise对象。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#10-异步操作前面使用await关键字标明，即await后面的操作应该返回Promise对象。凡是使用yield关键字的地方，就是next方法的停下来的地方，它后面的表达式的值会作为next-返回对象的value属性，这一点是与同步Generator函数一致。异步Generator函数内部能够同时使用await和yield命令。可以这样理解，await命令用于将外部操作产生的值输入函数内部，yield命令用于将函数内部的值输出。异步Generator函数的返回值是一个异步Iterator，即每次调用它的next方法都会返回一个Promise对象，也就是说，跟在yield命令后面的应该是一个Promise对象。"><span class="nav-text">10.异步操作前面使用await关键字标明，即await后面的操作应该返回Promise对象。凡是使用yield关键字的地方，就是next方法的停下来的地方，它后面的表达式的值会作为next()返回对象的value属性，这一点是与同步Generator函数一致。异步Generator函数内部能够同时使用await和yield命令。可以这样理解，await命令用于将外部操作产生的值输入函数内部，yield命令用于将函数内部的值输出。异步Generator函数的返回值是一个异步Iterator，即每次调用它的next方法都会返回一个Promise对象，也就是说，跟在yield命令后面的应该是一个Promise对象。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#11-如果异步Generator函数抛出错误，则会被Promise对象reject，然后抛出的错误会被catch方法捕获。普通的async函数返回的是一个Promise对象，而异步Generator函数返回的是一个异步Iterator对象。可以这样理解，async函数和异步Generator函数是封装异步操作的两种方法，都用来达到同一种目的。区别在于，前者自带执行器，后者通过for-await…of执行，或自己编写执行器。异步Generator函数也可以通过next方法的参数接收外部传入的数据。"><span class="nav-text">11.如果异步Generator函数抛出错误，则会被Promise对象reject，然后抛出的错误会被catch方法捕获。普通的async函数返回的是一个Promise对象，而异步Generator函数返回的是一个异步Iterator对象。可以这样理解，async函数和异步Generator函数是封装异步操作的两种方法，都用来达到同一种目的。区别在于，前者自带执行器，后者通过for await…of执行，或自己编写执行器。异步Generator函数也可以通过next方法的参数接收外部传入的数据。</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第十九章-Class的基本语法"><span class="nav-text">第十九章 Class的基本语法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-类的数据类型就是函数，类本身就指向构造函数。使用的时候也是直接对类使用new命令，跟构造函数的用法完全一致。类的内部定义的所有方法都是不可枚举的，这一点与ES5的行为不一致。"><span class="nav-text">1.类的数据类型就是函数，类本身就指向构造函数。使用的时候也是直接对类使用new命令，跟构造函数的用法完全一致。类的内部定义的所有方法都是不可枚举的，这一点与ES5的行为不一致。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-类和模块的内部默认使用严格模式，所以不需要使用use-strict指定运行模式。只要将代码写在类或模块之中，那么就只有严格模式可用。"><span class="nav-text">2.类和模块的内部默认使用严格模式，所以不需要使用use strict指定运行模式。只要将代码写在类或模块之中，那么就只有严格模式可用。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-constructor方法是类的默认方法，通过new命令生成对象实例时自动调用该方法。一个类必须有constructor方法，如果没有显式定义，一个空的constructor方法会被默认添加。constructor方法默认返回实例对象-即thsi-，不过完全可以指定返回另外一个对象。类必须使用new来调用，否则会报错。这是它跟普通构造函数的一个主要区别，后者不用new也可以执行。"><span class="nav-text">3.constructor方法是类的默认方法，通过new命令生成对象实例时自动调用该方法。一个类必须有constructor方法，如果没有显式定义，一个空的constructor方法会被默认添加。constructor方法默认返回实例对象(即thsi)，不过完全可以指定返回另外一个对象。类必须使用new来调用，否则会报错。这是它跟普通构造函数的一个主要区别，后者不用new也可以执行。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-与ES5一样，实例的属性除非显式定义在其本身-即this对象-上，否则都是定义在原型-即Class-上。"><span class="nav-text">4.与ES5一样，实例的属性除非显式定义在其本身(即this对象)上，否则都是定义在原型(即Class)上。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-与函数一样，Class也可以使用表达式的形式定义。用表达式定义的类的名字是表达式所赋值的变量而不是Class后面跟的名称，Class后面跟的名称只能在Class的内部使用，指代当前类。"><span class="nav-text">5.与函数一样，Class也可以使用表达式的形式定义。用表达式定义的类的名字是表达式所赋值的变量而不是Class后面跟的名称，Class后面跟的名称只能在Class的内部使用，指代当前类。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-类不存在变量提升，这一点与ES5完全不同。这种规定的原因与继承有关，必须保证子类在父类之后定义。"><span class="nav-text">6.类不存在变量提升，这一点与ES5完全不同。这种规定的原因与继承有关，必须保证子类在父类之后定义。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7-在类中定义私有方法只能通过变通方法来模拟实现"><span class="nav-text">7.在类中定义私有方法只能通过变通方法来模拟实现:</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#8-为class加私有属性，方法是在属性名之前，使用-来表示。私有属性可以指定初始值在构造函数执行时进行初始化。"><span class="nav-text">8.为class加私有属性，方法是在属性名之前，使用#来表示。私有属性可以指定初始值在构造函数执行时进行初始化。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#9-类的方法内部如果含有this，它将默认指向类的实例。如果将这个方法提取出来单独使用，this会指向该方法运行时所在的环境，很可能会报错。"><span class="nav-text">9.类的方法内部如果含有this，它将默认指向类的实例。如果将这个方法提取出来单独使用，this会指向该方法运行时所在的环境，很可能会报错。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#10-与ES5一样，在”类”的内部可以使用get和set关键字对某个属性设置存值函数和取值函数，拦截该属性的存取行为。存值函数和取值函数是设置在属性的Descriptor对象上的。"><span class="nav-text">10.与ES5一样，在”类”的内部可以使用get和set关键字对某个属性设置存值函数和取值函数，拦截该属性的存取行为。存值函数和取值函数是设置在属性的Descriptor对象上的。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#11-类相当于实例的原型，所有在类中定义的方法都会被实例继承。如果在一个方法前加上static关键字，就表示该方法不会被实例继承，而是直接通过类调用，称为”静态方法”。父类的静态方法可以被子类继承。静态方法也可以从super对象上调用。"><span class="nav-text">11.类相当于实例的原型，所有在类中定义的方法都会被实例继承。如果在一个方法前加上static关键字，就表示该方法不会被实例继承，而是直接通过类调用，称为”静态方法”。父类的静态方法可以被子类继承。静态方法也可以从super对象上调用。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#12-静态属性指的是Class本身的属性，即Class-propname，而不是定义在实例对象-this-上的属性。"><span class="nav-text">12.静态属性指的是Class本身的属性，即Class.propname，而不是定义在实例对象(this)上的属性。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#13-Class的实例属性可以用等式写入类的定义之中。以前，我们定义实例属性时只能写在类的constructor方法里面。有了新的写法以后，可以不在constructor方法里面定义。"><span class="nav-text">13.Class的实例属性可以用等式写入类的定义之中。以前，我们定义实例属性时只能写在类的constructor方法里面。有了新的写法以后，可以不在constructor方法里面定义。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#14-Class的静态属性只要在上面的实例属性写法前面加上static关键字就可以了。"><span class="nav-text">14.Class的静态属性只要在上面的实例属性写法前面加上static关键字就可以了。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#15-new是从构造函数生成实例的命令。ES6为new命令引入了new-target属性，-在构造函数中-返回new命令所作用的构造函数。如果构造函数不是通过new命令调用的，那么new-target会返回undefined，因此这个属性可用于确定构造函数是怎么调用的。Class内部调用new-target，返回当前Class。需要注意的是，子类继承父类时new-target会返回子类。在函数外部，使用new-target会报错。"><span class="nav-text">15.new是从构造函数生成实例的命令。ES6为new命令引入了new.target属性，(在构造函数中)返回new命令所作用的构造函数。如果构造函数不是通过new命令调用的，那么new.target会返回undefined，因此这个属性可用于确定构造函数是怎么调用的。Class内部调用new.target，返回当前Class。需要注意的是，子类继承父类时new.target会返回子类。在函数外部，使用new.target会报错。</span></a></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="丁可"
+      src="/images/touxiang.jpg">
+  <p class="site-author-name" itemprop="name">丁可</p>
+  <div class="site-description" itemprop="description">哪来的勇气我就是不灰心</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">31</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">10</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/DK-frontend" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;DK-frontend" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/504015629@qq.com" title="E-Mail → 504015629@qq.com"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://blog.csdn.net/DK159753" title="CSDN → https:&#x2F;&#x2F;blog.csdn.net&#x2F;DK159753" rel="noopener" target="_blank"><i class="fab fa-crosshairs fa-fw"></i>CSDN</a>
+      </span>
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+      <iframe allow="autoplay" frameborder="no" border="0" marginwidth="0" marginheight="0" width=330 height=86 src="//music.163.com/outchain/player?type=2&id=1363973661&auto=1&height=66"></iframe>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2020 – 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">丁可</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">200k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">3:01</span>
+</div>
+<div class="theme-info">
+  <div class="powered-by"></div>
+  <span class="post-count">博客全站共97.8k字</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/pjax/pjax.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '#page-configurations',
+    '.content-wrap',
+    '.post-toc-wrap',
+    '.languages',
+    '#pjax'
+  ],
+  switches: {
+    '.post-toc-wrap': Pjax.switches.innerHTML
+  },
+  analytics: false,
+  cacheBust: false,
+  scrollTo : !CONFIG.bookmark.enable
+});
+
+window.addEventListener('pjax:success', () => {
+  document.querySelectorAll('script[data-pjax], script#page-configurations, #pjax script').forEach(element => {
+    var code = element.text || element.textContent || element.innerHTML || '';
+    var parent = element.parentNode;
+    parent.removeChild(element);
+    var script = document.createElement('script');
+    if (element.id) {
+      script.id = element.id;
+    }
+    if (element.className) {
+      script.className = element.className;
+    }
+    if (element.type) {
+      script.type = element.type;
+    }
+    if (element.src) {
+      script.src = element.src;
+      // Force synchronous loading of peripheral JS.
+      script.async = false;
+    }
+    if (element.dataset.pjax !== undefined) {
+      script.dataset.pjax = '';
+    }
+    if (code !== '') {
+      script.appendChild(document.createTextNode(code));
+    }
+    parent.appendChild(script);
+  });
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <div id="pjax">
+  
+
+  
+
+<script>
+NexT.utils.loadComments(document.querySelector('#lv-container'), () => {
+  window.livereOptions = {
+    refer: location.pathname.replace(CONFIG.root, '').replace('index.html', '')
+  };
+  (function(d, s) {
+    var j, e = d.getElementsByTagName(s)[0];
+    if (typeof LivereTower === 'function') { return; }
+    j = d.createElement(s);
+    j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+    j.async = true;
+    e.parentNode.insertBefore(j, e);
+  })(document, 'script');
+});
+</script>
+
+    </div>
+  
+   <canvas class="fireworks" style="position: fixed;left: 0;top: 0;z-index: 1; pointer-events: none;" ></canvas> 
+   <script type="text/javascript" src="//cdn.bootcss.com/animejs/2.2.0/anime.min.js"></script> 
+   <script type="text/javascript" src="/js/src/fireworks.js"></script>
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"model":{"jsonPath":"/live2dw/assets/wanko.model.json"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":false},"log":false});</script></body>
+</html>
+
+
