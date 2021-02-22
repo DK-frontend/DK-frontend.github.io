@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+ <!--pjax：防止跳转页面音乐暂停-->
+  <script src="https://cdn.jsdelivr.net/npm/pjax@0.2.8/pjax.js"></script> 
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<script src="//cdn.bootcss.com/pace/1.0.2/pace.min.js"></script>
+<link href="//cdn.bootcss.com/pace/1.0.2/themes/pink/pace-theme-flash.css" rel="stylesheet">
+<style>
+    .pace .pace-progress {
+        background: #1E92FB; /*进度条颜色*/
+        height: 3px;
+    }
+    .pace .pace-progress-inner {
+         box-shadow: 0 0 10px #1E92FB, 0 0 5px     #1E92FB; /*阴影颜色*/
+    }
+    .pace .pace-activity {
+        border-top-color: #1E92FB;    /*上边框颜色*/
+        border-left-color: #1E92FB;    /*左边框颜色*/
+    }
+</style>
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-big-counter.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yoursite.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="学习ES6标准入门第八天第二十四章 编程风格1.const优于let有以下几个原因: const可以提醒阅读程序的人，这个变量不应该改变 const比较符合函数式编程思想，运算不改变值，只是新建值，而且这样也有利于将来的分布式运算 JavaScript编译器会对const进行优化，所以多使用const有利于提供程序的运行效率，也就是说let和const的本质区别其实是编译器内部的处理不同  2.静">
+<meta property="og:type" content="article">
+<meta property="og:title" content="学习ES6标准入门第八天">
+<meta property="og:url" content="http://yoursite.com/2021/02/22/ES6eight/index.html">
+<meta property="og:site_name" content="DKの博客">
+<meta property="og:description" content="学习ES6标准入门第八天第二十四章 编程风格1.const优于let有以下几个原因: const可以提醒阅读程序的人，这个变量不应该改变 const比较符合函数式编程思想，运算不改变值，只是新建值，而且这样也有利于将来的分布式运算 JavaScript编译器会对const进行优化，所以多使用const有利于提供程序的运行效率，也就是说let和const的本质区别其实是编译器内部的处理不同  2.静">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-02-22T10:46:15.000Z">
+<meta property="article:modified_time" content="2021-02-22T15:36:16.965Z">
+<meta property="article:author" content="丁可">
+<meta property="article:tag" content="ES6">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://yoursite.com/2021/02/22/ES6eight/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>学习ES6标准入门第八天 | DKの博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+    <a href="https://github.com/DK-frontend" target="_blank" rel="noopener" class="github-corner" aria-label="View source on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" style="fill:#151513; color:#fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a><style>.github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}</style>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">DKの博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">记录前端学习的历程</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">10</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">3</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">33</span></a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/02/22/ES6eight/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/touxiang.jpg">
+      <meta itemprop="name" content="丁可">
+      <meta itemprop="description" content="哪来的勇气我就是不灰心">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="DKの博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          学习ES6标准入门第八天
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2021-02-22 18:46:15 / 修改时间：23:36:16" itemprop="dateCreated datePublished" datetime="2021-02-22T18:46:15+08:00">2021-02-22</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">学习笔记</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>7k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>6 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="学习ES6标准入门第八天"><a href="#学习ES6标准入门第八天" class="headerlink" title="学习ES6标准入门第八天"></a>学习ES6标准入门第八天</h1><h2 id="第二十四章-编程风格"><a href="#第二十四章-编程风格" class="headerlink" title="第二十四章 编程风格"></a>第二十四章 编程风格</h2><h3 id="1-const优于let有以下几个原因"><a href="#1-const优于let有以下几个原因" class="headerlink" title="1.const优于let有以下几个原因:"></a>1.const优于let有以下几个原因:</h3><ul>
+<li>const可以提醒阅读程序的人，这个变量不应该改变</li>
+<li>const比较符合函数式编程思想，运算不改变值，只是新建值，而且这样也有利于将来的分布式运算</li>
+<li>JavaScript编译器会对const进行优化，所以多使用const有利于提供程序的运行效率，也就是说let和const的本质区别其实是编译器内部的处理不同</li>
+</ul>
+<h3 id="2-静态字符串一律使用单引号或反引号。动态字符串使用反引号。"><a href="#2-静态字符串一律使用单引号或反引号。动态字符串使用反引号。" class="headerlink" title="2.静态字符串一律使用单引号或反引号。动态字符串使用反引号。"></a>2.静态字符串一律使用单引号或反引号。动态字符串使用反引号。</h3><h3 id="3-使用数组成员对变量赋值时，优先使用解构赋值。函数的参数如果是对象的成员，优先使用解构赋值。如果函数返回多个值，优先使用对象的解构赋值，而不是数组的解构赋值。这样便于以后添加返回值，以及更改返回值的顺序。"><a href="#3-使用数组成员对变量赋值时，优先使用解构赋值。函数的参数如果是对象的成员，优先使用解构赋值。如果函数返回多个值，优先使用对象的解构赋值，而不是数组的解构赋值。这样便于以后添加返回值，以及更改返回值的顺序。" class="headerlink" title="3.使用数组成员对变量赋值时，优先使用解构赋值。函数的参数如果是对象的成员，优先使用解构赋值。如果函数返回多个值，优先使用对象的解构赋值，而不是数组的解构赋值。这样便于以后添加返回值，以及更改返回值的顺序。"></a>3.使用数组成员对变量赋值时，优先使用解构赋值。函数的参数如果是对象的成员，优先使用解构赋值。如果函数返回多个值，优先使用对象的解构赋值，而不是数组的解构赋值。这样便于以后添加返回值，以及更改返回值的顺序。</h3><h3 id="4-单行定义的对象，最后一个成员不以逗号结尾。多行定义的对象，最后一个成员以逗号结尾。"><a href="#4-单行定义的对象，最后一个成员不以逗号结尾。多行定义的对象，最后一个成员以逗号结尾。" class="headerlink" title="4.单行定义的对象，最后一个成员不以逗号结尾。多行定义的对象，最后一个成员以逗号结尾。"></a>4.单行定义的对象，最后一个成员不以逗号结尾。多行定义的对象，最后一个成员以逗号结尾。</h3><h3 id="5-箭头函数取代Function-prototype-bind，不应再用self-this-that绑定this。简单的、单行的、不会复用的函数，建议采用箭头函数。如果函数体较为复杂，行数较多，还是应该采用传统的函数写法。不要在函数体内使用arguments变量，使用rest运算符-…-代替。因为rest运算符可以显式表明我们想要获取参数，而且arguments是一个类似数组的对象，而rest运算符可以提供一个真正的数组。使用默认值语法设置函数参数的默认值。"><a href="#5-箭头函数取代Function-prototype-bind，不应再用self-this-that绑定this。简单的、单行的、不会复用的函数，建议采用箭头函数。如果函数体较为复杂，行数较多，还是应该采用传统的函数写法。不要在函数体内使用arguments变量，使用rest运算符-…-代替。因为rest运算符可以显式表明我们想要获取参数，而且arguments是一个类似数组的对象，而rest运算符可以提供一个真正的数组。使用默认值语法设置函数参数的默认值。" class="headerlink" title="5.箭头函数取代Function.prototype.bind，不应再用self/_this/that绑定this。简单的、单行的、不会复用的函数，建议采用箭头函数。如果函数体较为复杂，行数较多，还是应该采用传统的函数写法。不要在函数体内使用arguments变量，使用rest运算符(…)代替。因为rest运算符可以显式表明我们想要获取参数，而且arguments是一个类似数组的对象，而rest运算符可以提供一个真正的数组。使用默认值语法设置函数参数的默认值。"></a>5.箭头函数取代Function.prototype.bind，不应再用self/_this/that绑定this。简单的、单行的、不会复用的函数，建议采用箭头函数。如果函数体较为复杂，行数较多，还是应该采用传统的函数写法。不要在函数体内使用arguments变量，使用rest运算符(…)代替。因为rest运算符可以显式表明我们想要获取参数，而且arguments是一个类似数组的对象，而rest运算符可以提供一个真正的数组。使用默认值语法设置函数参数的默认值。</h3><h3 id="6-注意区分Object和Map，只有模拟实体对象时才使用Object。如果只是需要key-value的数据结构，则使用Map。因为Map有内建的遍历机制。"><a href="#6-注意区分Object和Map，只有模拟实体对象时才使用Object。如果只是需要key-value的数据结构，则使用Map。因为Map有内建的遍历机制。" class="headerlink" title="6.注意区分Object和Map，只有模拟实体对象时才使用Object。如果只是需要key:value的数据结构，则使用Map。因为Map有内建的遍历机制。"></a>6.注意区分Object和Map，只有模拟实体对象时才使用Object。如果只是需要key:value的数据结构，则使用Map。因为Map有内建的遍历机制。</h3><h3 id="7-使用extends实现继承，因为这样更简单，不存在破坏instanceof运算的危险。"><a href="#7-使用extends实现继承，因为这样更简单，不存在破坏instanceof运算的危险。" class="headerlink" title="7.使用extends实现继承，因为这样更简单，不存在破坏instanceof运算的危险。"></a>7.使用extends实现继承，因为这样更简单，不存在破坏instanceof运算的危险。</h3><h3 id="8-如果模块只有一个输出值，就使用export-default；如果模块有多个输出值，就不使用export-default，不要同时使用export-default与普通的export。如果模块默认输出一个函数，函数名的首字母应该小写。如果模块默认输出一个对象，对象名的首字母应该大写。"><a href="#8-如果模块只有一个输出值，就使用export-default；如果模块有多个输出值，就不使用export-default，不要同时使用export-default与普通的export。如果模块默认输出一个函数，函数名的首字母应该小写。如果模块默认输出一个对象，对象名的首字母应该大写。" class="headerlink" title="8.如果模块只有一个输出值，就使用export default；如果模块有多个输出值，就不使用export default，不要同时使用export default与普通的export。如果模块默认输出一个函数，函数名的首字母应该小写。如果模块默认输出一个对象，对象名的首字母应该大写。"></a>8.如果模块只有一个输出值，就使用export default；如果模块有多个输出值，就不使用export default，不要同时使用export default与普通的export。如果模块默认输出一个函数，函数名的首字母应该小写。如果模块默认输出一个对象，对象名的首字母应该大写。</h3><a id="more"></a>
+<h2 id="第二十五章-读懂ECMAScript规格"><a href="#第二十五章-读懂ECMAScript规格" class="headerlink" title="第二十五章 读懂ECMAScript规格"></a>第二十五章 读懂ECMAScript规格</h2><h3 id="1-相等运算符-用于比较两个值，返回true或false，比较一共有12步"><a href="#1-相等运算符-用于比较两个值，返回true或false，比较一共有12步" class="headerlink" title="1.相等运算符(==)用于比较两个值，返回true或false，比较一共有12步:"></a>1.相等运算符(==)用于比较两个值，返回true或false，比较一共有12步:</h3><ul>
+<li>如果x不是正常值(比如抛出一个错误)，中断执行。</li>
+<li>如果y不是正常值，中断执行。</li>
+<li>如果Type(x)与Type(y)相同，执行严格相等运算x === y</li>
+<li>如果x是null，y是undefined，返回true</li>
+<li>如果x是undefined，y是null，返回true</li>
+<li>如果Type(x)是数值，Type(y)是字符串，返回x == ToNumber(y)的结果</li>
+<li>如果Type(x)是字符串，Type(y)是数值，返回ToNumber(x) == y的结果</li>
+<li>如果Type(x)是布尔值，返回ToNumber(x) == y的结果</li>
+<li>如果Type(y)是布尔值，返回x == ToNumber(y)的结果</li>
+<li>如果Type(x)是字符串或数值或Symbol值，Type(y)是对象，返回x == ToPrimitive(y)的结果</li>
+<li>如果Type(x)是对象，Type(y)是字符串或数值或Symbol值，返回ToPrimitive(x) == y的结果</li>
+<li>返回false</li>
+</ul>
+<h3 id="2-数组成员可以省略。只要逗号前面没有任何表达式，数组的length属性就会加1，并且相应增加其后成员的位置索引。被省略的成员不会被定义。如果被省略的成员是数组最后一个成员，则不会导致数组length属性增加。上面的规格说得很清楚，数组的空位会反映在length属性。也就是说，空位有自己的位置，但是这个位置的值未定义，即这个值是不存在的。如果一定要读取，结果就是undefined-因为undefined在JavaScript语言中表示不存在-。这就解释了为什么in运算符、数组的hasOwnProperty方法、Object-keys方法都取不到空位的属性名。因为这个属性名根本就不存在，规格里面没有说要为空位分配属性名-位置索引-，只说要为下一个元素的位置索引加1。"><a href="#2-数组成员可以省略。只要逗号前面没有任何表达式，数组的length属性就会加1，并且相应增加其后成员的位置索引。被省略的成员不会被定义。如果被省略的成员是数组最后一个成员，则不会导致数组length属性增加。上面的规格说得很清楚，数组的空位会反映在length属性。也就是说，空位有自己的位置，但是这个位置的值未定义，即这个值是不存在的。如果一定要读取，结果就是undefined-因为undefined在JavaScript语言中表示不存在-。这就解释了为什么in运算符、数组的hasOwnProperty方法、Object-keys方法都取不到空位的属性名。因为这个属性名根本就不存在，规格里面没有说要为空位分配属性名-位置索引-，只说要为下一个元素的位置索引加1。" class="headerlink" title="2.数组成员可以省略。只要逗号前面没有任何表达式，数组的length属性就会加1，并且相应增加其后成员的位置索引。被省略的成员不会被定义。如果被省略的成员是数组最后一个成员，则不会导致数组length属性增加。上面的规格说得很清楚，数组的空位会反映在length属性。也就是说，空位有自己的位置，但是这个位置的值未定义，即这个值是不存在的。如果一定要读取，结果就是undefined(因为undefined在JavaScript语言中表示不存在)。这就解释了为什么in运算符、数组的hasOwnProperty方法、Object.keys方法都取不到空位的属性名。因为这个属性名根本就不存在，规格里面没有说要为空位分配属性名(位置索引)，只说要为下一个元素的位置索引加1。"></a>2.数组成员可以省略。只要逗号前面没有任何表达式，数组的length属性就会加1，并且相应增加其后成员的位置索引。被省略的成员不会被定义。如果被省略的成员是数组最后一个成员，则不会导致数组length属性增加。上面的规格说得很清楚，数组的空位会反映在length属性。也就是说，空位有自己的位置，但是这个位置的值未定义，即这个值是不存在的。如果一定要读取，结果就是undefined(因为undefined在JavaScript语言中表示不存在)。这就解释了为什么in运算符、数组的hasOwnProperty方法、Object.keys方法都取不到空位的属性名。因为这个属性名根本就不存在，规格里面没有说要为空位分配属性名(位置索引)，只说要为下一个元素的位置索引加1。</h3><h3 id="3-数组的map方法的步骤如下"><a href="#3-数组的map方法的步骤如下" class="headerlink" title="3.数组的map方法的步骤如下:"></a>3.数组的map方法的步骤如下:</h3><ul>
+<li>得到当前数组的this对象</li>
+<li>如果报错就返回</li>
+<li>求出当前数组的length属性</li>
+<li>如果报错就返回</li>
+<li>如果map方法的参数callbackfn不可执行，就报错</li>
+<li>如果map方法的参数之中，指定了this，就让T等于该参数，否则T为undefined</li>
+<li>生成一个新的数组A，跟当前数组的length属性保持一致</li>
+<li>如果报错就返回</li>
+<li>设定k等于0</li>
+<li>只要k小于当前数组的length属性，就重复下面步骤<ul>
+<li>设定Pk等于ToString(k),即将K转为字符串</li>
+<li>设定kPresent等于HasProperty(O,Pk)，即求当前数组有没有指定属性</li>
+<li>如果报错就返回</li>
+<li>如果kPresent等于true，则进行下面步骤<ul>
+<li>设定kValue等于Get(O，Pk)，取出当前数组的指定属性</li>
+<li>如果报错就返回</li>
+<li>设定mappedValue等于Call(callbackfn,T,&lt;&lt;kValue，k，O&gt;&gt;)，即执行回调函数</li>
+<li>如果报错就返回</li>
+<li>设定status等于CreateDataPropertyOrThrow(A,pK,MAPPEDValue),即将回调函数的值放入A数组的指定位置</li>
+<li>如果报错就返回</li>
+</ul>
+</li>
+<li>k增加1</li>
+</ul>
+</li>
+<li>返回A</li>
+</ul>
+<h2 id="第二十六章-ArrayBuffer"><a href="#第二十六章-ArrayBuffer" class="headerlink" title="第二十六章 ArrayBuffer"></a>第二十六章 ArrayBuffer</h2><h3 id="1-ArrayBuffer对象、TypedArray视图和DataView视图是JavaScript操作二进制数据的一个接口。它们都以数组的语法处理二进制数据，所以统称为二进制数组。这个接口的原始设计目的与WebGL项目有关。所谓WebGL，就是浏览器与显卡之间的通信接口，为了满足JavaScript与显卡之间大量、实时的数据交换，它们之间的数据通信必须是二进制的，而不能是传统的文本格式。二进制数组就是在这种背景下诞生的。它很像C语言的数组，允许开发者以数组下标的形式直接操作内存，大大增强了JavaScript处理二进制数据的能力，使开发者有可能通过JavaScript与操作系统的原生接口进行二进制通信。二进制数组由三类对象组成-ArrayBuffer对象、TypedArray视图、DataView视图。简而言之，ArrayBuffer对象代表原始的二进制数据，TypedArray视图用于读-写简单类型的二进制数据，DataView视图用于读-写复杂类型的二进制数据。二进制数组并不是真正的数组，而是类似数组的对象。"><a href="#1-ArrayBuffer对象、TypedArray视图和DataView视图是JavaScript操作二进制数据的一个接口。它们都以数组的语法处理二进制数据，所以统称为二进制数组。这个接口的原始设计目的与WebGL项目有关。所谓WebGL，就是浏览器与显卡之间的通信接口，为了满足JavaScript与显卡之间大量、实时的数据交换，它们之间的数据通信必须是二进制的，而不能是传统的文本格式。二进制数组就是在这种背景下诞生的。它很像C语言的数组，允许开发者以数组下标的形式直接操作内存，大大增强了JavaScript处理二进制数据的能力，使开发者有可能通过JavaScript与操作系统的原生接口进行二进制通信。二进制数组由三类对象组成-ArrayBuffer对象、TypedArray视图、DataView视图。简而言之，ArrayBuffer对象代表原始的二进制数据，TypedArray视图用于读-写简单类型的二进制数据，DataView视图用于读-写复杂类型的二进制数据。二进制数组并不是真正的数组，而是类似数组的对象。" class="headerlink" title="1.ArrayBuffer对象、TypedArray视图和DataView视图是JavaScript操作二进制数据的一个接口。它们都以数组的语法处理二进制数据，所以统称为二进制数组。这个接口的原始设计目的与WebGL项目有关。所谓WebGL，就是浏览器与显卡之间的通信接口，为了满足JavaScript与显卡之间大量、实时的数据交换，它们之间的数据通信必须是二进制的，而不能是传统的文本格式。二进制数组就是在这种背景下诞生的。它很像C语言的数组，允许开发者以数组下标的形式直接操作内存，大大增强了JavaScript处理二进制数据的能力，使开发者有可能通过JavaScript与操作系统的原生接口进行二进制通信。二进制数组由三类对象组成:ArrayBuffer对象、TypedArray视图、DataView视图。简而言之，ArrayBuffer对象代表原始的二进制数据，TypedArray视图用于读/写简单类型的二进制数据，DataView视图用于读/写复杂类型的二进制数据。二进制数组并不是真正的数组，而是类似数组的对象。"></a>1.ArrayBuffer对象、TypedArray视图和DataView视图是JavaScript操作二进制数据的一个接口。它们都以数组的语法处理二进制数据，所以统称为二进制数组。这个接口的原始设计目的与WebGL项目有关。所谓WebGL，就是浏览器与显卡之间的通信接口，为了满足JavaScript与显卡之间大量、实时的数据交换，它们之间的数据通信必须是二进制的，而不能是传统的文本格式。二进制数组就是在这种背景下诞生的。它很像C语言的数组，允许开发者以数组下标的形式直接操作内存，大大增强了JavaScript处理二进制数据的能力，使开发者有可能通过JavaScript与操作系统的原生接口进行二进制通信。二进制数组由三类对象组成:ArrayBuffer对象、TypedArray视图、DataView视图。简而言之，ArrayBuffer对象代表原始的二进制数据，TypedArray视图用于读/写简单类型的二进制数据，DataView视图用于读/写复杂类型的二进制数据。二进制数组并不是真正的数组，而是类似数组的对象。</h3><h3 id="2-ArrayBuffer对象代表储存二进制数据的一段内存，它不能直接读-写，只能通过视图-TypedArray视图和DataView视图-读-写，视图的作用是以指定格式解读二进制数据。TypedArray视图与DataView视图的一个区别是，它不是一个构造函数，而是一组构造函数，代表不同的数据格式。如果对同一段内存分别建立两种视图，由于两个视图对应的是同一段内存，由此一个视图修改底层内存会影响到另一个视图。TypedArray视图的构造函数除了接受ArrayBuffer实例作为参数，还可以接受普通数组作为参数，直接分配内存生成底层的ArrayBuffer实例，同时完成对这段内存的赋值。"><a href="#2-ArrayBuffer对象代表储存二进制数据的一段内存，它不能直接读-写，只能通过视图-TypedArray视图和DataView视图-读-写，视图的作用是以指定格式解读二进制数据。TypedArray视图与DataView视图的一个区别是，它不是一个构造函数，而是一组构造函数，代表不同的数据格式。如果对同一段内存分别建立两种视图，由于两个视图对应的是同一段内存，由此一个视图修改底层内存会影响到另一个视图。TypedArray视图的构造函数除了接受ArrayBuffer实例作为参数，还可以接受普通数组作为参数，直接分配内存生成底层的ArrayBuffer实例，同时完成对这段内存的赋值。" class="headerlink" title="2.ArrayBuffer对象代表储存二进制数据的一段内存，它不能直接读/写，只能通过视图(TypedArray视图和DataView视图)读/写，视图的作用是以指定格式解读二进制数据。TypedArray视图与DataView视图的一个区别是，它不是一个构造函数，而是一组构造函数，代表不同的数据格式。如果对同一段内存分别建立两种视图，由于两个视图对应的是同一段内存，由此一个视图修改底层内存会影响到另一个视图。TypedArray视图的构造函数除了接受ArrayBuffer实例作为参数，还可以接受普通数组作为参数，直接分配内存生成底层的ArrayBuffer实例，同时完成对这段内存的赋值。"></a>2.ArrayBuffer对象代表储存二进制数据的一段内存，它不能直接读/写，只能通过视图(TypedArray视图和DataView视图)读/写，视图的作用是以指定格式解读二进制数据。TypedArray视图与DataView视图的一个区别是，它不是一个构造函数，而是一组构造函数，代表不同的数据格式。如果对同一段内存分别建立两种视图，由于两个视图对应的是同一段内存，由此一个视图修改底层内存会影响到另一个视图。TypedArray视图的构造函数除了接受ArrayBuffer实例作为参数，还可以接受普通数组作为参数，直接分配内存生成底层的ArrayBuffer实例，同时完成对这段内存的赋值。</h3><h3 id="3-ArrayBuffer实例的byteLength属性返回所分配的内存区域的字节长度。如果要分配的内存区域很大，有可能分配失败-因为没有那么多的连续空余内存-，所以有必要检查是否分配成功。"><a href="#3-ArrayBuffer实例的byteLength属性返回所分配的内存区域的字节长度。如果要分配的内存区域很大，有可能分配失败-因为没有那么多的连续空余内存-，所以有必要检查是否分配成功。" class="headerlink" title="3.ArrayBuffer实例的byteLength属性返回所分配的内存区域的字节长度。如果要分配的内存区域很大，有可能分配失败(因为没有那么多的连续空余内存)，所以有必要检查是否分配成功。"></a>3.ArrayBuffer实例的byteLength属性返回所分配的内存区域的字节长度。如果要分配的内存区域很大，有可能分配失败(因为没有那么多的连续空余内存)，所以有必要检查是否分配成功。</h3><h3 id="4-ArrayBuffer实例有一个slice方法，允许将内存区域的一部分复制生成一个新的ArrayBuffer对象。slice方法其实包含两步，第一步先分配一段新内存，第二步将原来那个ArrayBuffer对象复制过去。除了slice方法，ArrayBuffer对象不提供任何直接读-写内存的方法，只允许在其上建立试图，然后通过视图读-写"><a href="#4-ArrayBuffer实例有一个slice方法，允许将内存区域的一部分复制生成一个新的ArrayBuffer对象。slice方法其实包含两步，第一步先分配一段新内存，第二步将原来那个ArrayBuffer对象复制过去。除了slice方法，ArrayBuffer对象不提供任何直接读-写内存的方法，只允许在其上建立试图，然后通过视图读-写" class="headerlink" title="4.ArrayBuffer实例有一个slice方法，允许将内存区域的一部分复制生成一个新的ArrayBuffer对象。slice方法其实包含两步，第一步先分配一段新内存，第二步将原来那个ArrayBuffer对象复制过去。除了slice方法，ArrayBuffer对象不提供任何直接读/写内存的方法，只允许在其上建立试图，然后通过视图读/写"></a>4.ArrayBuffer实例有一个slice方法，允许将内存区域的一部分复制生成一个新的ArrayBuffer对象。slice方法其实包含两步，第一步先分配一段新内存，第二步将原来那个ArrayBuffer对象复制过去。除了slice方法，ArrayBuffer对象不提供任何直接读/写内存的方法，只允许在其上建立试图，然后通过视图读/写</h3><h3 id="5-ArrayBuffer有一个静态方法isView，返回一个布尔值，表示参数是否为ArrayBuffer的视图实例。这个方法大致相当于判断参数是否为TypedArray实例或DataView实例。"><a href="#5-ArrayBuffer有一个静态方法isView，返回一个布尔值，表示参数是否为ArrayBuffer的视图实例。这个方法大致相当于判断参数是否为TypedArray实例或DataView实例。" class="headerlink" title="5.ArrayBuffer有一个静态方法isView，返回一个布尔值，表示参数是否为ArrayBuffer的视图实例。这个方法大致相当于判断参数是否为TypedArray实例或DataView实例。"></a>5.ArrayBuffer有一个静态方法isView，返回一个布尔值，表示参数是否为ArrayBuffer的视图实例。这个方法大致相当于判断参数是否为TypedArray实例或DataView实例。</h3><h3 id="6-ArrayBuffer对象作为内存区域，可以存放多种类型的数据。同一段内存，不同数据有不同的解读方式，这就叫做”视图”。ArrayBuffer有两种视图，一种是TypedArray视图，另一种是DataView视图。前者的数组成员都是同一个数据类型，后者的数组成员可以是不同的数据类型。目前，TypedArray视图一共包括9钟类型，每一种视图都是一种数据结构，它们很像普通数组，都有length属性，都能用方括号运算符-获取单个元素，所有数组方法都能在其上使用。普通数组与TypedArray数组的差异主要在以下方面"><a href="#6-ArrayBuffer对象作为内存区域，可以存放多种类型的数据。同一段内存，不同数据有不同的解读方式，这就叫做”视图”。ArrayBuffer有两种视图，一种是TypedArray视图，另一种是DataView视图。前者的数组成员都是同一个数据类型，后者的数组成员可以是不同的数据类型。目前，TypedArray视图一共包括9钟类型，每一种视图都是一种数据结构，它们很像普通数组，都有length属性，都能用方括号运算符-获取单个元素，所有数组方法都能在其上使用。普通数组与TypedArray数组的差异主要在以下方面" class="headerlink" title="6.ArrayBuffer对象作为内存区域，可以存放多种类型的数据。同一段内存，不同数据有不同的解读方式，这就叫做”视图”。ArrayBuffer有两种视图，一种是TypedArray视图，另一种是DataView视图。前者的数组成员都是同一个数据类型，后者的数组成员可以是不同的数据类型。目前，TypedArray视图一共包括9钟类型，每一种视图都是一种数据结构，它们很像普通数组，都有length属性，都能用方括号运算符([])获取单个元素，所有数组方法都能在其上使用。普通数组与TypedArray数组的差异主要在以下方面:"></a>6.ArrayBuffer对象作为内存区域，可以存放多种类型的数据。同一段内存，不同数据有不同的解读方式，这就叫做”视图”。ArrayBuffer有两种视图，一种是TypedArray视图，另一种是DataView视图。前者的数组成员都是同一个数据类型，后者的数组成员可以是不同的数据类型。目前，TypedArray视图一共包括9钟类型，每一种视图都是一种数据结构，它们很像普通数组，都有length属性，都能用方括号运算符([])获取单个元素，所有数组方法都能在其上使用。普通数组与TypedArray数组的差异主要在以下方面:</h3><ul>
+<li>TypedArray数组的所有成员都是同一种类型</li>
+<li>TypedArray数组的成员是连续的，不会有空位</li>
+<li>TypedArray数组成员的默认值为0</li>
+<li>TypedArray数组只是一层视图，本身不储存数据，它的数据都储存在底层的ArrayBuffer对象中，要获取底层对象必须使用buffer属性</li>
+</ul>
+<h3 id="7-视图的构造函数可以接受3个参数"><a href="#7-视图的构造函数可以接受3个参数" class="headerlink" title="7.视图的构造函数可以接受3个参数:"></a>7.视图的构造函数可以接受3个参数:</h3><ul>
+<li>第一个参数(必选):视图对应的底层ArrayBuffer对象</li>
+<li>第二个参数(可选):视图开始的字节序号，默认从0开始，该参数必须与所要建立的数据类型一致，否则会报错</li>
+<li>第三个参数(可选):视图包含的数据个数，默认直到本段内存区域结束</li>
+</ul>
+<p>视图还可以不通过ArrayBuffer对象，而是直接分配内存生成，视图构造函数的参数就是成员的个数<br>TypedArray数组的构造函数可以接受另一个TypedArray实例作为参数。此时生成的新数组只是复制了参数数组的值，对应的底层内存是不一样的。新数组会开辟一段新的内存储存数据，不会在原数组的内存之上建立视图，如果想基于同一段内存构造不同的视图，可以在视图构造函数中传入另一个视图对应变量的buffer属性。<br>构造函数的参数也可以是一个普通数组，然后直接生成TypedArray实例。这时TypedArray视图会重新开辟内存，不会在原数组的内存上建立试图。TypedArray数组也可以转换回普通数组。</p>
+<h3 id="8-字节序指的是数值在内存中的表示方式。x86体系的计算机都采用小端字节序，相对重要的字节排在后面的内存地址，相对不重要的字节排在前面的内存地址，而大端字节序则完全相反，将最重要的字节排在前面。"><a href="#8-字节序指的是数值在内存中的表示方式。x86体系的计算机都采用小端字节序，相对重要的字节排在后面的内存地址，相对不重要的字节排在前面的内存地址，而大端字节序则完全相反，将最重要的字节排在前面。" class="headerlink" title="8.字节序指的是数值在内存中的表示方式。x86体系的计算机都采用小端字节序，相对重要的字节排在后面的内存地址，相对不重要的字节排在前面的内存地址，而大端字节序则完全相反，将最重要的字节排在前面。"></a>8.字节序指的是数值在内存中的表示方式。x86体系的计算机都采用小端字节序，相对重要的字节排在后面的内存地址，相对不重要的字节排在前面的内存地址，而大端字节序则完全相反，将最重要的字节排在前面。</h3><h3 id="9-每一种视图的构造函数都有一个BYTES-PER-ELEMENT属性，表示这种数据类型占据的字节数。"><a href="#9-每一种视图的构造函数都有一个BYTES-PER-ELEMENT属性，表示这种数据类型占据的字节数。" class="headerlink" title="9.每一种视图的构造函数都有一个BYTES_PER_ELEMENT属性，表示这种数据类型占据的字节数。"></a>9.每一种视图的构造函数都有一个BYTES_PER_ELEMENT属性，表示这种数据类型占据的字节数。</h3><h3 id="10-不同的视图类型所能容纳的数值范围是确定的。超出这个范围就会出现溢出。TypedArray数组的溢出处理规则简单来说就是抛弃溢出的位，然后按照视图类型进行解释。简单的转换规则可以如下表是"><a href="#10-不同的视图类型所能容纳的数值范围是确定的。超出这个范围就会出现溢出。TypedArray数组的溢出处理规则简单来说就是抛弃溢出的位，然后按照视图类型进行解释。简单的转换规则可以如下表是" class="headerlink" title="10.不同的视图类型所能容纳的数值范围是确定的。超出这个范围就会出现溢出。TypedArray数组的溢出处理规则简单来说就是抛弃溢出的位，然后按照视图类型进行解释。简单的转换规则可以如下表是:"></a>10.不同的视图类型所能容纳的数值范围是确定的。超出这个范围就会出现溢出。TypedArray数组的溢出处理规则简单来说就是抛弃溢出的位，然后按照视图类型进行解释。简单的转换规则可以如下表是:</h3><ul>
+<li>正向溢出:当输入值大于当前数据类型的最大值时，结果等于当前数据类型的最小值加上余值再减去1</li>
+<li>负向溢出:当输入值小于当前数据类型的最小值时，结果等于当前数据类型的最大值减去余值再加上1</li>
+</ul>
+<p>Uint8ClampedArray视图的溢出规则与上面的规则不同。它规定:凡是发生正向溢出，该值一律等于当前数据类型的最大值，即255；如果发生负向溢出，该值一律等于当权数据类型的最小值，即0</p>
+<h3 id="11-TypedArray实例的buffer属性返回整段内存区域对应的ArrayBuffer对象。该属性为只读属性。"><a href="#11-TypedArray实例的buffer属性返回整段内存区域对应的ArrayBuffer对象。该属性为只读属性。" class="headerlink" title="11.TypedArray实例的buffer属性返回整段内存区域对应的ArrayBuffer对象。该属性为只读属性。"></a>11.TypedArray实例的buffer属性返回整段内存区域对应的ArrayBuffer对象。该属性为只读属性。</h3><h3 id="12-byteLength属性返回TypedArray数组占据的内存长度，单位为字节。byteOffset属性返回TypedArray数组从底层ArrayBuffer对象的哪个字节开始。这两个属性都是只读属性。"><a href="#12-byteLength属性返回TypedArray数组占据的内存长度，单位为字节。byteOffset属性返回TypedArray数组从底层ArrayBuffer对象的哪个字节开始。这两个属性都是只读属性。" class="headerlink" title="12.byteLength属性返回TypedArray数组占据的内存长度，单位为字节。byteOffset属性返回TypedArray数组从底层ArrayBuffer对象的哪个字节开始。这两个属性都是只读属性。"></a>12.byteLength属性返回TypedArray数组占据的内存长度，单位为字节。byteOffset属性返回TypedArray数组从底层ArrayBuffer对象的哪个字节开始。这两个属性都是只读属性。</h3><h3 id="13-length属性表示TypedArray数组含有多少个成员。注意将byteLength属性和length属性区分，前者是字节长度，后者是成员长度。"><a href="#13-length属性表示TypedArray数组含有多少个成员。注意将byteLength属性和length属性区分，前者是字节长度，后者是成员长度。" class="headerlink" title="13.length属性表示TypedArray数组含有多少个成员。注意将byteLength属性和length属性区分，前者是字节长度，后者是成员长度。"></a>13.length属性表示TypedArray数组含有多少个成员。注意将byteLength属性和length属性区分，前者是字节长度，后者是成员长度。</h3><h3 id="14-TypedArray数组的set方法用于复制数组-普通数组或TypedArray数组-也就是将一段内存完全复制到另一段内存，它是整段内存的复制。set方法还可以接受第二个参数，表示从b对象的哪一个成员开始复制a对象"><a href="#14-TypedArray数组的set方法用于复制数组-普通数组或TypedArray数组-也就是将一段内存完全复制到另一段内存，它是整段内存的复制。set方法还可以接受第二个参数，表示从b对象的哪一个成员开始复制a对象" class="headerlink" title="14.TypedArray数组的set方法用于复制数组(普通数组或TypedArray数组)也就是将一段内存完全复制到另一段内存，它是整段内存的复制。set方法还可以接受第二个参数，表示从b对象的哪一个成员开始复制a对象"></a>14.TypedArray数组的set方法用于复制数组(普通数组或TypedArray数组)也就是将一段内存完全复制到另一段内存，它是整段内存的复制。set方法还可以接受第二个参数，表示从b对象的哪一个成员开始复制a对象</h3><h3 id="15-subarray方法是对于TypedArray数组的一部分再建立一个新的视图。subarray方法的第一个参数是起始的成员序号，第二个参数是结束的成员序号-不含该成员-，如果省略则包含剩余的全部成员。"><a href="#15-subarray方法是对于TypedArray数组的一部分再建立一个新的视图。subarray方法的第一个参数是起始的成员序号，第二个参数是结束的成员序号-不含该成员-，如果省略则包含剩余的全部成员。" class="headerlink" title="15.subarray方法是对于TypedArray数组的一部分再建立一个新的视图。subarray方法的第一个参数是起始的成员序号，第二个参数是结束的成员序号(不含该成员)，如果省略则包含剩余的全部成员。"></a>15.subarray方法是对于TypedArray数组的一部分再建立一个新的视图。subarray方法的第一个参数是起始的成员序号，第二个参数是结束的成员序号(不含该成员)，如果省略则包含剩余的全部成员。</h3><h3 id="16-TypedArray实例的slice方法可以返回一个指定位置的新的TypedArray实例"><a href="#16-TypedArray实例的slice方法可以返回一个指定位置的新的TypedArray实例" class="headerlink" title="16.TypedArray实例的slice方法可以返回一个指定位置的新的TypedArray实例"></a>16.TypedArray实例的slice方法可以返回一个指定位置的新的TypedArray实例</h3><h3 id="17-TypedArray数组的所有构造函数都有一个静态方法of，用于将参数转为一个TypedArray实例"><a href="#17-TypedArray数组的所有构造函数都有一个静态方法of，用于将参数转为一个TypedArray实例" class="headerlink" title="17.TypedArray数组的所有构造函数都有一个静态方法of，用于将参数转为一个TypedArray实例"></a>17.TypedArray数组的所有构造函数都有一个静态方法of，用于将参数转为一个TypedArray实例</h3><h3 id="18-静态方法from接受一个可遍历的数据结构-比如数组-作为参数，返回一个基于此结构的TypedArray实例"><a href="#18-静态方法from接受一个可遍历的数据结构-比如数组-作为参数，返回一个基于此结构的TypedArray实例" class="headerlink" title="18.静态方法from接受一个可遍历的数据结构(比如数组)作为参数，返回一个基于此结构的TypedArray实例"></a>18.静态方法from接受一个可遍历的数据结构(比如数组)作为参数，返回一个基于此结构的TypedArray实例</h3><h3 id="19-DataView视图用于处理网络设备传来的数据，所以大端字节序或小端字节序可以自行设定。DataView实例提供8个方法读取内存，这一系列get方法的参数都是一个字节序号-不能是负数，否则会报错-，表示从哪个字节开始读取。如果一次读取两个或两个以上字节，必须明确数据的存储方式，到底是小端字节序还是大端字节序。默认情况下，DataView的get方法使用大端字节序解读数据，如果需要使用小端字节序解读，必须在get方法的第二个参数指定true。DataView视图提供了8个方法写入内存，这一系列set方法接受两个参数-第一个参数是字节序号，表示从哪个字节开始写入；第二个参数为写入的数据。对于那些写入两个或两个以上字节的方法，需要指定第三个参数，false或undefined表示使用大端字节序写入，true表示使用小端字节序写入。"><a href="#19-DataView视图用于处理网络设备传来的数据，所以大端字节序或小端字节序可以自行设定。DataView实例提供8个方法读取内存，这一系列get方法的参数都是一个字节序号-不能是负数，否则会报错-，表示从哪个字节开始读取。如果一次读取两个或两个以上字节，必须明确数据的存储方式，到底是小端字节序还是大端字节序。默认情况下，DataView的get方法使用大端字节序解读数据，如果需要使用小端字节序解读，必须在get方法的第二个参数指定true。DataView视图提供了8个方法写入内存，这一系列set方法接受两个参数-第一个参数是字节序号，表示从哪个字节开始写入；第二个参数为写入的数据。对于那些写入两个或两个以上字节的方法，需要指定第三个参数，false或undefined表示使用大端字节序写入，true表示使用小端字节序写入。" class="headerlink" title="19.DataView视图用于处理网络设备传来的数据，所以大端字节序或小端字节序可以自行设定。DataView实例提供8个方法读取内存，这一系列get方法的参数都是一个字节序号(不能是负数，否则会报错)，表示从哪个字节开始读取。如果一次读取两个或两个以上字节，必须明确数据的存储方式，到底是小端字节序还是大端字节序。默认情况下，DataView的get方法使用大端字节序解读数据，如果需要使用小端字节序解读，必须在get方法的第二个参数指定true。DataView视图提供了8个方法写入内存，这一系列set方法接受两个参数:第一个参数是字节序号，表示从哪个字节开始写入；第二个参数为写入的数据。对于那些写入两个或两个以上字节的方法，需要指定第三个参数，false或undefined表示使用大端字节序写入，true表示使用小端字节序写入。"></a>19.DataView视图用于处理网络设备传来的数据，所以大端字节序或小端字节序可以自行设定。DataView实例提供8个方法读取内存，这一系列get方法的参数都是一个字节序号(不能是负数，否则会报错)，表示从哪个字节开始读取。如果一次读取两个或两个以上字节，必须明确数据的存储方式，到底是小端字节序还是大端字节序。默认情况下，DataView的get方法使用大端字节序解读数据，如果需要使用小端字节序解读，必须在get方法的第二个参数指定true。DataView视图提供了8个方法写入内存，这一系列set方法接受两个参数:第一个参数是字节序号，表示从哪个字节开始写入；第二个参数为写入的数据。对于那些写入两个或两个以上字节的方法，需要指定第三个参数，false或undefined表示使用大端字节序写入，true表示使用小端字节序写入。</h3><h3 id="20-JavaScript是单线程的，Web-worker引入了多线程-主线程用来与用户互动，Worker线程用来承担计算任务。每个线程的数据都是隔离的，通过postMessage-通信。线程之间的数据交换可以是各种格式的，不仅仅是字符串，也可以是二进制数据。这种交换采用的是复制机制，即一个进程将需要分享的数据复制一份，通过postMessage方法交给另一个进程。如果数据量比较大，这种通信的效率显然比较低。很容易想到，这时可以留出一块内存区域，由主线程与Worker线程共享，两方都可以读写，那么就会大大提高效率，协作起来也会比较简单-不想postMessage那么麻烦-。ES2017引入SharedArrayBuffer，允许Worker线程与主线程共享同一块内存。SharedArrayBuffer的API与ArrayBuffer一摸一样，唯一的区别是后者无法共享。SharedArrayBuffer与ArrayBuffer一样，本身是无法读写的，必须在上面建立视图，然后通过视图进行读写。"><a href="#20-JavaScript是单线程的，Web-worker引入了多线程-主线程用来与用户互动，Worker线程用来承担计算任务。每个线程的数据都是隔离的，通过postMessage-通信。线程之间的数据交换可以是各种格式的，不仅仅是字符串，也可以是二进制数据。这种交换采用的是复制机制，即一个进程将需要分享的数据复制一份，通过postMessage方法交给另一个进程。如果数据量比较大，这种通信的效率显然比较低。很容易想到，这时可以留出一块内存区域，由主线程与Worker线程共享，两方都可以读写，那么就会大大提高效率，协作起来也会比较简单-不想postMessage那么麻烦-。ES2017引入SharedArrayBuffer，允许Worker线程与主线程共享同一块内存。SharedArrayBuffer的API与ArrayBuffer一摸一样，唯一的区别是后者无法共享。SharedArrayBuffer与ArrayBuffer一样，本身是无法读写的，必须在上面建立视图，然后通过视图进行读写。" class="headerlink" title="20.JavaScript是单线程的，Web worker引入了多线程:主线程用来与用户互动，Worker线程用来承担计算任务。每个线程的数据都是隔离的，通过postMessage()通信。线程之间的数据交换可以是各种格式的，不仅仅是字符串，也可以是二进制数据。这种交换采用的是复制机制，即一个进程将需要分享的数据复制一份，通过postMessage方法交给另一个进程。如果数据量比较大，这种通信的效率显然比较低。很容易想到，这时可以留出一块内存区域，由主线程与Worker线程共享，两方都可以读写，那么就会大大提高效率，协作起来也会比较简单(不想postMessage那么麻烦)。ES2017引入SharedArrayBuffer，允许Worker线程与主线程共享同一块内存。SharedArrayBuffer的API与ArrayBuffer一摸一样，唯一的区别是后者无法共享。SharedArrayBuffer与ArrayBuffer一样，本身是无法读写的，必须在上面建立视图，然后通过视图进行读写。"></a>20.JavaScript是单线程的，Web worker引入了多线程:主线程用来与用户互动，Worker线程用来承担计算任务。每个线程的数据都是隔离的，通过postMessage()通信。线程之间的数据交换可以是各种格式的，不仅仅是字符串，也可以是二进制数据。这种交换采用的是复制机制，即一个进程将需要分享的数据复制一份，通过postMessage方法交给另一个进程。如果数据量比较大，这种通信的效率显然比较低。很容易想到，这时可以留出一块内存区域，由主线程与Worker线程共享，两方都可以读写，那么就会大大提高效率，协作起来也会比较简单(不想postMessage那么麻烦)。ES2017引入SharedArrayBuffer，允许Worker线程与主线程共享同一块内存。SharedArrayBuffer的API与ArrayBuffer一摸一样，唯一的区别是后者无法共享。SharedArrayBuffer与ArrayBuffer一样，本身是无法读写的，必须在上面建立视图，然后通过视图进行读写。</h3><h3 id="21-多线程共享内存，最大的问题就是如何防止两个线程同时修改某个地址，或者说，当一个线程修改共享内存以后，必须有一个机制让其他线程同步。SharedArrayBuffer-API提供Atomics对象，保证所有共享内存的操作都是”原子性”的，并且可以在所有线程内同步。什么叫”原子性操作”呢？现代编程语言中，一条普通的命令被编译器处理以后会变成多条机器指令。如果是单线程运行，这是没有问题的。多线程环境并且共享内存时，就会出现问题，因为这一组机器指令的运行期间可能会插入其他线程的指令，从而导致运行结果出错。Atomics对象就是为了解决这个问题而提出的，它可以保证一个操作所对应的多条机器指令一定是作为一个整体来运行的，中间不会被打断。也就是说，它所涉及的操作都可以看作是原子性的单操作，这可以避免线程竞争，提高多线程共享内存时的操作安全。"><a href="#21-多线程共享内存，最大的问题就是如何防止两个线程同时修改某个地址，或者说，当一个线程修改共享内存以后，必须有一个机制让其他线程同步。SharedArrayBuffer-API提供Atomics对象，保证所有共享内存的操作都是”原子性”的，并且可以在所有线程内同步。什么叫”原子性操作”呢？现代编程语言中，一条普通的命令被编译器处理以后会变成多条机器指令。如果是单线程运行，这是没有问题的。多线程环境并且共享内存时，就会出现问题，因为这一组机器指令的运行期间可能会插入其他线程的指令，从而导致运行结果出错。Atomics对象就是为了解决这个问题而提出的，它可以保证一个操作所对应的多条机器指令一定是作为一个整体来运行的，中间不会被打断。也就是说，它所涉及的操作都可以看作是原子性的单操作，这可以避免线程竞争，提高多线程共享内存时的操作安全。" class="headerlink" title="21.多线程共享内存，最大的问题就是如何防止两个线程同时修改某个地址，或者说，当一个线程修改共享内存以后，必须有一个机制让其他线程同步。SharedArrayBuffer API提供Atomics对象，保证所有共享内存的操作都是”原子性”的，并且可以在所有线程内同步。什么叫”原子性操作”呢？现代编程语言中，一条普通的命令被编译器处理以后会变成多条机器指令。如果是单线程运行，这是没有问题的。多线程环境并且共享内存时，就会出现问题，因为这一组机器指令的运行期间可能会插入其他线程的指令，从而导致运行结果出错。Atomics对象就是为了解决这个问题而提出的，它可以保证一个操作所对应的多条机器指令一定是作为一个整体来运行的，中间不会被打断。也就是说，它所涉及的操作都可以看作是原子性的单操作，这可以避免线程竞争，提高多线程共享内存时的操作安全。"></a>21.多线程共享内存，最大的问题就是如何防止两个线程同时修改某个地址，或者说，当一个线程修改共享内存以后，必须有一个机制让其他线程同步。SharedArrayBuffer API提供Atomics对象，保证所有共享内存的操作都是”原子性”的，并且可以在所有线程内同步。什么叫”原子性操作”呢？现代编程语言中，一条普通的命令被编译器处理以后会变成多条机器指令。如果是单线程运行，这是没有问题的。多线程环境并且共享内存时，就会出现问题，因为这一组机器指令的运行期间可能会插入其他线程的指令，从而导致运行结果出错。Atomics对象就是为了解决这个问题而提出的，它可以保证一个操作所对应的多条机器指令一定是作为一个整体来运行的，中间不会被打断。也就是说，它所涉及的操作都可以看作是原子性的单操作，这可以避免线程竞争，提高多线程共享内存时的操作安全。</h3><h3 id="22-store-方法用来向共享内存写入数据，load-方法用来从共享内存中读出数据。比起直接的读写操作，它们的好处是保证了读写操作的原子性。此外，它们还可以用来解决一个问题-多个线程使用共享线程的某个位置作为开关，一旦该位置的值变了，就执行特定操作。这时，必须保证该位置的赋值操作一定是在它前面的所有可能会改写内存的操作结束后执行；而该位置的取值操作一定是在它后面所有可能会读取该位置的操作开始之前执行。store方法接受3个参数-SharedBuffer的视图、位置索引和值，返回sharesArray-index-的值。load方法只接受两个参数-SharedBuffer的视图和位置索引，也是返回sharedArray-index-的值。"><a href="#22-store-方法用来向共享内存写入数据，load-方法用来从共享内存中读出数据。比起直接的读写操作，它们的好处是保证了读写操作的原子性。此外，它们还可以用来解决一个问题-多个线程使用共享线程的某个位置作为开关，一旦该位置的值变了，就执行特定操作。这时，必须保证该位置的赋值操作一定是在它前面的所有可能会改写内存的操作结束后执行；而该位置的取值操作一定是在它后面所有可能会读取该位置的操作开始之前执行。store方法接受3个参数-SharedBuffer的视图、位置索引和值，返回sharesArray-index-的值。load方法只接受两个参数-SharedBuffer的视图和位置索引，也是返回sharedArray-index-的值。" class="headerlink" title="22.store()方法用来向共享内存写入数据，load()方法用来从共享内存中读出数据。比起直接的读写操作，它们的好处是保证了读写操作的原子性。此外，它们还可以用来解决一个问题:多个线程使用共享线程的某个位置作为开关，一旦该位置的值变了，就执行特定操作。这时，必须保证该位置的赋值操作一定是在它前面的所有可能会改写内存的操作结束后执行；而该位置的取值操作一定是在它后面所有可能会读取该位置的操作开始之前执行。store方法接受3个参数:SharedBuffer的视图、位置索引和值，返回sharesArray[index]的值。load方法只接受两个参数:SharedBuffer的视图和位置索引，也是返回sharedArray[index]的值。"></a>22.store()方法用来向共享内存写入数据，load()方法用来从共享内存中读出数据。比起直接的读写操作，它们的好处是保证了读写操作的原子性。此外，它们还可以用来解决一个问题:多个线程使用共享线程的某个位置作为开关，一旦该位置的值变了，就执行特定操作。这时，必须保证该位置的赋值操作一定是在它前面的所有可能会改写内存的操作结束后执行；而该位置的取值操作一定是在它后面所有可能会读取该位置的操作开始之前执行。store方法接受3个参数:SharedBuffer的视图、位置索引和值，返回sharesArray[index]的值。load方法只接受两个参数:SharedBuffer的视图和位置索引，也是返回sharedArray[index]的值。</h3><h3 id="23-使用while循环等待主线程的通知不是很高效，如果用在主线程，就会造成卡顿。Atomics对象提供了wait-和wake-两个方法用于等待通知。这两个方法相当于锁内存，即在一个线程进行操作时，让其他线程休眠-建立锁-，等到操作结束，再唤醒那些休眠的线程-解除锁-。当sharedArray-index-不等于value，Atomics-wait就返回not-equal，否则就进入休眠。只有使用Atomics-wake-或者time-ms以后才能唤醒。被Atomics-wake-唤醒时，返回ok，超时唤醒时返回timed-out。浏览器的主线程有权”拒绝”休眠，这是为了防止用户失去响应。"><a href="#23-使用while循环等待主线程的通知不是很高效，如果用在主线程，就会造成卡顿。Atomics对象提供了wait-和wake-两个方法用于等待通知。这两个方法相当于锁内存，即在一个线程进行操作时，让其他线程休眠-建立锁-，等到操作结束，再唤醒那些休眠的线程-解除锁-。当sharedArray-index-不等于value，Atomics-wait就返回not-equal，否则就进入休眠。只有使用Atomics-wake-或者time-ms以后才能唤醒。被Atomics-wake-唤醒时，返回ok，超时唤醒时返回timed-out。浏览器的主线程有权”拒绝”休眠，这是为了防止用户失去响应。" class="headerlink" title="23.使用while循环等待主线程的通知不是很高效，如果用在主线程，就会造成卡顿。Atomics对象提供了wait()和wake()两个方法用于等待通知。这两个方法相当于锁内存，即在一个线程进行操作时，让其他线程休眠(建立锁)，等到操作结束，再唤醒那些休眠的线程(解除锁)。当sharedArray[index]不等于value，Atomics.wait就返回not-equal，否则就进入休眠。只有使用Atomics.wake()或者time ms以后才能唤醒。被Atomics.wake()唤醒时，返回ok，超时唤醒时返回timed-out。浏览器的主线程有权”拒绝”休眠，这是为了防止用户失去响应。"></a>23.使用while循环等待主线程的通知不是很高效，如果用在主线程，就会造成卡顿。Atomics对象提供了wait()和wake()两个方法用于等待通知。这两个方法相当于锁内存，即在一个线程进行操作时，让其他线程休眠(建立锁)，等到操作结束，再唤醒那些休眠的线程(解除锁)。当sharedArray[index]不等于value，Atomics.wait就返回not-equal，否则就进入休眠。只有使用Atomics.wake()或者time ms以后才能唤醒。被Atomics.wake()唤醒时，返回ok，超时唤醒时返回timed-out。浏览器的主线程有权”拒绝”休眠，这是为了防止用户失去响应。</h3>
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div>您的支持是我最大的动力</div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/weixin.png" alt="丁可 微信支付">
+        <p>微信支付</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/images/zhifubao.png" alt="丁可 支付宝">
+        <p>支付宝</p>
+      </div>
+
+  </div>
+</div>
+
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>丁可
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://yoursite.com/2021/02/22/ES6eight/" title="学习ES6标准入门第八天">http://yoursite.com/2021/02/22/ES6eight/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/ES6/" rel="tag"><i class="fa fa-tag"></i> ES6</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/02/21/ES6seven/" rel="prev" title="学习ES6标准入门第七天">
+      <i class="fa fa-chevron-left"></i> 学习ES6标准入门第七天
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+      <div>
+  
+    <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>感谢您的阅读-------------</div>
+    
+</div>
+
+  
+</div>
+
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    
+  <div class="comments">
+    <div id="lv-container" data-id="city" data-uid="MTAyMC81MTEwOC8yNzU4OQ=="></div>
+  </div>
+  
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#学习ES6标准入门第八天"><span class="nav-text">学习ES6标准入门第八天</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#第二十四章-编程风格"><span class="nav-text">第二十四章 编程风格</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-const优于let有以下几个原因"><span class="nav-text">1.const优于let有以下几个原因:</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-静态字符串一律使用单引号或反引号。动态字符串使用反引号。"><span class="nav-text">2.静态字符串一律使用单引号或反引号。动态字符串使用反引号。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-使用数组成员对变量赋值时，优先使用解构赋值。函数的参数如果是对象的成员，优先使用解构赋值。如果函数返回多个值，优先使用对象的解构赋值，而不是数组的解构赋值。这样便于以后添加返回值，以及更改返回值的顺序。"><span class="nav-text">3.使用数组成员对变量赋值时，优先使用解构赋值。函数的参数如果是对象的成员，优先使用解构赋值。如果函数返回多个值，优先使用对象的解构赋值，而不是数组的解构赋值。这样便于以后添加返回值，以及更改返回值的顺序。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-单行定义的对象，最后一个成员不以逗号结尾。多行定义的对象，最后一个成员以逗号结尾。"><span class="nav-text">4.单行定义的对象，最后一个成员不以逗号结尾。多行定义的对象，最后一个成员以逗号结尾。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-箭头函数取代Function-prototype-bind，不应再用self-this-that绑定this。简单的、单行的、不会复用的函数，建议采用箭头函数。如果函数体较为复杂，行数较多，还是应该采用传统的函数写法。不要在函数体内使用arguments变量，使用rest运算符-…-代替。因为rest运算符可以显式表明我们想要获取参数，而且arguments是一个类似数组的对象，而rest运算符可以提供一个真正的数组。使用默认值语法设置函数参数的默认值。"><span class="nav-text">5.箭头函数取代Function.prototype.bind，不应再用self&#x2F;_this&#x2F;that绑定this。简单的、单行的、不会复用的函数，建议采用箭头函数。如果函数体较为复杂，行数较多，还是应该采用传统的函数写法。不要在函数体内使用arguments变量，使用rest运算符(…)代替。因为rest运算符可以显式表明我们想要获取参数，而且arguments是一个类似数组的对象，而rest运算符可以提供一个真正的数组。使用默认值语法设置函数参数的默认值。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-注意区分Object和Map，只有模拟实体对象时才使用Object。如果只是需要key-value的数据结构，则使用Map。因为Map有内建的遍历机制。"><span class="nav-text">6.注意区分Object和Map，只有模拟实体对象时才使用Object。如果只是需要key:value的数据结构，则使用Map。因为Map有内建的遍历机制。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7-使用extends实现继承，因为这样更简单，不存在破坏instanceof运算的危险。"><span class="nav-text">7.使用extends实现继承，因为这样更简单，不存在破坏instanceof运算的危险。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#8-如果模块只有一个输出值，就使用export-default；如果模块有多个输出值，就不使用export-default，不要同时使用export-default与普通的export。如果模块默认输出一个函数，函数名的首字母应该小写。如果模块默认输出一个对象，对象名的首字母应该大写。"><span class="nav-text">8.如果模块只有一个输出值，就使用export default；如果模块有多个输出值，就不使用export default，不要同时使用export default与普通的export。如果模块默认输出一个函数，函数名的首字母应该小写。如果模块默认输出一个对象，对象名的首字母应该大写。</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第二十五章-读懂ECMAScript规格"><span class="nav-text">第二十五章 读懂ECMAScript规格</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-相等运算符-用于比较两个值，返回true或false，比较一共有12步"><span class="nav-text">1.相等运算符(&#x3D;&#x3D;)用于比较两个值，返回true或false，比较一共有12步:</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-数组成员可以省略。只要逗号前面没有任何表达式，数组的length属性就会加1，并且相应增加其后成员的位置索引。被省略的成员不会被定义。如果被省略的成员是数组最后一个成员，则不会导致数组length属性增加。上面的规格说得很清楚，数组的空位会反映在length属性。也就是说，空位有自己的位置，但是这个位置的值未定义，即这个值是不存在的。如果一定要读取，结果就是undefined-因为undefined在JavaScript语言中表示不存在-。这就解释了为什么in运算符、数组的hasOwnProperty方法、Object-keys方法都取不到空位的属性名。因为这个属性名根本就不存在，规格里面没有说要为空位分配属性名-位置索引-，只说要为下一个元素的位置索引加1。"><span class="nav-text">2.数组成员可以省略。只要逗号前面没有任何表达式，数组的length属性就会加1，并且相应增加其后成员的位置索引。被省略的成员不会被定义。如果被省略的成员是数组最后一个成员，则不会导致数组length属性增加。上面的规格说得很清楚，数组的空位会反映在length属性。也就是说，空位有自己的位置，但是这个位置的值未定义，即这个值是不存在的。如果一定要读取，结果就是undefined(因为undefined在JavaScript语言中表示不存在)。这就解释了为什么in运算符、数组的hasOwnProperty方法、Object.keys方法都取不到空位的属性名。因为这个属性名根本就不存在，规格里面没有说要为空位分配属性名(位置索引)，只说要为下一个元素的位置索引加1。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-数组的map方法的步骤如下"><span class="nav-text">3.数组的map方法的步骤如下:</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第二十六章-ArrayBuffer"><span class="nav-text">第二十六章 ArrayBuffer</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-ArrayBuffer对象、TypedArray视图和DataView视图是JavaScript操作二进制数据的一个接口。它们都以数组的语法处理二进制数据，所以统称为二进制数组。这个接口的原始设计目的与WebGL项目有关。所谓WebGL，就是浏览器与显卡之间的通信接口，为了满足JavaScript与显卡之间大量、实时的数据交换，它们之间的数据通信必须是二进制的，而不能是传统的文本格式。二进制数组就是在这种背景下诞生的。它很像C语言的数组，允许开发者以数组下标的形式直接操作内存，大大增强了JavaScript处理二进制数据的能力，使开发者有可能通过JavaScript与操作系统的原生接口进行二进制通信。二进制数组由三类对象组成-ArrayBuffer对象、TypedArray视图、DataView视图。简而言之，ArrayBuffer对象代表原始的二进制数据，TypedArray视图用于读-写简单类型的二进制数据，DataView视图用于读-写复杂类型的二进制数据。二进制数组并不是真正的数组，而是类似数组的对象。"><span class="nav-text">1.ArrayBuffer对象、TypedArray视图和DataView视图是JavaScript操作二进制数据的一个接口。它们都以数组的语法处理二进制数据，所以统称为二进制数组。这个接口的原始设计目的与WebGL项目有关。所谓WebGL，就是浏览器与显卡之间的通信接口，为了满足JavaScript与显卡之间大量、实时的数据交换，它们之间的数据通信必须是二进制的，而不能是传统的文本格式。二进制数组就是在这种背景下诞生的。它很像C语言的数组，允许开发者以数组下标的形式直接操作内存，大大增强了JavaScript处理二进制数据的能力，使开发者有可能通过JavaScript与操作系统的原生接口进行二进制通信。二进制数组由三类对象组成:ArrayBuffer对象、TypedArray视图、DataView视图。简而言之，ArrayBuffer对象代表原始的二进制数据，TypedArray视图用于读&#x2F;写简单类型的二进制数据，DataView视图用于读&#x2F;写复杂类型的二进制数据。二进制数组并不是真正的数组，而是类似数组的对象。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-ArrayBuffer对象代表储存二进制数据的一段内存，它不能直接读-写，只能通过视图-TypedArray视图和DataView视图-读-写，视图的作用是以指定格式解读二进制数据。TypedArray视图与DataView视图的一个区别是，它不是一个构造函数，而是一组构造函数，代表不同的数据格式。如果对同一段内存分别建立两种视图，由于两个视图对应的是同一段内存，由此一个视图修改底层内存会影响到另一个视图。TypedArray视图的构造函数除了接受ArrayBuffer实例作为参数，还可以接受普通数组作为参数，直接分配内存生成底层的ArrayBuffer实例，同时完成对这段内存的赋值。"><span class="nav-text">2.ArrayBuffer对象代表储存二进制数据的一段内存，它不能直接读&#x2F;写，只能通过视图(TypedArray视图和DataView视图)读&#x2F;写，视图的作用是以指定格式解读二进制数据。TypedArray视图与DataView视图的一个区别是，它不是一个构造函数，而是一组构造函数，代表不同的数据格式。如果对同一段内存分别建立两种视图，由于两个视图对应的是同一段内存，由此一个视图修改底层内存会影响到另一个视图。TypedArray视图的构造函数除了接受ArrayBuffer实例作为参数，还可以接受普通数组作为参数，直接分配内存生成底层的ArrayBuffer实例，同时完成对这段内存的赋值。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-ArrayBuffer实例的byteLength属性返回所分配的内存区域的字节长度。如果要分配的内存区域很大，有可能分配失败-因为没有那么多的连续空余内存-，所以有必要检查是否分配成功。"><span class="nav-text">3.ArrayBuffer实例的byteLength属性返回所分配的内存区域的字节长度。如果要分配的内存区域很大，有可能分配失败(因为没有那么多的连续空余内存)，所以有必要检查是否分配成功。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-ArrayBuffer实例有一个slice方法，允许将内存区域的一部分复制生成一个新的ArrayBuffer对象。slice方法其实包含两步，第一步先分配一段新内存，第二步将原来那个ArrayBuffer对象复制过去。除了slice方法，ArrayBuffer对象不提供任何直接读-写内存的方法，只允许在其上建立试图，然后通过视图读-写"><span class="nav-text">4.ArrayBuffer实例有一个slice方法，允许将内存区域的一部分复制生成一个新的ArrayBuffer对象。slice方法其实包含两步，第一步先分配一段新内存，第二步将原来那个ArrayBuffer对象复制过去。除了slice方法，ArrayBuffer对象不提供任何直接读&#x2F;写内存的方法，只允许在其上建立试图，然后通过视图读&#x2F;写</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-ArrayBuffer有一个静态方法isView，返回一个布尔值，表示参数是否为ArrayBuffer的视图实例。这个方法大致相当于判断参数是否为TypedArray实例或DataView实例。"><span class="nav-text">5.ArrayBuffer有一个静态方法isView，返回一个布尔值，表示参数是否为ArrayBuffer的视图实例。这个方法大致相当于判断参数是否为TypedArray实例或DataView实例。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-ArrayBuffer对象作为内存区域，可以存放多种类型的数据。同一段内存，不同数据有不同的解读方式，这就叫做”视图”。ArrayBuffer有两种视图，一种是TypedArray视图，另一种是DataView视图。前者的数组成员都是同一个数据类型，后者的数组成员可以是不同的数据类型。目前，TypedArray视图一共包括9钟类型，每一种视图都是一种数据结构，它们很像普通数组，都有length属性，都能用方括号运算符-获取单个元素，所有数组方法都能在其上使用。普通数组与TypedArray数组的差异主要在以下方面"><span class="nav-text">6.ArrayBuffer对象作为内存区域，可以存放多种类型的数据。同一段内存，不同数据有不同的解读方式，这就叫做”视图”。ArrayBuffer有两种视图，一种是TypedArray视图，另一种是DataView视图。前者的数组成员都是同一个数据类型，后者的数组成员可以是不同的数据类型。目前，TypedArray视图一共包括9钟类型，每一种视图都是一种数据结构，它们很像普通数组，都有length属性，都能用方括号运算符([])获取单个元素，所有数组方法都能在其上使用。普通数组与TypedArray数组的差异主要在以下方面:</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7-视图的构造函数可以接受3个参数"><span class="nav-text">7.视图的构造函数可以接受3个参数:</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#8-字节序指的是数值在内存中的表示方式。x86体系的计算机都采用小端字节序，相对重要的字节排在后面的内存地址，相对不重要的字节排在前面的内存地址，而大端字节序则完全相反，将最重要的字节排在前面。"><span class="nav-text">8.字节序指的是数值在内存中的表示方式。x86体系的计算机都采用小端字节序，相对重要的字节排在后面的内存地址，相对不重要的字节排在前面的内存地址，而大端字节序则完全相反，将最重要的字节排在前面。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#9-每一种视图的构造函数都有一个BYTES-PER-ELEMENT属性，表示这种数据类型占据的字节数。"><span class="nav-text">9.每一种视图的构造函数都有一个BYTES_PER_ELEMENT属性，表示这种数据类型占据的字节数。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#10-不同的视图类型所能容纳的数值范围是确定的。超出这个范围就会出现溢出。TypedArray数组的溢出处理规则简单来说就是抛弃溢出的位，然后按照视图类型进行解释。简单的转换规则可以如下表是"><span class="nav-text">10.不同的视图类型所能容纳的数值范围是确定的。超出这个范围就会出现溢出。TypedArray数组的溢出处理规则简单来说就是抛弃溢出的位，然后按照视图类型进行解释。简单的转换规则可以如下表是:</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#11-TypedArray实例的buffer属性返回整段内存区域对应的ArrayBuffer对象。该属性为只读属性。"><span class="nav-text">11.TypedArray实例的buffer属性返回整段内存区域对应的ArrayBuffer对象。该属性为只读属性。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#12-byteLength属性返回TypedArray数组占据的内存长度，单位为字节。byteOffset属性返回TypedArray数组从底层ArrayBuffer对象的哪个字节开始。这两个属性都是只读属性。"><span class="nav-text">12.byteLength属性返回TypedArray数组占据的内存长度，单位为字节。byteOffset属性返回TypedArray数组从底层ArrayBuffer对象的哪个字节开始。这两个属性都是只读属性。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#13-length属性表示TypedArray数组含有多少个成员。注意将byteLength属性和length属性区分，前者是字节长度，后者是成员长度。"><span class="nav-text">13.length属性表示TypedArray数组含有多少个成员。注意将byteLength属性和length属性区分，前者是字节长度，后者是成员长度。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#14-TypedArray数组的set方法用于复制数组-普通数组或TypedArray数组-也就是将一段内存完全复制到另一段内存，它是整段内存的复制。set方法还可以接受第二个参数，表示从b对象的哪一个成员开始复制a对象"><span class="nav-text">14.TypedArray数组的set方法用于复制数组(普通数组或TypedArray数组)也就是将一段内存完全复制到另一段内存，它是整段内存的复制。set方法还可以接受第二个参数，表示从b对象的哪一个成员开始复制a对象</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#15-subarray方法是对于TypedArray数组的一部分再建立一个新的视图。subarray方法的第一个参数是起始的成员序号，第二个参数是结束的成员序号-不含该成员-，如果省略则包含剩余的全部成员。"><span class="nav-text">15.subarray方法是对于TypedArray数组的一部分再建立一个新的视图。subarray方法的第一个参数是起始的成员序号，第二个参数是结束的成员序号(不含该成员)，如果省略则包含剩余的全部成员。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#16-TypedArray实例的slice方法可以返回一个指定位置的新的TypedArray实例"><span class="nav-text">16.TypedArray实例的slice方法可以返回一个指定位置的新的TypedArray实例</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#17-TypedArray数组的所有构造函数都有一个静态方法of，用于将参数转为一个TypedArray实例"><span class="nav-text">17.TypedArray数组的所有构造函数都有一个静态方法of，用于将参数转为一个TypedArray实例</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#18-静态方法from接受一个可遍历的数据结构-比如数组-作为参数，返回一个基于此结构的TypedArray实例"><span class="nav-text">18.静态方法from接受一个可遍历的数据结构(比如数组)作为参数，返回一个基于此结构的TypedArray实例</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#19-DataView视图用于处理网络设备传来的数据，所以大端字节序或小端字节序可以自行设定。DataView实例提供8个方法读取内存，这一系列get方法的参数都是一个字节序号-不能是负数，否则会报错-，表示从哪个字节开始读取。如果一次读取两个或两个以上字节，必须明确数据的存储方式，到底是小端字节序还是大端字节序。默认情况下，DataView的get方法使用大端字节序解读数据，如果需要使用小端字节序解读，必须在get方法的第二个参数指定true。DataView视图提供了8个方法写入内存，这一系列set方法接受两个参数-第一个参数是字节序号，表示从哪个字节开始写入；第二个参数为写入的数据。对于那些写入两个或两个以上字节的方法，需要指定第三个参数，false或undefined表示使用大端字节序写入，true表示使用小端字节序写入。"><span class="nav-text">19.DataView视图用于处理网络设备传来的数据，所以大端字节序或小端字节序可以自行设定。DataView实例提供8个方法读取内存，这一系列get方法的参数都是一个字节序号(不能是负数，否则会报错)，表示从哪个字节开始读取。如果一次读取两个或两个以上字节，必须明确数据的存储方式，到底是小端字节序还是大端字节序。默认情况下，DataView的get方法使用大端字节序解读数据，如果需要使用小端字节序解读，必须在get方法的第二个参数指定true。DataView视图提供了8个方法写入内存，这一系列set方法接受两个参数:第一个参数是字节序号，表示从哪个字节开始写入；第二个参数为写入的数据。对于那些写入两个或两个以上字节的方法，需要指定第三个参数，false或undefined表示使用大端字节序写入，true表示使用小端字节序写入。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#20-JavaScript是单线程的，Web-worker引入了多线程-主线程用来与用户互动，Worker线程用来承担计算任务。每个线程的数据都是隔离的，通过postMessage-通信。线程之间的数据交换可以是各种格式的，不仅仅是字符串，也可以是二进制数据。这种交换采用的是复制机制，即一个进程将需要分享的数据复制一份，通过postMessage方法交给另一个进程。如果数据量比较大，这种通信的效率显然比较低。很容易想到，这时可以留出一块内存区域，由主线程与Worker线程共享，两方都可以读写，那么就会大大提高效率，协作起来也会比较简单-不想postMessage那么麻烦-。ES2017引入SharedArrayBuffer，允许Worker线程与主线程共享同一块内存。SharedArrayBuffer的API与ArrayBuffer一摸一样，唯一的区别是后者无法共享。SharedArrayBuffer与ArrayBuffer一样，本身是无法读写的，必须在上面建立视图，然后通过视图进行读写。"><span class="nav-text">20.JavaScript是单线程的，Web worker引入了多线程:主线程用来与用户互动，Worker线程用来承担计算任务。每个线程的数据都是隔离的，通过postMessage()通信。线程之间的数据交换可以是各种格式的，不仅仅是字符串，也可以是二进制数据。这种交换采用的是复制机制，即一个进程将需要分享的数据复制一份，通过postMessage方法交给另一个进程。如果数据量比较大，这种通信的效率显然比较低。很容易想到，这时可以留出一块内存区域，由主线程与Worker线程共享，两方都可以读写，那么就会大大提高效率，协作起来也会比较简单(不想postMessage那么麻烦)。ES2017引入SharedArrayBuffer，允许Worker线程与主线程共享同一块内存。SharedArrayBuffer的API与ArrayBuffer一摸一样，唯一的区别是后者无法共享。SharedArrayBuffer与ArrayBuffer一样，本身是无法读写的，必须在上面建立视图，然后通过视图进行读写。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#21-多线程共享内存，最大的问题就是如何防止两个线程同时修改某个地址，或者说，当一个线程修改共享内存以后，必须有一个机制让其他线程同步。SharedArrayBuffer-API提供Atomics对象，保证所有共享内存的操作都是”原子性”的，并且可以在所有线程内同步。什么叫”原子性操作”呢？现代编程语言中，一条普通的命令被编译器处理以后会变成多条机器指令。如果是单线程运行，这是没有问题的。多线程环境并且共享内存时，就会出现问题，因为这一组机器指令的运行期间可能会插入其他线程的指令，从而导致运行结果出错。Atomics对象就是为了解决这个问题而提出的，它可以保证一个操作所对应的多条机器指令一定是作为一个整体来运行的，中间不会被打断。也就是说，它所涉及的操作都可以看作是原子性的单操作，这可以避免线程竞争，提高多线程共享内存时的操作安全。"><span class="nav-text">21.多线程共享内存，最大的问题就是如何防止两个线程同时修改某个地址，或者说，当一个线程修改共享内存以后，必须有一个机制让其他线程同步。SharedArrayBuffer API提供Atomics对象，保证所有共享内存的操作都是”原子性”的，并且可以在所有线程内同步。什么叫”原子性操作”呢？现代编程语言中，一条普通的命令被编译器处理以后会变成多条机器指令。如果是单线程运行，这是没有问题的。多线程环境并且共享内存时，就会出现问题，因为这一组机器指令的运行期间可能会插入其他线程的指令，从而导致运行结果出错。Atomics对象就是为了解决这个问题而提出的，它可以保证一个操作所对应的多条机器指令一定是作为一个整体来运行的，中间不会被打断。也就是说，它所涉及的操作都可以看作是原子性的单操作，这可以避免线程竞争，提高多线程共享内存时的操作安全。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#22-store-方法用来向共享内存写入数据，load-方法用来从共享内存中读出数据。比起直接的读写操作，它们的好处是保证了读写操作的原子性。此外，它们还可以用来解决一个问题-多个线程使用共享线程的某个位置作为开关，一旦该位置的值变了，就执行特定操作。这时，必须保证该位置的赋值操作一定是在它前面的所有可能会改写内存的操作结束后执行；而该位置的取值操作一定是在它后面所有可能会读取该位置的操作开始之前执行。store方法接受3个参数-SharedBuffer的视图、位置索引和值，返回sharesArray-index-的值。load方法只接受两个参数-SharedBuffer的视图和位置索引，也是返回sharedArray-index-的值。"><span class="nav-text">22.store()方法用来向共享内存写入数据，load()方法用来从共享内存中读出数据。比起直接的读写操作，它们的好处是保证了读写操作的原子性。此外，它们还可以用来解决一个问题:多个线程使用共享线程的某个位置作为开关，一旦该位置的值变了，就执行特定操作。这时，必须保证该位置的赋值操作一定是在它前面的所有可能会改写内存的操作结束后执行；而该位置的取值操作一定是在它后面所有可能会读取该位置的操作开始之前执行。store方法接受3个参数:SharedBuffer的视图、位置索引和值，返回sharesArray[index]的值。load方法只接受两个参数:SharedBuffer的视图和位置索引，也是返回sharedArray[index]的值。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#23-使用while循环等待主线程的通知不是很高效，如果用在主线程，就会造成卡顿。Atomics对象提供了wait-和wake-两个方法用于等待通知。这两个方法相当于锁内存，即在一个线程进行操作时，让其他线程休眠-建立锁-，等到操作结束，再唤醒那些休眠的线程-解除锁-。当sharedArray-index-不等于value，Atomics-wait就返回not-equal，否则就进入休眠。只有使用Atomics-wake-或者time-ms以后才能唤醒。被Atomics-wake-唤醒时，返回ok，超时唤醒时返回timed-out。浏览器的主线程有权”拒绝”休眠，这是为了防止用户失去响应。"><span class="nav-text">23.使用while循环等待主线程的通知不是很高效，如果用在主线程，就会造成卡顿。Atomics对象提供了wait()和wake()两个方法用于等待通知。这两个方法相当于锁内存，即在一个线程进行操作时，让其他线程休眠(建立锁)，等到操作结束，再唤醒那些休眠的线程(解除锁)。当sharedArray[index]不等于value，Atomics.wait就返回not-equal，否则就进入休眠。只有使用Atomics.wake()或者time ms以后才能唤醒。被Atomics.wake()唤醒时，返回ok，超时唤醒时返回timed-out。浏览器的主线程有权”拒绝”休眠，这是为了防止用户失去响应。</span></a></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="丁可"
+      src="/images/touxiang.jpg">
+  <p class="site-author-name" itemprop="name">丁可</p>
+  <div class="site-description" itemprop="description">哪来的勇气我就是不灰心</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">33</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">10</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/DK-frontend" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;DK-frontend" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/504015629@qq.com" title="E-Mail → 504015629@qq.com"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://blog.csdn.net/DK159753" title="CSDN → https:&#x2F;&#x2F;blog.csdn.net&#x2F;DK159753" rel="noopener" target="_blank"><i class="fab fa-crosshairs fa-fw"></i>CSDN</a>
+      </span>
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+      <iframe allow="autoplay" frameborder="no" border="0" marginwidth="0" marginheight="0" width=330 height=86 src="//music.163.com/outchain/player?type=2&id=1363973661&auto=1&height=66"></iframe>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2020 – 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">丁可</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">214k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">3:15</span>
+</div>
+<div class="theme-info">
+  <div class="powered-by"></div>
+  <span class="post-count">博客全站共108.1k字</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/pjax/pjax.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '#page-configurations',
+    '.content-wrap',
+    '.post-toc-wrap',
+    '.languages',
+    '#pjax'
+  ],
+  switches: {
+    '.post-toc-wrap': Pjax.switches.innerHTML
+  },
+  analytics: false,
+  cacheBust: false,
+  scrollTo : !CONFIG.bookmark.enable
+});
+
+window.addEventListener('pjax:success', () => {
+  document.querySelectorAll('script[data-pjax], script#page-configurations, #pjax script').forEach(element => {
+    var code = element.text || element.textContent || element.innerHTML || '';
+    var parent = element.parentNode;
+    parent.removeChild(element);
+    var script = document.createElement('script');
+    if (element.id) {
+      script.id = element.id;
+    }
+    if (element.className) {
+      script.className = element.className;
+    }
+    if (element.type) {
+      script.type = element.type;
+    }
+    if (element.src) {
+      script.src = element.src;
+      // Force synchronous loading of peripheral JS.
+      script.async = false;
+    }
+    if (element.dataset.pjax !== undefined) {
+      script.dataset.pjax = '';
+    }
+    if (code !== '') {
+      script.appendChild(document.createTextNode(code));
+    }
+    parent.appendChild(script);
+  });
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <div id="pjax">
+  
+
+  
+
+<script>
+NexT.utils.loadComments(document.querySelector('#lv-container'), () => {
+  window.livereOptions = {
+    refer: location.pathname.replace(CONFIG.root, '').replace('index.html', '')
+  };
+  (function(d, s) {
+    var j, e = d.getElementsByTagName(s)[0];
+    if (typeof LivereTower === 'function') { return; }
+    j = d.createElement(s);
+    j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+    j.async = true;
+    e.parentNode.insertBefore(j, e);
+  })(document, 'script');
+});
+</script>
+
+    </div>
+  
+   <canvas class="fireworks" style="position: fixed;left: 0;top: 0;z-index: 1; pointer-events: none;" ></canvas> 
+   <script type="text/javascript" src="//cdn.bootcss.com/animejs/2.2.0/anime.min.js"></script> 
+   <script type="text/javascript" src="/js/src/fireworks.js"></script>
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"model":{"jsonPath":"/live2dw/assets/wanko.model.json"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":false},"log":false});</script></body>
+</html>
+
+
