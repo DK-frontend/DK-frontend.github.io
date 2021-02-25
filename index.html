@@ -154,7 +154,7 @@
   </li>
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">35</span></a>
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">36</span></a>
 
   </li>
   </ul>
@@ -184,6 +184,97 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/02/25/JavaScriptthree/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/touxiang.jpg">
+      <meta itemprop="name" content="丁可">
+      <meta itemprop="description" content="哪来的勇气我就是不灰心">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="DKの博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/02/25/JavaScriptthree/" class="post-title-link" itemprop="url">学习JavaScript权威指南第三天</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2021-02-25 20:14:11 / 修改时间：23:40:16" itemprop="dateCreated datePublished" datetime="2021-02-25T20:14:11+08:00">2021-02-25</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">学习笔记</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>4.5k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>4 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="学习JavaScript权威指南第三天"><a href="#学习JavaScript权威指南第三天" class="headerlink" title="学习JavaScript权威指南第三天"></a>学习JavaScript权威指南第三天</h1><h2 id="第七章-数组"><a href="#第七章-数组" class="headerlink" title="第七章 数组"></a>第七章 数组</h2><h3 id="1-JavaScript数组的索引是基于零的32位数值-第一个元素的索引为0，最大可能索引为4294967294-2的32次方-2-，数组最大能容纳4294967295个元素。每个JavaScript的数组都有一个length属性。针对非稀疏数组，该属性就是数组元素的个数。针对稀疏数组。length比所有元素的索引要大。"><a href="#1-JavaScript数组的索引是基于零的32位数值-第一个元素的索引为0，最大可能索引为4294967294-2的32次方-2-，数组最大能容纳4294967295个元素。每个JavaScript的数组都有一个length属性。针对非稀疏数组，该属性就是数组元素的个数。针对稀疏数组。length比所有元素的索引要大。" class="headerlink" title="1.JavaScript数组的索引是基于零的32位数值:第一个元素的索引为0，最大可能索引为4294967294(2的32次方-2)，数组最大能容纳4294967295个元素。每个JavaScript的数组都有一个length属性。针对非稀疏数组，该属性就是数组元素的个数。针对稀疏数组。length比所有元素的索引要大。"></a>1.JavaScript数组的索引是基于零的32位数值:第一个元素的索引为0，最大可能索引为4294967294(2的32次方-2)，数组最大能容纳4294967295个元素。每个JavaScript的数组都有一个length属性。针对非稀疏数组，该属性就是数组元素的个数。针对稀疏数组。length比所有元素的索引要大。</h3><h3 id="2-数组的特别之处在于，当使用小于2的32次方的非负整数作为属性名时数组会自动维护其length属性值。清晰地区分数组地索引和对象地属性名是非常有用的。所有的索引都是属性名，但只有在0-2的32次方-2之间的整数属性名才是索引。所有的数组都是对象，可以为其创建任意名字的属性。但如果使用的属性是数组的索引，数组的特殊行为就是将根据需要更新它们的length属性值。数组的索引当使用的一个浮点数和一个整数相等时情况也是一样的。"><a href="#2-数组的特别之处在于，当使用小于2的32次方的非负整数作为属性名时数组会自动维护其length属性值。清晰地区分数组地索引和对象地属性名是非常有用的。所有的索引都是属性名，但只有在0-2的32次方-2之间的整数属性名才是索引。所有的数组都是对象，可以为其创建任意名字的属性。但如果使用的属性是数组的索引，数组的特殊行为就是将根据需要更新它们的length属性值。数组的索引当使用的一个浮点数和一个整数相等时情况也是一样的。" class="headerlink" title="2.数组的特别之处在于，当使用小于2的32次方的非负整数作为属性名时数组会自动维护其length属性值。清晰地区分数组地索引和对象地属性名是非常有用的。所有的索引都是属性名，但只有在0~2的32次方-2之间的整数属性名才是索引。所有的数组都是对象，可以为其创建任意名字的属性。但如果使用的属性是数组的索引，数组的特殊行为就是将根据需要更新它们的length属性值。数组的索引当使用的一个浮点数和一个整数相等时情况也是一样的。"></a>2.数组的特别之处在于，当使用小于2的32次方的非负整数作为属性名时数组会自动维护其length属性值。清晰地区分数组地索引和对象地属性名是非常有用的。所有的索引都是属性名，但只有在0~2的32次方-2之间的整数属性名才是索引。所有的数组都是对象，可以为其创建任意名字的属性。但如果使用的属性是数组的索引，数组的特殊行为就是将根据需要更新它们的length属性值。数组的索引当使用的一个浮点数和一个整数相等时情况也是一样的。</h3><h3 id="3-稀疏数组就是包含从0开始的不连续索引的数组。通常，数组的length属性值代表数组中元素的个数。如果数组是稀疏的。length属性值大于元素的个数。注意，当在数组直接量中省略值时不会创建稀疏数组。省略的元素在数组中是存在的，其值为undefined。当省略数组直接量中的值时，这时所得到的数组也是稀疏数组，省略掉的值是不存在的。"><a href="#3-稀疏数组就是包含从0开始的不连续索引的数组。通常，数组的length属性值代表数组中元素的个数。如果数组是稀疏的。length属性值大于元素的个数。注意，当在数组直接量中省略值时不会创建稀疏数组。省略的元素在数组中是存在的，其值为undefined。当省略数组直接量中的值时，这时所得到的数组也是稀疏数组，省略掉的值是不存在的。" class="headerlink" title="3.稀疏数组就是包含从0开始的不连续索引的数组。通常，数组的length属性值代表数组中元素的个数。如果数组是稀疏的。length属性值大于元素的个数。注意，当在数组直接量中省略值时不会创建稀疏数组。省略的元素在数组中是存在的，其值为undefined。当省略数组直接量中的值时，这时所得到的数组也是稀疏数组，省略掉的值是不存在的。"></a>3.稀疏数组就是包含从0开始的不连续索引的数组。通常，数组的length属性值代表数组中元素的个数。如果数组是稀疏的。length属性值大于元素的个数。注意，当在数组直接量中省略值时不会创建稀疏数组。省略的元素在数组中是存在的，其值为undefined。当省略数组直接量中的值时，这时所得到的数组也是稀疏数组，省略掉的值是不存在的。</h3><h3 id="4-数组长度保证大于它的每个元素的索引值，为了维持此规则不变化，数组有两个特殊的行为"><a href="#4-数组长度保证大于它的每个元素的索引值，为了维持此规则不变化，数组有两个特殊的行为" class="headerlink" title="4.数组长度保证大于它的每个元素的索引值，为了维持此规则不变化，数组有两个特殊的行为:"></a>4.数组长度保证大于它的每个元素的索引值，为了维持此规则不变化，数组有两个特殊的行为:</h3><ul>
+<li>如果为一个数组元素赋值，它的索引i大于或等于现有数组的长度时，length属性的值将设置为i+</li>
+<li>设置length属性为一个小于当前长度的非负整数n时，当前数组中那些索引值大于或等于n的元素将从中删除
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2021/02/25/JavaScriptthree/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/02/24/JavaScripttwo/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -198,7 +289,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2021/02/24/JavaScripttwo/" class="post-title-link" itemprop="url">学习JavaScript权威指南第一天</a>
+            <a href="/2021/02/24/JavaScripttwo/" class="post-title-link" itemprop="url">学习JavaScript权威指南第二天</a>
         </h2>
 
         <div class="post-meta">
@@ -215,7 +306,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-02-25 00:26:09" itemprop="dateModified" datetime="2021-02-25T00:26:09+08:00">2021-02-25</time>
+                <time title="修改时间：2021-02-25 20:14:40" itemprop="dateModified" datetime="2021-02-25T20:14:40+08:00">2021-02-25</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -252,7 +343,7 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h1 id="学习JavaScript权威指南第一天"><a href="#学习JavaScript权威指南第一天" class="headerlink" title="学习JavaScript权威指南第一天"></a>学习JavaScript权威指南第一天</h1><h2 id="第四章-表达式和运算符"><a href="#第四章-表达式和运算符" class="headerlink" title="第四章 表达式和运算符"></a>第四章 表达式和运算符</h2><h3 id="1-最简单的表达式是”原始表达式”。原始表达式是表达式的最小单位——它们不再包含其他表达式。JavaScript中的原始表达式包含常量或直接量、关键字和变量。当JavaScript代码中出现了标识符，JavaScript会将其当做变量而去查找它的值。如果变量名不存在，表达式运算结果为undefined。然而，在ECMAScript-5的严格模式中，对不存在的变量进行求值会抛出一个引用错误异常。"><a href="#1-最简单的表达式是”原始表达式”。原始表达式是表达式的最小单位——它们不再包含其他表达式。JavaScript中的原始表达式包含常量或直接量、关键字和变量。当JavaScript代码中出现了标识符，JavaScript会将其当做变量而去查找它的值。如果变量名不存在，表达式运算结果为undefined。然而，在ECMAScript-5的严格模式中，对不存在的变量进行求值会抛出一个引用错误异常。" class="headerlink" title="1.最简单的表达式是”原始表达式”。原始表达式是表达式的最小单位——它们不再包含其他表达式。JavaScript中的原始表达式包含常量或直接量、关键字和变量。当JavaScript代码中出现了标识符，JavaScript会将其当做变量而去查找它的值。如果变量名不存在，表达式运算结果为undefined。然而，在ECMAScript 5的严格模式中，对不存在的变量进行求值会抛出一个引用错误异常。"></a>1.最简单的表达式是”原始表达式”。原始表达式是表达式的最小单位——它们不再包含其他表达式。JavaScript中的原始表达式包含常量或直接量、关键字和变量。当JavaScript代码中出现了标识符，JavaScript会将其当做变量而去查找它的值。如果变量名不存在，表达式运算结果为undefined。然而，在ECMAScript 5的严格模式中，对不存在的变量进行求值会抛出一个引用错误异常。</h3><h3 id="2-显然-identifier的写法更加简单，但需要注意的是，这种方式只适用于要访问的属性名称是合法的标识符，并且需要直到要访问的属性的名字。如果属性名称是一个保留字或者包含空格和标点符号，或是一个数字-对于数组来说-，即必须使用方括号的写法。当属性名是通过运算得出的值而不是固定的值的时候，这时必须使用方括号写法。"><a href="#2-显然-identifier的写法更加简单，但需要注意的是，这种方式只适用于要访问的属性名称是合法的标识符，并且需要直到要访问的属性的名字。如果属性名称是一个保留字或者包含空格和标点符号，或是一个数字-对于数组来说-，即必须使用方括号的写法。当属性名是通过运算得出的值而不是固定的值的时候，这时必须使用方括号写法。" class="headerlink" title="2.显然.identifier的写法更加简单，但需要注意的是，这种方式只适用于要访问的属性名称是合法的标识符，并且需要直到要访问的属性的名字。如果属性名称是一个保留字或者包含空格和标点符号，或是一个数字(对于数组来说)，即必须使用方括号的写法。当属性名是通过运算得出的值而不是固定的值的时候，这时必须使用方括号写法。"></a>2.显然.identifier的写法更加简单，但需要注意的是，这种方式只适用于要访问的属性名称是合法的标识符，并且需要直到要访问的属性的名字。如果属性名称是一个保留字或者包含空格和标点符号，或是一个数字(对于数组来说)，即必须使用方括号的写法。当属性名是通过运算得出的值而不是固定的值的时候，这时必须使用方括号写法。</h3><h3 id="3-在方法调用中，执行函数体的时候，作为属性访问主题的对象和数组便是其调用方法内this的指向。并不是方法调用的调用表达式通常使用全局对象作为this关键字的值。然而在ECMAScript-5中，那些通过严格模式定义的函数在调用时将使用undefined作为this的值，this不会指向全局对象。"><a href="#3-在方法调用中，执行函数体的时候，作为属性访问主题的对象和数组便是其调用方法内this的指向。并不是方法调用的调用表达式通常使用全局对象作为this关键字的值。然而在ECMAScript-5中，那些通过严格模式定义的函数在调用时将使用undefined作为this的值，this不会指向全局对象。" class="headerlink" title="3.在方法调用中，执行函数体的时候，作为属性访问主题的对象和数组便是其调用方法内this的指向。并不是方法调用的调用表达式通常使用全局对象作为this关键字的值。然而在ECMAScript 5中，那些通过严格模式定义的函数在调用时将使用undefined作为this的值，this不会指向全局对象。"></a>3.在方法调用中，执行函数体的时候，作为属性访问主题的对象和数组便是其调用方法内this的指向。并不是方法调用的调用表达式通常使用全局对象作为this关键字的值。然而在ECMAScript 5中，那些通过严格模式定义的函数在调用时将使用undefined作为this的值，this不会指向全局对象。</h3><h3 id="4-左值是一个古老的术语，它是指”表达式只能出现在赋值运算符的左侧”。在JavaScript中，变量、对象属性和数组元素均是左值"><a href="#4-左值是一个古老的术语，它是指”表达式只能出现在赋值运算符的左侧”。在JavaScript中，变量、对象属性和数组元素均是左值" class="headerlink" title="4.左值是一个古老的术语，它是指”表达式只能出现在赋值运算符的左侧”。在JavaScript中，变量、对象属性和数组元素均是左值"></a>4.左值是一个古老的术语，它是指”表达式只能出现在赋值运算符的左侧”。在JavaScript中，变量、对象属性和数组元素均是左值</h3><h3 id="5-需要注意的是，属性访问表达式和调用表达式的优先级要比所有运算符都要高。"><a href="#5-需要注意的是，属性访问表达式和调用表达式的优先级要比所有运算符都要高。" class="headerlink" title="5.需要注意的是，属性访问表达式和调用表达式的优先级要比所有运算符都要高。"></a>5.需要注意的是，属性访问表达式和调用表达式的优先级要比所有运算符都要高。</h3><h3 id="6-如果操作数-或者转换结果-是NaN值，算术运算的结果也是NaN。除数为0的运算结果为正无穷大或负无穷大，而0-0的结果是NaN，所有这些运算均不会报错。"><a href="#6-如果操作数-或者转换结果-是NaN值，算术运算的结果也是NaN。除数为0的运算结果为正无穷大或负无穷大，而0-0的结果是NaN，所有这些运算均不会报错。" class="headerlink" title="6.如果操作数(或者转换结果)是NaN值，算术运算的结果也是NaN。除数为0的运算结果为正无穷大或负无穷大，而0/0的结果是NaN，所有这些运算均不会报错。"></a>6.如果操作数(或者转换结果)是NaN值，算术运算的结果也是NaN。除数为0的运算结果为正无穷大或负无穷大，而0/0的结果是NaN，所有这些运算均不会报错。</h3><h3 id="7-加法操作符的行为表现为"><a href="#7-加法操作符的行为表现为" class="headerlink" title="7.加法操作符的行为表现为:"></a>7.加法操作符的行为表现为:</h3><ul>
+          <h1 id="学习JavaScript权威指南第二天"><a href="#学习JavaScript权威指南第二天" class="headerlink" title="学习JavaScript权威指南第二天"></a>学习JavaScript权威指南第二天</h1><h2 id="第四章-表达式和运算符"><a href="#第四章-表达式和运算符" class="headerlink" title="第四章 表达式和运算符"></a>第四章 表达式和运算符</h2><h3 id="1-最简单的表达式是”原始表达式”。原始表达式是表达式的最小单位——它们不再包含其他表达式。JavaScript中的原始表达式包含常量或直接量、关键字和变量。当JavaScript代码中出现了标识符，JavaScript会将其当做变量而去查找它的值。如果变量名不存在，表达式运算结果为undefined。然而，在ECMAScript-5的严格模式中，对不存在的变量进行求值会抛出一个引用错误异常。"><a href="#1-最简单的表达式是”原始表达式”。原始表达式是表达式的最小单位——它们不再包含其他表达式。JavaScript中的原始表达式包含常量或直接量、关键字和变量。当JavaScript代码中出现了标识符，JavaScript会将其当做变量而去查找它的值。如果变量名不存在，表达式运算结果为undefined。然而，在ECMAScript-5的严格模式中，对不存在的变量进行求值会抛出一个引用错误异常。" class="headerlink" title="1.最简单的表达式是”原始表达式”。原始表达式是表达式的最小单位——它们不再包含其他表达式。JavaScript中的原始表达式包含常量或直接量、关键字和变量。当JavaScript代码中出现了标识符，JavaScript会将其当做变量而去查找它的值。如果变量名不存在，表达式运算结果为undefined。然而，在ECMAScript 5的严格模式中，对不存在的变量进行求值会抛出一个引用错误异常。"></a>1.最简单的表达式是”原始表达式”。原始表达式是表达式的最小单位——它们不再包含其他表达式。JavaScript中的原始表达式包含常量或直接量、关键字和变量。当JavaScript代码中出现了标识符，JavaScript会将其当做变量而去查找它的值。如果变量名不存在，表达式运算结果为undefined。然而，在ECMAScript 5的严格模式中，对不存在的变量进行求值会抛出一个引用错误异常。</h3><h3 id="2-显然-identifier的写法更加简单，但需要注意的是，这种方式只适用于要访问的属性名称是合法的标识符，并且需要直到要访问的属性的名字。如果属性名称是一个保留字或者包含空格和标点符号，或是一个数字-对于数组来说-，即必须使用方括号的写法。当属性名是通过运算得出的值而不是固定的值的时候，这时必须使用方括号写法。"><a href="#2-显然-identifier的写法更加简单，但需要注意的是，这种方式只适用于要访问的属性名称是合法的标识符，并且需要直到要访问的属性的名字。如果属性名称是一个保留字或者包含空格和标点符号，或是一个数字-对于数组来说-，即必须使用方括号的写法。当属性名是通过运算得出的值而不是固定的值的时候，这时必须使用方括号写法。" class="headerlink" title="2.显然.identifier的写法更加简单，但需要注意的是，这种方式只适用于要访问的属性名称是合法的标识符，并且需要直到要访问的属性的名字。如果属性名称是一个保留字或者包含空格和标点符号，或是一个数字(对于数组来说)，即必须使用方括号的写法。当属性名是通过运算得出的值而不是固定的值的时候，这时必须使用方括号写法。"></a>2.显然.identifier的写法更加简单，但需要注意的是，这种方式只适用于要访问的属性名称是合法的标识符，并且需要直到要访问的属性的名字。如果属性名称是一个保留字或者包含空格和标点符号，或是一个数字(对于数组来说)，即必须使用方括号的写法。当属性名是通过运算得出的值而不是固定的值的时候，这时必须使用方括号写法。</h3><h3 id="3-在方法调用中，执行函数体的时候，作为属性访问主题的对象和数组便是其调用方法内this的指向。并不是方法调用的调用表达式通常使用全局对象作为this关键字的值。然而在ECMAScript-5中，那些通过严格模式定义的函数在调用时将使用undefined作为this的值，this不会指向全局对象。"><a href="#3-在方法调用中，执行函数体的时候，作为属性访问主题的对象和数组便是其调用方法内this的指向。并不是方法调用的调用表达式通常使用全局对象作为this关键字的值。然而在ECMAScript-5中，那些通过严格模式定义的函数在调用时将使用undefined作为this的值，this不会指向全局对象。" class="headerlink" title="3.在方法调用中，执行函数体的时候，作为属性访问主题的对象和数组便是其调用方法内this的指向。并不是方法调用的调用表达式通常使用全局对象作为this关键字的值。然而在ECMAScript 5中，那些通过严格模式定义的函数在调用时将使用undefined作为this的值，this不会指向全局对象。"></a>3.在方法调用中，执行函数体的时候，作为属性访问主题的对象和数组便是其调用方法内this的指向。并不是方法调用的调用表达式通常使用全局对象作为this关键字的值。然而在ECMAScript 5中，那些通过严格模式定义的函数在调用时将使用undefined作为this的值，this不会指向全局对象。</h3><h3 id="4-左值是一个古老的术语，它是指”表达式只能出现在赋值运算符的左侧”。在JavaScript中，变量、对象属性和数组元素均是左值"><a href="#4-左值是一个古老的术语，它是指”表达式只能出现在赋值运算符的左侧”。在JavaScript中，变量、对象属性和数组元素均是左值" class="headerlink" title="4.左值是一个古老的术语，它是指”表达式只能出现在赋值运算符的左侧”。在JavaScript中，变量、对象属性和数组元素均是左值"></a>4.左值是一个古老的术语，它是指”表达式只能出现在赋值运算符的左侧”。在JavaScript中，变量、对象属性和数组元素均是左值</h3><h3 id="5-需要注意的是，属性访问表达式和调用表达式的优先级要比所有运算符都要高。"><a href="#5-需要注意的是，属性访问表达式和调用表达式的优先级要比所有运算符都要高。" class="headerlink" title="5.需要注意的是，属性访问表达式和调用表达式的优先级要比所有运算符都要高。"></a>5.需要注意的是，属性访问表达式和调用表达式的优先级要比所有运算符都要高。</h3><h3 id="6-如果操作数-或者转换结果-是NaN值，算术运算的结果也是NaN。除数为0的运算结果为正无穷大或负无穷大，而0-0的结果是NaN，所有这些运算均不会报错。"><a href="#6-如果操作数-或者转换结果-是NaN值，算术运算的结果也是NaN。除数为0的运算结果为正无穷大或负无穷大，而0-0的结果是NaN，所有这些运算均不会报错。" class="headerlink" title="6.如果操作数(或者转换结果)是NaN值，算术运算的结果也是NaN。除数为0的运算结果为正无穷大或负无穷大，而0/0的结果是NaN，所有这些运算均不会报错。"></a>6.如果操作数(或者转换结果)是NaN值，算术运算的结果也是NaN。除数为0的运算结果为正无穷大或负无穷大，而0/0的结果是NaN，所有这些运算均不会报错。</h3><h3 id="7-加法操作符的行为表现为"><a href="#7-加法操作符的行为表现为" class="headerlink" title="7.加法操作符的行为表现为:"></a>7.加法操作符的行为表现为:</h3><ul>
 <li>如果其中一个操作数是对象，则对象会遵循对象到原始值的转换规则转换为原始类值:日期对象通过toString()方法执行转换，其他对象则通过valueOf()方法执行转换(如果valueOf()方法返回一个原始值的话)。由于多数对象都不具备可用的valueOf()方法，因此它们会通过toString()方法来执行转换。</li>
 <li>在进行了对象到原始值的转换后，如果其中一个操作数是字符串的话，另一个操作数也会转换为字符串，然后进行字符串连接。</li>
 <li>否则，两个操作数都将转换为数字(或者NaN)，然后进行加法操作
@@ -1031,104 +1122,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/02/13/ES6one/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/touxiang.jpg">
-      <meta itemprop="name" content="丁可">
-      <meta itemprop="description" content="哪来的勇气我就是不灰心">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="DKの博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/02/13/ES6one/" class="post-title-link" itemprop="url">学习ES6标准入门第一天</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-02-13 20:10:15" itemprop="dateCreated datePublished" datetime="2021-02-13T20:10:15+08:00">2021-02-13</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-02-14 01:02:07" itemprop="dateModified" datetime="2021-02-14T01:02:07+08:00">2021-02-14</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">学习笔记</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>3.7k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>3 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="学习ES6标准入门第一天"><a href="#学习ES6标准入门第一天" class="headerlink" title="学习ES6标准入门第一天"></a>学习ES6标准入门第一天</h1><h2 id="第二章-let和const命令"><a href="#第二章-let和const命令" class="headerlink" title="第二章 let和const命令"></a>第二章 let和const命令</h2><h3 id="1-在循环中用let声明的变量i只在当前轮的循环中有效。所以每一次循环的i其实都是一个新的变量，如果每一轮循环的变量i都是重新声明的，那它怎么知道上一轮循环的值从而计算出本轮循环的值呢？这是因为JavaScript引擎内部会记住上一轮循环的值，初始化本轮的变量i时，就在上一轮循环的基础上进行计算。另外，for循环还有一个特别之处，就是设置循环变量的那部分是一个父作用域，而循环体内部是一个单独的子作用域。"><a href="#1-在循环中用let声明的变量i只在当前轮的循环中有效。所以每一次循环的i其实都是一个新的变量，如果每一轮循环的变量i都是重新声明的，那它怎么知道上一轮循环的值从而计算出本轮循环的值呢？这是因为JavaScript引擎内部会记住上一轮循环的值，初始化本轮的变量i时，就在上一轮循环的基础上进行计算。另外，for循环还有一个特别之处，就是设置循环变量的那部分是一个父作用域，而循环体内部是一个单独的子作用域。" class="headerlink" title="1.在循环中用let声明的变量i只在当前轮的循环中有效。所以每一次循环的i其实都是一个新的变量，如果每一轮循环的变量i都是重新声明的，那它怎么知道上一轮循环的值从而计算出本轮循环的值呢？这是因为JavaScript引擎内部会记住上一轮循环的值，初始化本轮的变量i时，就在上一轮循环的基础上进行计算。另外，for循环还有一个特别之处，就是设置循环变量的那部分是一个父作用域，而循环体内部是一个单独的子作用域。"></a>1.在循环中用let声明的变量i只在当前轮的循环中有效。所以每一次循环的i其实都是一个新的变量，如果每一轮循环的变量i都是重新声明的，那它怎么知道上一轮循环的值从而计算出本轮循环的值呢？这是因为JavaScript引擎内部会记住上一轮循环的值，初始化本轮的变量i时，就在上一轮循环的基础上进行计算。另外，for循环还有一个特别之处，就是设置循环变量的那部分是一个父作用域，而循环体内部是一个单独的子作用域。</h3><h3 id="2-只要块级作用域内存在let命令，它所声明的变量就”绑定”这个区域，不再受外部影响。"><a href="#2-只要块级作用域内存在let命令，它所声明的变量就”绑定”这个区域，不再受外部影响。" class="headerlink" title="2.只要块级作用域内存在let命令，它所声明的变量就”绑定”这个区域，不再受外部影响。"></a>2.只要块级作用域内存在let命令，它所声明的变量就”绑定”这个区域，不再受外部影响。</h3><h3 id="3-ES6明确规定，如果区块中存在let和const命令，则这个区块对这些命令声明的变量从一开始就形成封闭作用域。只要在声明之前就使用这些变量，就会报错。暂时性死区也意味着typeof不再是一个百分之百安全的操作。变量x使用let命令声明，所以在声明之前都属于x的”死区”，只要用到该变量就会报错。因此，typeof运行时就会抛出一个ReferenceError。作为比较，如果一个变量根本没有被声明，使用typeof反而不会报错。暂时性死区的本质就是，只要进入当前作用域，所要使用的变量就已经存在了，但是不可获取，只有等到声明变量的那一行代码出现，才可以获取和使用该变量。"><a href="#3-ES6明确规定，如果区块中存在let和const命令，则这个区块对这些命令声明的变量从一开始就形成封闭作用域。只要在声明之前就使用这些变量，就会报错。暂时性死区也意味着typeof不再是一个百分之百安全的操作。变量x使用let命令声明，所以在声明之前都属于x的”死区”，只要用到该变量就会报错。因此，typeof运行时就会抛出一个ReferenceError。作为比较，如果一个变量根本没有被声明，使用typeof反而不会报错。暂时性死区的本质就是，只要进入当前作用域，所要使用的变量就已经存在了，但是不可获取，只有等到声明变量的那一行代码出现，才可以获取和使用该变量。" class="headerlink" title="3.ES6明确规定，如果区块中存在let和const命令，则这个区块对这些命令声明的变量从一开始就形成封闭作用域。只要在声明之前就使用这些变量，就会报错。暂时性死区也意味着typeof不再是一个百分之百安全的操作。变量x使用let命令声明，所以在声明之前都属于x的”死区”，只要用到该变量就会报错。因此，typeof运行时就会抛出一个ReferenceError。作为比较，如果一个变量根本没有被声明，使用typeof反而不会报错。暂时性死区的本质就是，只要进入当前作用域，所要使用的变量就已经存在了，但是不可获取，只有等到声明变量的那一行代码出现，才可以获取和使用该变量。"></a>3.ES6明确规定，如果区块中存在let和const命令，则这个区块对这些命令声明的变量从一开始就形成封闭作用域。只要在声明之前就使用这些变量，就会报错。暂时性死区也意味着typeof不再是一个百分之百安全的操作。变量x使用let命令声明，所以在声明之前都属于x的”死区”，只要用到该变量就会报错。因此，typeof运行时就会抛出一个ReferenceError。作为比较，如果一个变量根本没有被声明，使用typeof反而不会报错。暂时性死区的本质就是，只要进入当前作用域，所要使用的变量就已经存在了，但是不可获取，只有等到声明变量的那一行代码出现，才可以获取和使用该变量。</h3><h3 id="4-let不允许在相同作用域内重复声明同一个变量。"><a href="#4-let不允许在相同作用域内重复声明同一个变量。" class="headerlink" title="4.let不允许在相同作用域内重复声明同一个变量。"></a>4.let不允许在相同作用域内重复声明同一个变量。</h3><h3 id="5-块级作用域的出现，实际上使得获得广泛应用的立即执行匿名函数-IIFE-不再必要了。"><a href="#5-块级作用域的出现，实际上使得获得广泛应用的立即执行匿名函数-IIFE-不再必要了。" class="headerlink" title="5.块级作用域的出现，实际上使得获得广泛应用的立即执行匿名函数(IIFE)不再必要了。"></a>5.块级作用域的出现，实际上使得获得广泛应用的立即执行匿名函数(IIFE)不再必要了。</h3><h3 id="6-ES6在附录中规定，浏览器的实现可以不遵守上面的规定，而有自己的行为方式，具体如下"><a href="#6-ES6在附录中规定，浏览器的实现可以不遵守上面的规定，而有自己的行为方式，具体如下" class="headerlink" title="6.ES6在附录中规定，浏览器的实现可以不遵守上面的规定，而有自己的行为方式，具体如下:"></a>6.ES6在附录中规定，浏览器的实现可以不遵守上面的规定，而有自己的行为方式，具体如下:</h3><ul>
-<li>允许在块级作用域内声明函数</li>
-<li>函数声明类似于var，即会提升到全局作用域或函数作用域的头部。</li>
-<li>同时，函数声明还会提升到所在的块级作用域的头部。
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2021/02/13/ES6one/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1199,7 +1192,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">35</span>
+          <span class="site-state-item-count">36</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -1264,17 +1257,17 @@
       <i class="fa fa-chart-area"></i>
     </span>
       <span class="post-meta-item-text">站点总字数：</span>
-    <span title="站点总字数">229k</span>
+    <span title="站点总字数">233k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">3:28</span>
+    <span title="站点阅读时长">3:32</span>
 </div>
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共118.4k字</span>
+  <span class="post-count">博客全站共121.8k字</span>
 </div>
 
         
