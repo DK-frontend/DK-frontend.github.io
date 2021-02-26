@@ -154,7 +154,7 @@
   </li>
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">36</span></a>
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">37</span></a>
 
   </li>
   </ul>
@@ -180,6 +180,95 @@
 
           <div class="content index posts-expand">
             
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/02/04/vuetwo/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/touxiang.jpg">
+      <meta itemprop="name" content="丁可">
+      <meta itemprop="description" content="哪来的勇气我就是不灰心">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="DKの博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/02/04/vuetwo/" class="post-title-link" itemprop="url">深入浅出vue.js学习笔记第三天</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2021-02-04 21:37:40 / 修改时间：23:12:24" itemprop="dateCreated datePublished" datetime="2021-02-04T21:37:40+08:00">2021-02-04</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">学习笔记</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>3.4k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>3 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="深入浅出vue-js学习笔记第三天"><a href="#深入浅出vue-js学习笔记第三天" class="headerlink" title="深入浅出vue.js学习笔记第三天"></a>深入浅出vue.js学习笔记第三天</h1><h2 id="第九章-解析器"><a href="#第九章-解析器" class="headerlink" title="第九章 解析器"></a>第九章 解析器</h2><h3 id="1-AST不是什么很神奇的东西，它只是用JavaScript中的对象来描述一个节点，一个对象表示一个节点，对象中的属性用来保存节点所需的各种数据。当很多个独立的节点通过parent属性和children属性连在一起时，就变成了一个树，而这样一个用对象描述的节点树其实就是AST。"><a href="#1-AST不是什么很神奇的东西，它只是用JavaScript中的对象来描述一个节点，一个对象表示一个节点，对象中的属性用来保存节点所需的各种数据。当很多个独立的节点通过parent属性和children属性连在一起时，就变成了一个树，而这样一个用对象描述的节点树其实就是AST。" class="headerlink" title="1.AST不是什么很神奇的东西，它只是用JavaScript中的对象来描述一个节点，一个对象表示一个节点，对象中的属性用来保存节点所需的各种数据。当很多个独立的节点通过parent属性和children属性连在一起时，就变成了一个树，而这样一个用对象描述的节点树其实就是AST。"></a>1.AST不是什么很神奇的东西，它只是用JavaScript中的对象来描述一个节点，一个对象表示一个节点，对象中的属性用来保存节点所需的各种数据。当很多个独立的节点通过parent属性和children属性连在一起时，就变成了一个树，而这样一个用对象描述的节点树其实就是AST。</h3><h3 id="2-HTML解析器的作用是解析HTML，它在解析HTML的过程中会不断触发各种钩子函数。这些钩子函数包括开始标签钩子函数、结束标签钩子函数、文本钩子函数以及注释钩子函数。。当HTML解析器不再触发钩子函数时，就说明所有模板都解析完毕，所有类型的节点都在钩子函数中构建完成，即AST构建完成。"><a href="#2-HTML解析器的作用是解析HTML，它在解析HTML的过程中会不断触发各种钩子函数。这些钩子函数包括开始标签钩子函数、结束标签钩子函数、文本钩子函数以及注释钩子函数。。当HTML解析器不再触发钩子函数时，就说明所有模板都解析完毕，所有类型的节点都在钩子函数中构建完成，即AST构建完成。" class="headerlink" title="2.HTML解析器的作用是解析HTML，它在解析HTML的过程中会不断触发各种钩子函数。这些钩子函数包括开始标签钩子函数、结束标签钩子函数、文本钩子函数以及注释钩子函数。。当HTML解析器不再触发钩子函数时，就说明所有模板都解析完毕，所有类型的节点都在钩子函数中构建完成，即AST构建完成。"></a>2.HTML解析器的作用是解析HTML，它在解析HTML的过程中会不断触发各种钩子函数。这些钩子函数包括开始标签钩子函数、结束标签钩子函数、文本钩子函数以及注释钩子函数。。当HTML解析器不再触发钩子函数时，就说明所有模板都解析完毕，所有类型的节点都在钩子函数中构建完成，即AST构建完成。</h3><h3 id="3-构建AST层级关系其实非常简单，我们只需要维护一个栈即可，用栈来记录层级关系，这个层级关系也可以理解为DOM深度。基于HTML解析器的逻辑，我们可以在每次触发钩子函数start时，把当前构建的节点推入栈中；每当触发钩子函数end时，就从栈中弹出一个节点。"><a href="#3-构建AST层级关系其实非常简单，我们只需要维护一个栈即可，用栈来记录层级关系，这个层级关系也可以理解为DOM深度。基于HTML解析器的逻辑，我们可以在每次触发钩子函数start时，把当前构建的节点推入栈中；每当触发钩子函数end时，就从栈中弹出一个节点。" class="headerlink" title="3.构建AST层级关系其实非常简单，我们只需要维护一个栈即可，用栈来记录层级关系，这个层级关系也可以理解为DOM深度。基于HTML解析器的逻辑，我们可以在每次触发钩子函数start时，把当前构建的节点推入栈中；每当触发钩子函数end时，就从栈中弹出一个节点。"></a>3.构建AST层级关系其实非常简单，我们只需要维护一个栈即可，用栈来记录层级关系，这个层级关系也可以理解为DOM深度。基于HTML解析器的逻辑，我们可以在每次触发钩子函数start时，把当前构建的节点推入栈中；每当触发钩子函数end时，就从栈中弹出一个节点。</h3><h3 id="4-解析HTML模板的过程就是循环的过程，简单来说就是用HTML模板字符串来循环，每轮循环都从HTML模板中截取一小段字符串，然后重复以上过程，直到HTML模板被截成一个空字符串时结束循环，解析完毕。"><a href="#4-解析HTML模板的过程就是循环的过程，简单来说就是用HTML模板字符串来循环，每轮循环都从HTML模板中截取一小段字符串，然后重复以上过程，直到HTML模板被截成一个空字符串时结束循环，解析完毕。" class="headerlink" title="4.解析HTML模板的过程就是循环的过程，简单来说就是用HTML模板字符串来循环，每轮循环都从HTML模板中截取一小段字符串，然后重复以上过程，直到HTML模板被截成一个空字符串时结束循环，解析完毕。"></a>4.解析HTML模板的过程就是循环的过程，简单来说就是用HTML模板字符串来循环，每轮循环都从HTML模板中截取一小段字符串，然后重复以上过程，直到HTML模板被截成一个空字符串时结束循环，解析完毕。</h3><h3 id="5-在HTML解析器中，像分辨出模板是否以开始标签开头并不难，我们需要先判断HTML模板是不是以-lt-开头。如果模板以-lt-开头那么它也有可能是以结束标签开头的模板，还有可能是注释等其他标签，因为这些类型的片段都已-lt-开头。那么要进一步确定模板是不是以开始标签开头，还需要借助正则表达式来分辨模板的开始位置是否符合开始标签的特征。"><a href="#5-在HTML解析器中，像分辨出模板是否以开始标签开头并不难，我们需要先判断HTML模板是不是以-lt-开头。如果模板以-lt-开头那么它也有可能是以结束标签开头的模板，还有可能是注释等其他标签，因为这些类型的片段都已-lt-开头。那么要进一步确定模板是不是以开始标签开头，还需要借助正则表达式来分辨模板的开始位置是否符合开始标签的特征。" class="headerlink" title="5.在HTML解析器中，像分辨出模板是否以开始标签开头并不难，我们需要先判断HTML模板是不是以&lt;开头。如果模板以&lt;开头那么它也有可能是以结束标签开头的模板，还有可能是注释等其他标签，因为这些类型的片段都已&lt;开头。那么要进一步确定模板是不是以开始标签开头，还需要借助正则表达式来分辨模板的开始位置是否符合开始标签的特征。"></a>5.在HTML解析器中，像分辨出模板是否以开始标签开头并不难，我们需要先判断HTML模板是不是以&lt;开头。如果模板以&lt;开头那么它也有可能是以结束标签开头的模板，还有可能是注释等其他标签，因为这些类型的片段都已&lt;开头。那么要进一步确定模板是不是以开始标签开头，还需要借助正则表达式来分辨模板的开始位置是否符合开始标签的特征。</h3><h3 id="6-我们只需要每解析一个属性就截取一个属性。如果截取完之后，剩下的HTML模板依然符合标签属性的正则表达式，那么说明还有剩余的属性需要处理，此时就重复执行前面的流程，直到剩余的模板不存在属性，也就是剩余的模板不存在符合正则表达式所预设的规则。"><a href="#6-我们只需要每解析一个属性就截取一个属性。如果截取完之后，剩下的HTML模板依然符合标签属性的正则表达式，那么说明还有剩余的属性需要处理，此时就重复执行前面的流程，直到剩余的模板不存在属性，也就是剩余的模板不存在符合正则表达式所预设的规则。" class="headerlink" title="6.我们只需要每解析一个属性就截取一个属性。如果截取完之后，剩下的HTML模板依然符合标签属性的正则表达式，那么说明还有剩余的属性需要处理，此时就重复执行前面的流程，直到剩余的模板不存在属性，也就是剩余的模板不存在符合正则表达式所预设的规则。"></a>6.我们只需要每解析一个属性就截取一个属性。如果截取完之后，剩下的HTML模板依然符合标签属性的正则表达式，那么说明还有剩余的属性需要处理，此时就重复执行前面的流程，直到剩余的模板不存在属性，也就是剩余的模板不存在符合正则表达式所预设的规则。</h3>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2021/02/04/vuetwo/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
       
   
   
@@ -1025,100 +1114,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/07/29/doublelinklist/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/touxiang.jpg">
-      <meta itemprop="name" content="丁可">
-      <meta itemprop="description" content="哪来的勇气我就是不灰心">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="DKの博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/07/29/doublelinklist/" class="post-title-link" itemprop="url">JavaScript实现双向链表(doublelinklist)</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2020-07-29 20:50:50 / 修改时间：23:05:44" itemprop="dateCreated datePublished" datetime="2020-07-29T20:50:50+08:00">2020-07-29</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Javascript/" itemprop="url" rel="index"><span itemprop="name">Javascript</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>18k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>16 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="JavaScript实现双向链表"><a href="#JavaScript实现双向链表" class="headerlink" title="JavaScript实现双向链表"></a>JavaScript实现双向链表</h1><h2 id="一、双向链表简介"><a href="#一、双向链表简介" class="headerlink" title="一、双向链表简介"></a>一、双向链表简介</h2><p><strong>双向链表：</strong>既可以<strong>从头遍历到尾</strong>，又可以<strong>从尾遍历到头</strong>。也就是说链表连接的过程是<strong>双向</strong>的，它的实现原理是：一个节点既有<strong>向前连接的引用</strong>，也有一个<strong>向后连接的引用</strong>。</p>
-<p><strong>双向链表的缺点：</strong></p>
-<ul>
-<li>每次在<strong>插入或删除</strong>某个节点时，都需要处理四个引用，而不是两个，实现起来会困难些；</li>
-<li>相对于单向链表，所占<strong>内存空间更大</strong>一些；</li>
-<li>但是，相对于双向链表的便利性而言，这些缺点微不足道。
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2020/07/29/doublelinklist/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1189,7 +1184,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">36</span>
+          <span class="site-state-item-count">37</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -1254,17 +1249,17 @@
       <i class="fa fa-chart-area"></i>
     </span>
       <span class="post-meta-item-text">站点总字数：</span>
-    <span title="站点总字数">233k</span>
+    <span title="站点总字数">240k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">3:32</span>
+    <span title="站点阅读时长">3:38</span>
 </div>
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共121.8k字</span>
+  <span class="post-count">博客全站共126.9k字</span>
 </div>
 
         
