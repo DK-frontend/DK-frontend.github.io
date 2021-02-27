@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+ <!--pjax：防止跳转页面音乐暂停-->
+  <script src="https://cdn.jsdelivr.net/npm/pjax@0.2.8/pjax.js"></script> 
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<script src="//cdn.bootcss.com/pace/1.0.2/pace.min.js"></script>
+<link href="//cdn.bootcss.com/pace/1.0.2/themes/pink/pace-theme-flash.css" rel="stylesheet">
+<style>
+    .pace .pace-progress {
+        background: #1E92FB; /*进度条颜色*/
+        height: 3px;
+    }
+    .pace .pace-progress-inner {
+         box-shadow: 0 0 10px #1E92FB, 0 0 5px     #1E92FB; /*阴影颜色*/
+    }
+    .pace .pace-activity {
+        border-top-color: #1E92FB;    /*上边框颜色*/
+        border-left-color: #1E92FB;    /*左边框颜色*/
+    }
+</style>
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-big-counter.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yoursite.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="学习JavaScript权威指南第五天第十二章 服务器端JavaScript1.由于Node的函数和方法都是异步的，因此当它们等待运算完成时并不产生阻塞。非阻塞方法的返回值无法返回异步运算的结果给你。如果想获取结果，或想知道完成运算的的时间，当结果准备好或完成运算(或发生错误时)时，就必须提供Node能调用的一个函数。在某些情况下(如在调用前面出现的setTimeout()时)，只需简单地把函数作">
+<meta property="og:type" content="article">
+<meta property="og:title" content="学习JavaScript权威指南第五天">
+<meta property="og:url" content="http://yoursite.com/2021/02/27/JavaScriptfive/index.html">
+<meta property="og:site_name" content="DKの博客">
+<meta property="og:description" content="学习JavaScript权威指南第五天第十二章 服务器端JavaScript1.由于Node的函数和方法都是异步的，因此当它们等待运算完成时并不产生阻塞。非阻塞方法的返回值无法返回异步运算的结果给你。如果想获取结果，或想知道完成运算的的时间，当结果准备好或完成运算(或发生错误时)时，就必须提供Node能调用的一个函数。在某些情况下(如在调用前面出现的setTimeout()时)，只需简单地把函数作">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-02-27T12:21:19.000Z">
+<meta property="article:modified_time" content="2021-02-27T15:27:26.046Z">
+<meta property="article:author" content="丁可">
+<meta property="article:tag" content="JavaScript">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://yoursite.com/2021/02/27/JavaScriptfive/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>学习JavaScript权威指南第五天 | DKの博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+    <a href="https://github.com/DK-frontend" target="_blank" rel="noopener" class="github-corner" aria-label="View source on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" style="fill:#151513; color:#fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a><style>.github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}</style>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">DKの博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">记录前端学习的历程</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">11</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">3</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">38</span></a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/02/27/JavaScriptfive/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/touxiang.jpg">
+      <meta itemprop="name" content="丁可">
+      <meta itemprop="description" content="哪来的勇气我就是不灰心">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="DKの博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          学习JavaScript权威指南第五天
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2021-02-27 20:21:19 / 修改时间：23:27:26" itemprop="dateCreated datePublished" datetime="2021-02-27T20:21:19+08:00">2021-02-27</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">学习笔记</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>3.1k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>3 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="学习JavaScript权威指南第五天"><a href="#学习JavaScript权威指南第五天" class="headerlink" title="学习JavaScript权威指南第五天"></a>学习JavaScript权威指南第五天</h1><h2 id="第十二章-服务器端JavaScript"><a href="#第十二章-服务器端JavaScript" class="headerlink" title="第十二章 服务器端JavaScript"></a>第十二章 服务器端JavaScript</h2><h3 id="1-由于Node的函数和方法都是异步的，因此当它们等待运算完成时并不产生阻塞。非阻塞方法的返回值无法返回异步运算的结果给你。如果想获取结果，或想知道完成运算的的时间，当结果准备好或完成运算-或发生错误时-时，就必须提供Node能调用的一个函数。在某些情况下-如在调用前面出现的setTimeout-时-，只需简单地把函数作为参数传入，Node会适时调用它。在另外一些情况下，则可以利用Node的事件机制。Node对象产生事件-称为时间触发器-定义on-方法来注册处理程序。当传入参数时，将时间类型-一个字符串-作为第一参数，处理程序函数作为第二参数。不同的事件类型传递给处理程序函数的参数不同。"><a href="#1-由于Node的函数和方法都是异步的，因此当它们等待运算完成时并不产生阻塞。非阻塞方法的返回值无法返回异步运算的结果给你。如果想获取结果，或想知道完成运算的的时间，当结果准备好或完成运算-或发生错误时-时，就必须提供Node能调用的一个函数。在某些情况下-如在调用前面出现的setTimeout-时-，只需简单地把函数作为参数传入，Node会适时调用它。在另外一些情况下，则可以利用Node的事件机制。Node对象产生事件-称为时间触发器-定义on-方法来注册处理程序。当传入参数时，将时间类型-一个字符串-作为第一参数，处理程序函数作为第二参数。不同的事件类型传递给处理程序函数的参数不同。" class="headerlink" title="1.由于Node的函数和方法都是异步的，因此当它们等待运算完成时并不产生阻塞。非阻塞方法的返回值无法返回异步运算的结果给你。如果想获取结果，或想知道完成运算的的时间，当结果准备好或完成运算(或发生错误时)时，就必须提供Node能调用的一个函数。在某些情况下(如在调用前面出现的setTimeout()时)，只需简单地把函数作为参数传入，Node会适时调用它。在另外一些情况下，则可以利用Node的事件机制。Node对象产生事件(称为时间触发器)定义on()方法来注册处理程序。当传入参数时，将时间类型(一个字符串)作为第一参数，处理程序函数作为第二参数。不同的事件类型传递给处理程序函数的参数不同。"></a>1.由于Node的函数和方法都是异步的，因此当它们等待运算完成时并不产生阻塞。非阻塞方法的返回值无法返回异步运算的结果给你。如果想获取结果，或想知道完成运算的的时间，当结果准备好或完成运算(或发生错误时)时，就必须提供Node能调用的一个函数。在某些情况下(如在调用前面出现的setTimeout()时)，只需简单地把函数作为参数传入，Node会适时调用它。在另外一些情况下，则可以利用Node的事件机制。Node对象产生事件(称为时间触发器)定义on()方法来注册处理程序。当传入参数时，将时间类型(一个字符串)作为第一参数，处理程序函数作为第二参数。不同的事件类型传递给处理程序函数的参数不同。</h3><h2 id="第十三章-Web浏览器中的JavaScript"><a href="#第十三章-Web浏览器中的JavaScript" class="headerlink" title="第十三章 Web浏览器中的JavaScript"></a>第十三章 Web浏览器中的JavaScript</h2><h3 id="1-Window对象定义了一些属性，比如，指代Location对象的location属性，Location对象指定当前显示在窗口中的URL，并允许脚本往窗口里载入新的URL。"><a href="#1-Window对象定义了一些属性，比如，指代Location对象的location属性，Location对象指定当前显示在窗口中的URL，并允许脚本往窗口里载入新的URL。" class="headerlink" title="1.Window对象定义了一些属性，比如，指代Location对象的location属性，Location对象指定当前显示在窗口中的URL，并允许脚本往窗口里载入新的URL。"></a>1.Window对象定义了一些属性，比如，指代Location对象的location属性，Location对象指定当前显示在窗口中的URL，并允许脚本往窗口里载入新的URL。</h3><h3 id="2-在HTML文档里嵌入客户端JavaScript代码有四种方法"><a href="#2-在HTML文档里嵌入客户端JavaScript代码有四种方法" class="headerlink" title="2.在HTML文档里嵌入客户端JavaScript代码有四种方法:"></a>2.在HTML文档里嵌入客户端JavaScript代码有四种方法:</h3><ul>
+<li>内联，放置在<script>和</script>标签对之间</li>
+<li>放置在由<script>标签的src属性指定的外部文件中</li>
+<li>放置在HTML事件处理程序之中，该事件处理程序由onclick或onmouseover这样的HTML属性值指定</li>
+<li>放在一个URL里，这个URL使用特殊的"javascript:"协议</li>
+</ul>
+<h3 id="3-使用src属性时，和标签之间的任何内容都会忽略。如果需要，可以在标签之间添加代码的补充说明文档或版权信息。但是要注意，如果有任何非空格或JavaScript注释的文本出现在和之间，HTML5校验器将会报错。src属性方式的一个优点是-如果一个JavaScript代码文件由多个页面共享，就只需要下载它一次，通过使用它的第一个页面——随后的页面可以从浏览器缓存检索它。"><a href="#3-使用src属性时，和标签之间的任何内容都会忽略。如果需要，可以在标签之间添加代码的补充说明文档或版权信息。但是要注意，如果有任何非空格或JavaScript注释的文本出现在和之间，HTML5校验器将会报错。src属性方式的一个优点是-如果一个JavaScript代码文件由多个页面共享，就只需要下载它一次，通过使用它的第一个页面——随后的页面可以从浏览器缓存检索它。" class="headerlink" title="3.使用src属性时，和标签之间的任何内容都会忽略。如果需要，可以在标签之间添加代码的补充说明文档或版权信息。但是要注意，如果有任何非空格或JavaScript注释的文本出现在和之间，HTML5校验器将会报错。src属性方式的一个优点是:如果一个JavaScript代码文件由多个页面共享，就只需要下载它一次，通过使用它的第一个页面——随后的页面可以从浏览器缓存检索它。"></a>3.使用src属性时，<script>和</script>标签之间的任何内容都会忽略。如果需要，可以在<script>标签之间添加代码的补充说明文档或版权信息。但是要注意，如果有任何非空格或JavaScript注释的文本出现在<script src="">和</script>之间，HTML5校验器将会报错。src属性方式的一个优点是:如果一个JavaScript代码文件由多个页面共享，就只需要下载它一次，通过使用它的第一个页面——随后的页面可以从浏览器缓存检索它。</h3><h3 id="4-当Web浏览器遇到元素，并且这个元素包含其值不被浏览器识别的type属性时，它会解析这个元素但不会尝试显示或执行它的内容。这意味着可以使用元素来嵌入任意的文本数据到文档里，只要用type属性为数据声明一个不可执行的类型。要获取数据，可以用标识script元素的HTMLElement对象的text属性。但是，要注意这些数据嵌入技术只对内联脚本生效。如果同时指定src属性和一个未知的类型，那么这个脚本会被忽略，并且不会从指定的URL里下载任何内容。"><a href="#4-当Web浏览器遇到元素，并且这个元素包含其值不被浏览器识别的type属性时，它会解析这个元素但不会尝试显示或执行它的内容。这意味着可以使用元素来嵌入任意的文本数据到文档里，只要用type属性为数据声明一个不可执行的类型。要获取数据，可以用标识script元素的HTMLElement对象的text属性。但是，要注意这些数据嵌入技术只对内联脚本生效。如果同时指定src属性和一个未知的类型，那么这个脚本会被忽略，并且不会从指定的URL里下载任何内容。" class="headerlink" title="4.当Web浏览器遇到元素，并且这个元素包含其值不被浏览器识别的type属性时，它会解析这个元素但不会尝试显示或执行它的内容。这意味着可以使用元素来嵌入任意的文本数据到文档里，只要用type属性为数据声明一个不可执行的类型。要获取数据，可以用标识script元素的HTMLElement对象的text属性。但是，要注意这些数据嵌入技术只对内联脚本生效。如果同时指定src属性和一个未知的类型，那么这个脚本会被忽略，并且不会从指定的URL里下载任何内容。"></a>4.当Web浏览器遇到<script>元素，并且这个<script>元素包含其值不被浏览器识别的type属性时，它会解析这个元素但不会尝试显示或执行它的内容。这意味着可以使用<script>元素来嵌入任意的文本数据到文档里，只要用type属性为数据声明一个不可执行的类型。要获取数据，可以用标识script元素的HTMLElement对象的text属性。但是，要注意这些数据嵌入技术只对内联脚本生效。如果同时指定src属性和一个未知的类型，那么这个脚本会被忽略，并且不会从指定的URL里下载任何内容。</h3><a id="more"></a>
+<h3 id="5-在URL后面跟一个javascript-协议限定符，是另一种嵌入JavaScript代码到客户端的方式。这种特殊的协议类型指定URL内容为任意字符串，这个字符串是会被JavaScript解释器运行的JavaScript代码。它被当作单独的一行代码对待，这意味着语句之间必须用分号隔开，而-注释必须用-注释代替。javascript-URL能识别的-资源-是转换成字符串的执行代码的返回值。如果代码返回undefined，那么这个资源是没有内容的。部分浏览器会执行URL里的代码，并使用返回的字符串作为待显示新文档的内容。其他浏览器不允许URL像上面一样覆盖当前文档，它们会忽略代码的返回值。"><a href="#5-在URL后面跟一个javascript-协议限定符，是另一种嵌入JavaScript代码到客户端的方式。这种特殊的协议类型指定URL内容为任意字符串，这个字符串是会被JavaScript解释器运行的JavaScript代码。它被当作单独的一行代码对待，这意味着语句之间必须用分号隔开，而-注释必须用-注释代替。javascript-URL能识别的-资源-是转换成字符串的执行代码的返回值。如果代码返回undefined，那么这个资源是没有内容的。部分浏览器会执行URL里的代码，并使用返回的字符串作为待显示新文档的内容。其他浏览器不允许URL像上面一样覆盖当前文档，它们会忽略代码的返回值。" class="headerlink" title="5.在URL后面跟一个javascript:协议限定符，是另一种嵌入JavaScript代码到客户端的方式。这种特殊的协议类型指定URL内容为任意字符串，这个字符串是会被JavaScript解释器运行的JavaScript代码。它被当作单独的一行代码对待，这意味着语句之间必须用分号隔开，而//注释必须用/* */注释代替。javascript:URL能识别的"资源"是转换成字符串的执行代码的返回值。如果代码返回undefined，那么这个资源是没有内容的。部分浏览器会执行URL里的代码，并使用返回的字符串作为待显示新文档的内容。其他浏览器不允许URL像上面一样覆盖当前文档，它们会忽略代码的返回值。"></a>5.在URL后面跟一个javascript:协议限定符，是另一种嵌入JavaScript代码到客户端的方式。这种特殊的协议类型指定URL内容为任意字符串，这个字符串是会被JavaScript解释器运行的JavaScript代码。它被当作单独的一行代码对待，这意味着语句之间必须用分号隔开，而//注释必须用/* */注释代替。javascript:URL能识别的"资源"是转换成字符串的执行代码的返回值。如果代码返回undefined，那么这个资源是没有内容的。部分浏览器会执行URL里的代码，并使用返回的字符串作为待显示新文档的内容。其他浏览器不允许URL像上面一样覆盖当前文档，它们会忽略代码的返回值。</h3><h3 id="6-如果Web页面包含一个嵌入的窗体-通常使用元素-，嵌入文档中的JavaScript代码和被嵌入文档里的JavaScript代码会有不同的全局对象，它可以当做一个单独的JavaScript程序。但是，要记住，没有严格的关于JavaScript程序范围的定义。如果外面和里面的文档来自于同一个服务器，那么两个文档中的代码就可以进行交互，并且如果你愿意，就可以把它们当作是同一个程序的两个相互作用的部分。JavaScript程序的执行有两个阶段。在第一阶段，载入文档内容，并执行元素里的代码-包括内联脚本和外部脚本-。当文档载入完成，并且所有脚本执行完成后，JavaScript执行就进入它的第二阶段。这个阶段是异步的，而且由事件驱动的。注意，嵌入在Web页面里的javascript-URL也可以被看做一种事件处理程序，因为直到用户通过单击链接或提交表单来激活之后它们才会有效果。JavaScript程序的载入阶段是相对短暂的，通常只持续1-2秒。在文档载入完成之后，只要Web浏览器显示文档，事件驱动阶段就会一直持续下去。因为这个阶段是异步的和事件驱动的，所有可能有长时间处于不活动状态，没有JavaScript被执行，被用户或网络事件触发的活动打断。"><a href="#6-如果Web页面包含一个嵌入的窗体-通常使用元素-，嵌入文档中的JavaScript代码和被嵌入文档里的JavaScript代码会有不同的全局对象，它可以当做一个单独的JavaScript程序。但是，要记住，没有严格的关于JavaScript程序范围的定义。如果外面和里面的文档来自于同一个服务器，那么两个文档中的代码就可以进行交互，并且如果你愿意，就可以把它们当作是同一个程序的两个相互作用的部分。JavaScript程序的执行有两个阶段。在第一阶段，载入文档内容，并执行元素里的代码-包括内联脚本和外部脚本-。当文档载入完成，并且所有脚本执行完成后，JavaScript执行就进入它的第二阶段。这个阶段是异步的，而且由事件驱动的。注意，嵌入在Web页面里的javascript-URL也可以被看做一种事件处理程序，因为直到用户通过单击链接或提交表单来激活之后它们才会有效果。JavaScript程序的载入阶段是相对短暂的，通常只持续1-2秒。在文档载入完成之后，只要Web浏览器显示文档，事件驱动阶段就会一直持续下去。因为这个阶段是异步的和事件驱动的，所有可能有长时间处于不活动状态，没有JavaScript被执行，被用户或网络事件触发的活动打断。" class="headerlink" title="6.如果Web页面包含一个嵌入的窗体(通常使用元素)，嵌入文档中的JavaScript代码和被嵌入文档里的JavaScript代码会有不同的全局对象，它可以当做一个单独的JavaScript程序。但是，要记住，没有严格的关于JavaScript程序范围的定义。如果外面和里面的文档来自于同一个服务器，那么两个文档中的代码就可以进行交互，并且如果你愿意，就可以把它们当作是同一个程序的两个相互作用的部分。JavaScript程序的执行有两个阶段。在第一阶段，载入文档内容，并执行元素里的代码(包括内联脚本和外部脚本)。当文档载入完成，并且所有脚本执行完成后，JavaScript执行就进入它的第二阶段。这个阶段是异步的，而且由事件驱动的。注意，嵌入在Web页面里的javascript:URL也可以被看做一种事件处理程序，因为直到用户通过单击链接或提交表单来激活之后它们才会有效果。JavaScript程序的载入阶段是相对短暂的，通常只持续1~2秒。在文档载入完成之后，只要Web浏览器显示文档，事件驱动阶段就会一直持续下去。因为这个阶段是异步的和事件驱动的，所有可能有长时间处于不活动状态，没有JavaScript被执行，被用户或网络事件触发的活动打断。"></a>6.如果Web页面包含一个嵌入的窗体(通常使用<iframe>元素)，嵌入文档中的JavaScript代码和被嵌入文档里的JavaScript代码会有不同的全局对象，它可以当做一个单独的JavaScript程序。但是，要记住，没有严格的关于JavaScript程序范围的定义。如果外面和里面的文档来自于同一个服务器，那么两个文档中的代码就可以进行交互，并且如果你愿意，就可以把它们当作是同一个程序的两个相互作用的部分。JavaScript程序的执行有两个阶段。在第一阶段，载入文档内容，并执行<script>元素里的代码(包括内联脚本和外部脚本)。当文档载入完成，并且所有脚本执行完成后，JavaScript执行就进入它的第二阶段。这个阶段是异步的，而且由事件驱动的。注意，嵌入在Web页面里的javascript:URL也可以被看做一种事件处理程序，因为直到用户通过单击链接或提交表单来激活之后它们才会有效果。JavaScript程序的载入阶段是相对短暂的，通常只持续1~2秒。在文档载入完成之后，只要Web浏览器显示文档，事件驱动阶段就会一直持续下去。因为这个阶段是异步的和事件驱动的，所有可能有长时间处于不活动状态，没有JavaScript被执行，被用户或网络事件触发的活动打断。</h3><h3 id="7-如果标签同时有两个属性，同时支持两者的浏览器会遵从async属性并忽略defer属性。"><a href="#7-如果标签同时有两个属性，同时支持两者的浏览器会遵从async属性并忽略defer属性。" class="headerlink" title="7.如果标签同时有两个属性，同时支持两者的浏览器会遵从async属性并忽略defer属性。"></a>7.如果<script>标签同时有两个属性，同时支持两者的浏览器会遵从async属性并忽略defer属性。</h3><h3 id="8-单线程执行是为了让编程更加简单。编写代码时可以确保两个事件处理程序不会同一时刻运行，操作文档内容时也不必担心会有其他线程试图同时修改文档，并且永远不需要在写JavaScript代码的时候担心锁、死锁和竞态条件。HTML5定义了一种并发的控制方式，叫做-Web-worker-。Web-worker是一个用来执行计算密集任务而不冻结用户界面的后台线程。运行在Web-worker线程里的代码不能访问文档内容，不能和主线程或其他worker共享状态，只可以和主线程和其他worker通过异步事件进行通信，所以主线程不能检测并发性，并且Web-worker不能修改JavaScript程序的基础单线程执行模型。"><a href="#8-单线程执行是为了让编程更加简单。编写代码时可以确保两个事件处理程序不会同一时刻运行，操作文档内容时也不必担心会有其他线程试图同时修改文档，并且永远不需要在写JavaScript代码的时候担心锁、死锁和竞态条件。HTML5定义了一种并发的控制方式，叫做-Web-worker-。Web-worker是一个用来执行计算密集任务而不冻结用户界面的后台线程。运行在Web-worker线程里的代码不能访问文档内容，不能和主线程或其他worker共享状态，只可以和主线程和其他worker通过异步事件进行通信，所以主线程不能检测并发性，并且Web-worker不能修改JavaScript程序的基础单线程执行模型。" class="headerlink" title="8.单线程执行是为了让编程更加简单。编写代码时可以确保两个事件处理程序不会同一时刻运行，操作文档内容时也不必担心会有其他线程试图同时修改文档，并且永远不需要在写JavaScript代码的时候担心锁、死锁和竞态条件。HTML5定义了一种并发的控制方式，叫做"Web worker"。Web worker是一个用来执行计算密集任务而不冻结用户界面的后台线程。运行在Web worker线程里的代码不能访问文档内容，不能和主线程或其他worker共享状态，只可以和主线程和其他worker通过异步事件进行通信，所以主线程不能检测并发性，并且Web worker不能修改JavaScript程序的基础单线程执行模型。"></a>8.单线程执行是为了让编程更加简单。编写代码时可以确保两个事件处理程序不会同一时刻运行，操作文档内容时也不必担心会有其他线程试图同时修改文档，并且永远不需要在写JavaScript代码的时候担心锁、死锁和竞态条件。HTML5定义了一种并发的控制方式，叫做"Web worker"。Web worker是一个用来执行计算密集任务而不冻结用户界面的后台线程。运行在Web worker线程里的代码不能访问文档内容，不能和主线程或其他worker共享状态，只可以和主线程和其他worker通过异步事件进行通信，所以主线程不能检测并发性，并且Web worker不能修改JavaScript程序的基础单线程执行模型。</h3><h3 id="9-JavaScript程序执行的时间线"><a href="#9-JavaScript程序执行的时间线" class="headerlink" title="9.JavaScript程序执行的时间线:"></a>9.JavaScript程序执行的时间线:</h3><ul>
+<li>Web浏览器创建Document对象，并且开始解析Web页面，解析HTML元素和它们的文本内容后添加Element对象和Text节点到文档中。在这个阶段document.readystate属性的值是"loading"</li>
+<li>当HTML解析器遇到没有async和defer属性的<script>元素时，它把这些元素添加到文档中，然后执行行内或外部脚本。这些脚本会同步执行，并且在脚本下载(如果需要)和执行时解析器会暂停。这样脚本就可以用document.write()来把文本插入到输入流中。解析器恢复时这些文本会成为文档的一部分。同步脚本经常简单定义函数和注册后面使用的注册事件处理程序，但它们可以遍历和操作文档树，因为在它们执行时已经存在了。这样，同步脚本可以看到它自己的<script>元素和它们之前的文档内容</li>
+<li>当解析器遇到设置了async属性的<script>元素时，他开始下载脚本文本，并继续解析文档。脚本会在它下载完成后尽快执行，但是解析器没有停下来等它下载。异步脚本禁止使用document.write()方法。它们可以看到自己的<script>元素和它之前的所有文档元素，并且可能或干脆不可能访问其他的文档内容</li>
+<li>当文档完成解析，document.readyState属性变成"interactive"</li>
+<li>所有有defer属性的脚本，会按它们在文档的里的出现顺序执行。异步脚本可能也会在这个时间执行。延迟脚本能访问完整的文档树，禁止使用document.write()方法。</li>
+<li>浏览器在Document对象上触发DOMContentLoaded事件。这标志着程序执行从同步脚本执行阶段转换到了异步事件驱动阶段。但要注意，这时可能还有异步脚本没有执行完成。</li>
+<li>这时，文档已经完全解析完成，但是浏览器可能还在等待其他内容载入，如图片。当所有这些内容完成载入时，并且所有异步脚本完成载入和执行，document.readyState属性改变为"complete"，Web浏览器触发Window对象上的load事件</li>
+<li>从此刻起，会调用异步事件，以异步响应用户输入事件、网络事件、计时器过期等。</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div>您的支持是我最大的动力</div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/weixin.png" alt="丁可 微信支付">
+        <p>微信支付</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/images/zhifubao.png" alt="丁可 支付宝">
+        <p>支付宝</p>
+      </div>
+
+  </div>
+</div>
+
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>丁可
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://yoursite.com/2021/02/27/JavaScriptfive/" title="学习JavaScript权威指南第五天">http://yoursite.com/2021/02/27/JavaScriptfive/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/JavaScript/" rel="tag"><i class="fa fa-tag"></i> JavaScript</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/02/26/JavaScriptfour/" rel="prev" title="学习JavaScript权威指南第四天">
+      <i class="fa fa-chevron-left"></i> 学习JavaScript权威指南第四天
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+      <div>
+  
+    <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>感谢您的阅读-------------</div>
+    
+</div>
+
+  
+</div>
+
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    
+  <div class="comments">
+    <div id="lv-container" data-id="city" data-uid="MTAyMC81MTEwOC8yNzU4OQ=="></div>
+  </div>
+  
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#学习JavaScript权威指南第五天"><span class="nav-text">学习JavaScript权威指南第五天</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#第十二章-服务器端JavaScript"><span class="nav-text">第十二章 服务器端JavaScript</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-由于Node的函数和方法都是异步的，因此当它们等待运算完成时并不产生阻塞。非阻塞方法的返回值无法返回异步运算的结果给你。如果想获取结果，或想知道完成运算的的时间，当结果准备好或完成运算-或发生错误时-时，就必须提供Node能调用的一个函数。在某些情况下-如在调用前面出现的setTimeout-时-，只需简单地把函数作为参数传入，Node会适时调用它。在另外一些情况下，则可以利用Node的事件机制。Node对象产生事件-称为时间触发器-定义on-方法来注册处理程序。当传入参数时，将时间类型-一个字符串-作为第一参数，处理程序函数作为第二参数。不同的事件类型传递给处理程序函数的参数不同。"><span class="nav-text">1.由于Node的函数和方法都是异步的，因此当它们等待运算完成时并不产生阻塞。非阻塞方法的返回值无法返回异步运算的结果给你。如果想获取结果，或想知道完成运算的的时间，当结果准备好或完成运算(或发生错误时)时，就必须提供Node能调用的一个函数。在某些情况下(如在调用前面出现的setTimeout()时)，只需简单地把函数作为参数传入，Node会适时调用它。在另外一些情况下，则可以利用Node的事件机制。Node对象产生事件(称为时间触发器)定义on()方法来注册处理程序。当传入参数时，将时间类型(一个字符串)作为第一参数，处理程序函数作为第二参数。不同的事件类型传递给处理程序函数的参数不同。</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第十三章-Web浏览器中的JavaScript"><span class="nav-text">第十三章 Web浏览器中的JavaScript</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-Window对象定义了一些属性，比如，指代Location对象的location属性，Location对象指定当前显示在窗口中的URL，并允许脚本往窗口里载入新的URL。"><span class="nav-text">1.Window对象定义了一些属性，比如，指代Location对象的location属性，Location对象指定当前显示在窗口中的URL，并允许脚本往窗口里载入新的URL。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-在HTML文档里嵌入客户端JavaScript代码有四种方法"><span class="nav-text">2.在HTML文档里嵌入客户端JavaScript代码有四种方法:</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-当Web浏览器遇到元素，并且这个元素包含其值不被浏览器识别的type属性时，它会解析这个元素但不会尝试显示或执行它的内容。这意味着可以使用元素来嵌入任意的文本数据到文档里，只要用type属性为数据声明一个不可执行的类型。要获取数据，可以用标识script元素的HTMLElement对象的text属性。但是，要注意这些数据嵌入技术只对内联脚本生效。如果同时指定src属性和一个未知的类型，那么这个脚本会被忽略，并且不会从指定的URL里下载任何内容。"><span class="nav-text">4.当Web浏览器遇到元素，并且这个&lt;script&gt;元素包含其值不被浏览器识别的type属性时，它会解析这个元素但不会尝试显示或执行它的内容。这意味着可以使用&lt;script&gt;元素来嵌入任意的文本数据到文档里，只要用type属性为数据声明一个不可执行的类型。要获取数据，可以用标识script元素的HTMLElement对象的text属性。但是，要注意这些数据嵌入技术只对内联脚本生效。如果同时指定src属性和一个未知的类型，那么这个脚本会被忽略，并且不会从指定的URL里下载任何内容。&lt;&#x2F;h3&gt;&lt;a id&#x3D;&quot;more&quot;&gt;&lt;&#x2F;a&gt;
+&lt;h3 id&#x3D;&quot;5-在URL后面跟一个javascript-协议限定符，是另一种嵌入JavaScript代码到客户端的方式。这种特殊的协议类型指定URL内容为任意字符串，这个字符串是会被JavaScript解释器运行的JavaScript代码。它被当作单独的一行代码对待，这意味着语句之间必须用分号隔开，而-注释必须用-注释代替。javascript-URL能识别的-资源-是转换成字符串的执行代码的返回值。如果代码返回undefined，那么这个资源是没有内容的。部分浏览器会执行URL里的代码，并使用返回的字符串作为待显示新文档的内容。其他浏览器不允许URL像上面一样覆盖当前文档，它们会忽略代码的返回值。&quot;&gt;&lt;a href&#x3D;&quot;#5-在URL后面跟一个javascript-协议限定符，是另一种嵌入JavaScript代码到客户端的方式。这种特殊的协议类型指定URL内容为任意字符串，这个字符串是会被JavaScript解释器运行的JavaScript代码。它被当作单独的一行代码对待，这意味着语句之间必须用分号隔开，而-注释必须用-注释代替。javascript-URL能识别的-资源-是转换成字符串的执行代码的返回值。如果代码返回undefined，那么这个资源是没有内容的。部分浏览器会执行URL里的代码，并使用返回的字符串作为待显示新文档的内容。其他浏览器不允许URL像上面一样覆盖当前文档，它们会忽略代码的返回值。&quot; class&#x3D;&quot;headerlink&quot; title&#x3D;&quot;5.在URL后面跟一个javascript:协议限定符，是另一种嵌入JavaScript代码到客户端的方式。这种特殊的协议类型指定URL内容为任意字符串，这个字符串是会被JavaScript解释器运行的JavaScript代码。它被当作单独的一行代码对待，这意味着语句之间必须用分号隔开，而&#x2F;&#x2F;注释必须用&#x2F;* *&#x2F;注释代替。javascript:URL能识别的&quot;资源&quot;是转换成字符串的执行代码的返回值。如果代码返回undefined，那么这个资源是没有内容的。部分浏览器会执行URL里的代码，并使用返回的字符串作为待显示新文档的内容。其他浏览器不允许URL像上面一样覆盖当前文档，它们会忽略代码的返回值。&quot;&gt;&lt;&#x2F;a&gt;5.在URL后面跟一个javascript:协议限定符，是另一种嵌入JavaScript代码到客户端的方式。这种特殊的协议类型指定URL内容为任意字符串，这个字符串是会被JavaScript解释器运行的JavaScript代码。它被当作单独的一行代码对待，这意味着语句之间必须用分号隔开，而&#x2F;&#x2F;注释必须用&#x2F;* *&#x2F;注释代替。javascript:URL能识别的&quot;资源&quot;是转换成字符串的执行代码的返回值。如果代码返回undefined，那么这个资源是没有内容的。部分浏览器会执行URL里的代码，并使用返回的字符串作为待显示新文档的内容。其他浏览器不允许URL像上面一样覆盖当前文档，它们会忽略代码的返回值。&lt;&#x2F;h3&gt;&lt;h3 id&#x3D;&quot;6-如果Web页面包含一个嵌入的窗体-通常使用元素-，嵌入文档中的JavaScript代码和被嵌入文档里的JavaScript代码会有不同的全局对象，它可以当做一个单独的JavaScript程序。但是，要记住，没有严格的关于JavaScript程序范围的定义。如果外面和里面的文档来自于同一个服务器，那么两个文档中的代码就可以进行交互，并且如果你愿意，就可以把它们当作是同一个程序的两个相互作用的部分。JavaScript程序的执行有两个阶段。在第一阶段，载入文档内容，并执行元素里的代码-包括内联脚本和外部脚本-。当文档载入完成，并且所有脚本执行完成后，JavaScript执行就进入它的第二阶段。这个阶段是异步的，而且由事件驱动的。注意，嵌入在Web页面里的javascript-URL也可以被看做一种事件处理程序，因为直到用户通过单击链接或提交表单来激活之后它们才会有效果。JavaScript程序的载入阶段是相对短暂的，通常只持续1-2秒。在文档载入完成之后，只要Web浏览器显示文档，事件驱动阶段就会一直持续下去。因为这个阶段是异步的和事件驱动的，所有可能有长时间处于不活动状态，没有JavaScript被执行，被用户或网络事件触发的活动打断。&quot;&gt;&lt;a href&#x3D;&quot;#6-如果Web页面包含一个嵌入的窗体-通常使用元素-，嵌入文档中的JavaScript代码和被嵌入文档里的JavaScript代码会有不同的全局对象，它可以当做一个单独的JavaScript程序。但是，要记住，没有严格的关于JavaScript程序范围的定义。如果外面和里面的文档来自于同一个服务器，那么两个文档中的代码就可以进行交互，并且如果你愿意，就可以把它们当作是同一个程序的两个相互作用的部分。JavaScript程序的执行有两个阶段。在第一阶段，载入文档内容，并执行元素里的代码-包括内联脚本和外部脚本-。当文档载入完成，并且所有脚本执行完成后，JavaScript执行就进入它的第二阶段。这个阶段是异步的，而且由事件驱动的。注意，嵌入在Web页面里的javascript-URL也可以被看做一种事件处理程序，因为直到用户通过单击链接或提交表单来激活之后它们才会有效果。JavaScript程序的载入阶段是相对短暂的，通常只持续1-2秒。在文档载入完成之后，只要Web浏览器显示文档，事件驱动阶段就会一直持续下去。因为这个阶段是异步的和事件驱动的，所有可能有长时间处于不活动状态，没有JavaScript被执行，被用户或网络事件触发的活动打断。&quot; class&#x3D;&quot;headerlink&quot; title&#x3D;&quot;6.如果Web页面包含一个嵌入的窗体(通常使用元素)，嵌入文档中的JavaScript代码和被嵌入文档里的JavaScript代码会有不同的全局对象，它可以当做一个单独的JavaScript程序。但是，要记住，没有严格的关于JavaScript程序范围的定义。如果外面和里面的文档来自于同一个服务器，那么两个文档中的代码就可以进行交互，并且如果你愿意，就可以把它们当作是同一个程序的两个相互作用的部分。JavaScript程序的执行有两个阶段。在第一阶段，载入文档内容，并执行元素里的代码(包括内联脚本和外部脚本)。当文档载入完成，并且所有脚本执行完成后，JavaScript执行就进入它的第二阶段。这个阶段是异步的，而且由事件驱动的。注意，嵌入在Web页面里的javascript:URL也可以被看做一种事件处理程序，因为直到用户通过单击链接或提交表单来激活之后它们才会有效果。JavaScript程序的载入阶段是相对短暂的，通常只持续1~2秒。在文档载入完成之后，只要Web浏览器显示文档，事件驱动阶段就会一直持续下去。因为这个阶段是异步的和事件驱动的，所有可能有长时间处于不活动状态，没有JavaScript被执行，被用户或网络事件触发的活动打断。&quot;&gt;&lt;&#x2F;a&gt;6.如果Web页面包含一个嵌入的窗体(通常使用&lt;iframe&gt;元素)，嵌入文档中的JavaScript代码和被嵌入文档里的JavaScript代码会有不同的全局对象，它可以当做一个单独的JavaScript程序。但是，要记住，没有严格的关于JavaScript程序范围的定义。如果外面和里面的文档来自于同一个服务器，那么两个文档中的代码就可以进行交互，并且如果你愿意，就可以把它们当作是同一个程序的两个相互作用的部分。JavaScript程序的执行有两个阶段。在第一阶段，载入文档内容，并执行&lt;script&gt;元素里的代码(包括内联脚本和外部脚本)。当文档载入完成，并且所有脚本执行完成后，JavaScript执行就进入它的第二阶段。这个阶段是异步的，而且由事件驱动的。注意，嵌入在Web页面里的javascript:URL也可以被看做一种事件处理程序，因为直到用户通过单击链接或提交表单来激活之后它们才会有效果。JavaScript程序的载入阶段是相对短暂的，通常只持续1~2秒。在文档载入完成之后，只要Web浏览器显示文档，事件驱动阶段就会一直持续下去。因为这个阶段是异步的和事件驱动的，所有可能有长时间处于不活动状态，没有JavaScript被执行，被用户或网络事件触发的活动打断。&lt;&#x2F;h3&gt;&lt;h3 id&#x3D;&quot;7-如果标签同时有两个属性，同时支持两者的浏览器会遵从async属性并忽略defer属性。&quot;&gt;&lt;a href&#x3D;&quot;#7-如果标签同时有两个属性，同时支持两者的浏览器会遵从async属性并忽略defer属性。&quot; class&#x3D;&quot;headerlink&quot; title&#x3D;&quot;7.如果标签同时有两个属性，同时支持两者的浏览器会遵从async属性并忽略defer属性。&quot;&gt;&lt;&#x2F;a&gt;7.如果&lt;script&gt;标签同时有两个属性，同时支持两者的浏览器会遵从async属性并忽略defer属性。&lt;&#x2F;h3&gt;&lt;h3 id&#x3D;&quot;8-单线程执行是为了让编程更加简单。编写代码时可以确保两个事件处理程序不会同一时刻运行，操作文档内容时也不必担心会有其他线程试图同时修改文档，并且永远不需要在写JavaScript代码的时候担心锁、死锁和竞态条件。HTML5定义了一种并发的控制方式，叫做-Web-worker-。Web-worker是一个用来执行计算密集任务而不冻结用户界面的后台线程。运行在Web-worker线程里的代码不能访问文档内容，不能和主线程或其他worker共享状态，只可以和主线程和其他worker通过异步事件进行通信，所以主线程不能检测并发性，并且Web-worker不能修改JavaScript程序的基础单线程执行模型。&quot;&gt;&lt;a href&#x3D;&quot;#8-单线程执行是为了让编程更加简单。编写代码时可以确保两个事件处理程序不会同一时刻运行，操作文档内容时也不必担心会有其他线程试图同时修改文档，并且永远不需要在写JavaScript代码的时候担心锁、死锁和竞态条件。HTML5定义了一种并发的控制方式，叫做-Web-worker-。Web-worker是一个用来执行计算密集任务而不冻结用户界面的后台线程。运行在Web-worker线程里的代码不能访问文档内容，不能和主线程或其他worker共享状态，只可以和主线程和其他worker通过异步事件进行通信，所以主线程不能检测并发性，并且Web-worker不能修改JavaScript程序的基础单线程执行模型。&quot; class&#x3D;&quot;headerlink&quot; title&#x3D;&quot;8.单线程执行是为了让编程更加简单。编写代码时可以确保两个事件处理程序不会同一时刻运行，操作文档内容时也不必担心会有其他线程试图同时修改文档，并且永远不需要在写JavaScript代码的时候担心锁、死锁和竞态条件。HTML5定义了一种并发的控制方式，叫做&quot;Web worker&quot;。Web worker是一个用来执行计算密集任务而不冻结用户界面的后台线程。运行在Web worker线程里的代码不能访问文档内容，不能和主线程或其他worker共享状态，只可以和主线程和其他worker通过异步事件进行通信，所以主线程不能检测并发性，并且Web worker不能修改JavaScript程序的基础单线程执行模型。&quot;&gt;&lt;&#x2F;a&gt;8.单线程执行是为了让编程更加简单。编写代码时可以确保两个事件处理程序不会同一时刻运行，操作文档内容时也不必担心会有其他线程试图同时修改文档，并且永远不需要在写JavaScript代码的时候担心锁、死锁和竞态条件。HTML5定义了一种并发的控制方式，叫做&quot;Web worker&quot;。Web worker是一个用来执行计算密集任务而不冻结用户界面的后台线程。运行在Web worker线程里的代码不能访问文档内容，不能和主线程或其他worker共享状态，只可以和主线程和其他worker通过异步事件进行通信，所以主线程不能检测并发性，并且Web worker不能修改JavaScript程序的基础单线程执行模型。&lt;&#x2F;h3&gt;&lt;h3 id&#x3D;&quot;9-JavaScript程序执行的时间线&quot;&gt;&lt;a href&#x3D;&quot;#9-JavaScript程序执行的时间线&quot; class&#x3D;&quot;headerlink&quot; title&#x3D;&quot;9.JavaScript程序执行的时间线:&quot;&gt;&lt;&#x2F;a&gt;9.JavaScript程序执行的时间线:&lt;&#x2F;h3&gt;&lt;ul&gt;
+&lt;li&gt;Web浏览器创建Document对象，并且开始解析Web页面，解析HTML元素和它们的文本内容后添加Element对象和Text节点到文档中。在这个阶段document.readystate属性的值是&quot;loading&quot;&lt;&#x2F;li&gt;
+&lt;li&gt;当HTML解析器遇到没有async和defer属性的&lt;script&gt;元素时，它把这些元素添加到文档中，然后执行行内或外部脚本。这些脚本会同步执行，并且在脚本下载(如果需要)和执行时解析器会暂停。这样脚本就可以用document.write()来把文本插入到输入流中。解析器恢复时这些文本会成为文档的一部分。同步脚本经常简单定义函数和注册后面使用的注册事件处理程序，但它们可以遍历和操作文档树，因为在它们执行时已经存在了。这样，同步脚本可以看到它自己的&lt;script&gt;元素和它们之前的文档内容&lt;&#x2F;li&gt;
+&lt;li&gt;当解析器遇到设置了async属性的&lt;script&gt;元素时，他开始下载脚本文本，并继续解析文档。脚本会在它下载完成后尽快执行，但是解析器没有停下来等它下载。异步脚本禁止使用document.write()方法。它们可以看到自己的&lt;script&gt;元素和它之前的所有文档元素，并且可能或干脆不可能访问其他的文档内容&lt;&#x2F;li&gt;
+&lt;li&gt;当文档完成解析，document.readyState属性变成&quot;interactive&quot;&lt;&#x2F;li&gt;
+&lt;li&gt;所有有defer属性的脚本，会按它们在文档的里的出现顺序执行。异步脚本可能也会在这个时间执行。延迟脚本能访问完整的文档树，禁止使用document.write()方法。&lt;&#x2F;li&gt;
+&lt;li&gt;浏览器在Document对象上触发DOMContentLoaded事件。这标志着程序执行从同步脚本执行阶段转换到了异步事件驱动阶段。但要注意，这时可能还有异步脚本没有执行完成。&lt;&#x2F;li&gt;
+&lt;li&gt;这时，文档已经完全解析完成，但是浏览器可能还在等待其他内容载入，如图片。当所有这些内容完成载入时，并且所有异步脚本完成载入和执行，document.readyState属性改变为&quot;complete&quot;，Web浏览器触发Window对象上的load事件&lt;&#x2F;li&gt;
+&lt;li&gt;从此刻起，会调用异步事件，以异步响应用户输入事件、网络事件、计时器过期等。&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+</span></a></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="丁可"
+      src="/images/touxiang.jpg">
+  <p class="site-author-name" itemprop="name">丁可</p>
+  <div class="site-description" itemprop="description">哪来的勇气我就是不灰心</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">38</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/DK-frontend" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;DK-frontend" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/504015629@qq.com" title="E-Mail → 504015629@qq.com"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://blog.csdn.net/DK159753" title="CSDN → https:&#x2F;&#x2F;blog.csdn.net&#x2F;DK159753" rel="noopener" target="_blank"><i class="fab fa-crosshairs fa-fw"></i>CSDN</a>
+      </span>
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+      <iframe allow="autoplay" frameborder="no" border="0" marginwidth="0" marginheight="0" width=330 height=86 src="//music.163.com/outchain/player?type=2&id=1363973661&auto=1&height=66"></iframe>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2020 – 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">丁可</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">243k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">3:41</span>
+</div>
+<div class="theme-info">
+  <div class="powered-by"></div>
+  <span class="post-count">博客全站共129.1k字</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/pjax/pjax.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '#page-configurations',
+    '.content-wrap',
+    '.post-toc-wrap',
+    '.languages',
+    '#pjax'
+  ],
+  switches: {
+    '.post-toc-wrap': Pjax.switches.innerHTML
+  },
+  analytics: false,
+  cacheBust: false,
+  scrollTo : !CONFIG.bookmark.enable
+});
+
+window.addEventListener('pjax:success', () => {
+  document.querySelectorAll('script[data-pjax], script#page-configurations, #pjax script').forEach(element => {
+    var code = element.text || element.textContent || element.innerHTML || '';
+    var parent = element.parentNode;
+    parent.removeChild(element);
+    var script = document.createElement('script');
+    if (element.id) {
+      script.id = element.id;
+    }
+    if (element.className) {
+      script.className = element.className;
+    }
+    if (element.type) {
+      script.type = element.type;
+    }
+    if (element.src) {
+      script.src = element.src;
+      // Force synchronous loading of peripheral JS.
+      script.async = false;
+    }
+    if (element.dataset.pjax !== undefined) {
+      script.dataset.pjax = '';
+    }
+    if (code !== '') {
+      script.appendChild(document.createTextNode(code));
+    }
+    parent.appendChild(script);
+  });
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <div id="pjax">
+  
+
+  
+
+<script>
+NexT.utils.loadComments(document.querySelector('#lv-container'), () => {
+  window.livereOptions = {
+    refer: location.pathname.replace(CONFIG.root, '').replace('index.html', '')
+  };
+  (function(d, s) {
+    var j, e = d.getElementsByTagName(s)[0];
+    if (typeof LivereTower === 'function') { return; }
+    j = d.createElement(s);
+    j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+    j.async = true;
+    e.parentNode.insertBefore(j, e);
+  })(document, 'script');
+});
+</script>
+
+    </div>
+  
+   <canvas class="fireworks" style="position: fixed;left: 0;top: 0;z-index: 1; pointer-events: none;" ></canvas> 
+   <script type="text/javascript" src="//cdn.bootcss.com/animejs/2.2.0/anime.min.js"></script> 
+   <script type="text/javascript" src="/js/src/fireworks.js"></script>
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"model":{"jsonPath":"/live2dw/assets/wanko.model.json"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":false},"log":false});</script></body>
+</html>
+
+
